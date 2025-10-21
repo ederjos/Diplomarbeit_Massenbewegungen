@@ -5,7 +5,7 @@ use Inertia\Inertia;
 use Illuminate\Http\Request;
 use App\Models\Municipality;
 
-// Create new table:
+// Create table:
 /* ./vendor/bin/sail artisan make:model Municipality -m
 app/Models/Municipality.php
 database/migrations/xxxx_xx_xx_create_municipalities_table.php
@@ -30,3 +30,9 @@ Route::post('/municipalities', function(Request $request) {
 
     return redirect()->route('home');
 })->name('municipalities.store');
+
+Route::delete('municipalities/{municipality}', function(Municipality $municipality){
+    $municipality->delete();
+
+    return redirect()->route('home');
+})->name('municipalities.destroy');
