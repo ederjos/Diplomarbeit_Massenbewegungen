@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
-
+use Grimzy\LaravelPostgis\Types\PointZ;
+use App\Models\Location;
+use App\Models\MeasurementValue;
 use App\Models\Municipality;
 use App\Models\Project;
 use App\Models\User;
@@ -25,10 +27,17 @@ Route::get('/', function () {
     // $municipalities = DB::select('select * from municipalities order by id limit 50'); // Complex queries, think about injection!
     // $municipalities = DB::table('municipalities')->orderBy('id')->take(50)->get();
 
+    // X,Y,Z Werte im EPSG 31254
+    // $location = new MeasurementValue();
+    // $location->x = 500000;
+    // $location->y = 200000;
+    // $location->z = 350;
+    // $location->save();
+
     return Inertia::render('Home', [
-        'municipalities' => $municipalities
-    ]);
-})->name('home');
+            'municipalities' => $municipalities
+        ]);
+    })->name('home');
 
 Route::post('/municipalities', function(Request $request) {
     $request->validate([
