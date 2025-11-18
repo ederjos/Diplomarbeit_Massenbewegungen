@@ -25,7 +25,7 @@ class Project extends Model
     $project = Project::find(1); // get project with id 1
     foreach ($project->users as $user) {
         if ($user->pivot->is_contact_person) {
-            echo $user->name . " is contact person\n";
+            echo $user->name . ' is contact person\n';
         }
     }
      */

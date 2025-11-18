@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->boolean('is_active');
-            $table->text('comment');
+            $table->text('comment')->default('');
             $table->integer('last_file_number');
             $table->rawColumn('period', "INTERVAL default '2 months 14 days'"); // for pgsql native datatype
             

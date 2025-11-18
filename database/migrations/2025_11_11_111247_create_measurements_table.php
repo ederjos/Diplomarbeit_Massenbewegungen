@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('measurements', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->dateTime('measurement_datetime');
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->timestamps();

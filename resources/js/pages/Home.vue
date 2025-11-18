@@ -41,11 +41,15 @@
 
     <p v-else class="text-gray-400 text-center mt-6 italic">No municipalities added yet.</p>
   </div>
+  <div>
+    <Leaflet />
+  </div>
 </template>
 
 <script lang="ts" setup>
 import { Head, useForm, router } from '@inertiajs/vue3'
 import { ref } from 'vue'
+
 
 interface Municipality {
   id: number

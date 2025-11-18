@@ -16,16 +16,13 @@ return new class extends Migration
             $table->id();
             $table->double('px');
             $table->double('py');
-            
+            $table->geometry('start_point', subtype: 'point', srid: 31254);
             $table->double('ax');
             $table->double('ay');
             $table->timestamps();
         });
 
-        // Copied from create_measurement_values_table.php
-        DB::statement('ALTER TABLE projections ADD COLUMN start_point geometry(Point, 31254)');
-
-        DB::statement("
+        DB::statement('
             CREATE OR REPLACE FUNCTION set_start_point_from_px_py()
             RETURNS trigger AS
             $$
@@ -36,14 +33,14 @@ return new class extends Migration
             END;
             $$
             LANGUAGE plpgsql;
-        ");
+        ');
 
-        DB::statement("
+        DB::statement('
             CREATE TRIGGER projections_start_point_trigger
             BEFORE INSERT OR UPDATE ON projections
             FOR EACH ROW
             EXECUTE FUNCTION set_start_point_from_px_py();
-        ");
+        ');
     }
 
     /**
@@ -51,8 +48,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement("DROP TRIGGER IF EXISTS projections_start_point_trigger ON projections");
-        DB::statement("DROP FUNCTION IF EXISTS set_start_point_from_px_py()");
+        DB::statement('DROP TRIGGER IF EXISTS projections_start_point_trigger ON projections');
+        DB::statement('DROP FUNCTION IF EXISTS set_start_point_from_px_py()');
         Schema::dropIfExists('projections');
     }
 };
