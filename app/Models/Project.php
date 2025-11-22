@@ -14,6 +14,11 @@ class Project extends Model
             ->withTimestamps();
     }
 
+    public function points()
+    {
+        return $this->hasMany(Point::class);
+    }
+
     // Example usage
     /*
     Add user as contact person
