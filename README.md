@@ -15,3 +15,8 @@ Let's add a column 'name' to the table `MEASUREMENT`
 - Changed in Migration -> [x]
 - Changed in Seeder    -> [x]
 - Changed in ERM       -> [ ]
+
+## Projektplanungs TBD
+
+* Prozessdiagramm (Flussdiagramm)
+* Softwareentwurf Diagramme
