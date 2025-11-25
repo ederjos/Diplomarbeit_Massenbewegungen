@@ -1,6 +1,10 @@
 # Diplomarbeit_Massenbewegungen
 Diplomarbeit als Web-Plattform zur Visualisierung von Massenbewegungen
 
+## TBD/TODO
+
+Load measurement values chronologically (since the last update, the files are loaded by filename, not by their correct time order)
+
 ## Changes
 
 ### 04.11.2025 column rename

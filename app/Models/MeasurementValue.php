@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\DB;
 class MeasurementValue extends Model
 {
 
-    protected $fillable = ['x', 'y', 'z', 'point_id', 'measurement_id', 'addition_id'];
+    protected $fillable = ['x', 'y', 'z', 'name', 'point_id', 'measurement_id', 'addition_id'];
 
     protected $casts = [
-        'geom' => Point::class, // Magellan will cast geom to a Point object
+        'geom' => Point::class,
     ];
 
     // Optional: automatically append lat/lon
@@ -27,7 +27,6 @@ class MeasurementValue extends Model
         return $this->belongsTo(Measurement::class);
     }
 
-    // Accessors -> could maybe be replaced by magellan?
     // Accessor for latitude
     public function getLatAttribute(): ?float
     {

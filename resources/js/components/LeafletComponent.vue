@@ -15,7 +15,8 @@ interface Measurement {
     z: number
     lat: number
     lon: number
-    date: string
+    datetime: string
+    measurement_name: string
 }
 
 interface Point {
@@ -35,6 +36,12 @@ const colors = [
     '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231',
     '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe'
 ]
+
+function displayPointDetails(point: Point): void {
+    console.log(point)
+    alert(point.name + " geklickt. Jetzt zeige Details an. (Z.B. zoom ohne Karte, Änderung pro Jahr, ...)")
+    return
+}
 
 onMounted(async () => {
     if (!mapContainer.value)
@@ -65,11 +72,12 @@ onMounted(async () => {
         const latlngs: [number, number][] = measurements.map(m => [m.lat, m.lon])
 
         // Draw polyline connecting measurements
-        L.polyline(latlngs, { color: 'white', weight: 2 }).addTo(map)
+        const currPolyline = L.polyline(latlngs, { color: 'white', weight: 2 }).addTo(map)
+        currPolyline.on('click', () => displayPointDetails(point))
 
         // Draw small circle markers for each measurement
         latlngs.forEach(coord => {
-            L.circleMarker(coord, {
+            const marker = L.circleMarker(coord, {
                 radius: 3,
                 fillColor: colors[point.id % colors.length],
                 color: 'gray',
@@ -77,6 +85,8 @@ onMounted(async () => {
                 opacity: 0.5,
                 fillOpacity: 0.8
             }).addTo(map)
+
+            marker.on('click', () => displayPointDetails(point))
         })
 
         bounds.push(...latlngs)
