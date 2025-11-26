@@ -59,7 +59,7 @@ interface MeasurementValue {
     y: number;
     z: number;
     measurement_id: number;
-    date: string | null;
+    datetime: string | null;
 }
 
 interface Point {
@@ -120,7 +120,7 @@ const chartData = computed(() => {
     const allDates = new Set<string>();
     points.value.forEach(p => {
         p.measurement_values.forEach(m => {
-            if (m.date) allDates.add(m.date);
+            if (m.datetime) allDates.add(m.datetime);
         });
     });
     
@@ -131,8 +131,8 @@ const chartData = computed(() => {
     const datasets = points.value.map((point, index) => {
         // Sort values by date
         const sortedValues = [...point.measurement_values].sort((a, b) => {
-            const da = a.date ? new Date(a.date).getTime() : 0;
-            const db = b.date ? new Date(b.date).getTime() : 0;
+            const da = a.datetime ? new Date(a.datetime).getTime() : 0;
+            const db = b.datetime ? new Date(b.datetime).getTime() : 0;
             return da - db;
         });
 
@@ -143,7 +143,7 @@ const chartData = computed(() => {
         // Map dates to values. If a date is missing for this point, we might want to skip or interpolate.
         // Chart.js handles nulls by breaking the line.
         const data = sortedDates.map(date => {
-            const val = sortedValues.find(v => v.date === date);
+            const val = sortedValues.find(v => v.datetime === date);
             if (!val) return null;
 
             const dx = val.x - initial.x;

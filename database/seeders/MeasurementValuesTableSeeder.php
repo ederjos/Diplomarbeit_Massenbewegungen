@@ -14,6 +14,19 @@ class MeasurementValuesTableSeeder extends Seeder
     public function run(): void
     {
         $files = File::files(database_path('seeders/csv'));
+
+        // put NM.csv first since it is the base measurement
+        // the other measurements (FM1.csv, ..., FMn.csv) are already ordered correctly
+        usort($files, function ($a, $b) {
+            if ($a->getFilename() === 'NM.csv') {
+                return -1;
+            }
+            if ($b->getFilename() === 'NM.csv') {
+                return 1;
+            }
+            return strnatcmp($a->getFilename(), $b->getFilename());
+        });
+
         $points = DB::table('points')->pluck('id', 'name');
         
         foreach ($files as $file) {
