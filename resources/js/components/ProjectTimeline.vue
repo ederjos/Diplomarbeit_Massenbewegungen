@@ -3,13 +3,9 @@
         <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-bold">Verschiebungsverlauf</h2>
             <div class="flex gap-2">
-                <button 
-                    v-for="mode in modes" 
-                    :key="mode.value"
-                    @click="currentMode = mode.value"
+                <button v-for="mode in modes" :key="mode.value" @click="currentMode = mode.value"
                     class="px-3 py-1 rounded text-sm font-medium transition-colors"
-                    :class="currentMode === mode.value ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'"
-                >
+                    :class="currentMode === mode.value ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
                     {{ mode.label }}
                 </button>
             </div>
@@ -18,7 +14,7 @@
         <div v-if="loading" class="h-64 flex items-center justify-center text-gray-500">
             Daten werden geladen...
         </div>
-        
+
         <div v-else-if="!hasData" class="h-64 flex items-center justify-center text-gray-500">
             Keine Messdaten verfügbar.
         </div>
@@ -33,25 +29,25 @@
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
 } from 'chart.js';
 import { Line } from 'vue-chartjs';
 
 ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
 );
 
 interface MeasurementValue {
@@ -98,7 +94,7 @@ const fetchPoints = async () => {
 
 const getPointColor = (name: string, index: number) => {
     const colors = [
-        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', 
+        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
         '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
     ];
     return colors[index % colors.length];
@@ -123,27 +119,30 @@ const chartData = computed(() => {
             if (m.datetime) allDates.add(m.datetime);
         });
     });
-    
+
     const sortedDates = Array.from(allDates).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
     const labels = sortedDates.map(formatDate);
 
     // 2. Create datasets
     const datasets = points.value.map((point, index) => {
-        // Sort values by date
-        const sortedValues = [...point.measurement_values].sort((a, b) => {
-            const da = a.datetime ? new Date(a.datetime).getTime() : 0;
-            const db = b.datetime ? new Date(b.datetime).getTime() : 0;
-            return da - db;
-        });
+        // Filter and sort values by date
+        const sortedValues = point.measurement_values
+            .filter(v => v.datetime)
+            .sort((a, b) => {
+                const da = new Date(a.datetime!).getTime();
+                const db = new Date(b.datetime!).getTime();
+                return da - db;
+            });
 
         if (sortedValues.length === 0) return null;
 
         const initial = sortedValues[0];
-        
+        const valueMap = new Map(sortedValues.map(v => [v.datetime, v]));
+
         // Map dates to values. If a date is missing for this point, we might want to skip or interpolate.
         // Chart.js handles nulls by breaking the line.
         const data = sortedDates.map(date => {
-            const val = sortedValues.find(v => v.datetime === date);
+            const val = valueMap.get(date);
             if (!val) return null;
 
             const dx = val.x - initial.x;
@@ -160,12 +159,12 @@ const chartData = computed(() => {
                 // The legacy charts show negative values for horizontal movement.
                 return -Math.sqrt(dx_cm * dx_cm + dy_cm * dy_cm);
             }
-            
+
             if (currentMode.value === 'vertical') {
                 // Vertical displacement (Z), usually negative for settlement
                 return dz_cm;
             }
-            
+
             // Total 3D displacement, negated as per legacy charts
             return -Math.sqrt(dx_cm * dx_cm + dy_cm * dy_cm + dz_cm * dz_cm);
         });
@@ -181,7 +180,8 @@ const chartData = computed(() => {
             pointStyle: pointStyle,
             pointRadius: 5,
             pointHoverRadius: 7,
-            tension: 0.1
+            tension: 0.1,
+            spanGaps: true
         };
     }).filter(ds => ds !== null);
 
@@ -222,13 +222,13 @@ const chartOptions = computed(() => {
                 mode: 'index' as const,
                 intersect: false,
                 callbacks: {
-                    label: function(context: any) {
+                    label: function (context: any) {
                         let label = context.dataset.label || '';
                         if (label) {
                             label += ': ';
                         }
                         if (context.parsed.y !== null) {
-                            label += context.parsed.y.toFixed(1) + ' cm';
+                            label += context.parsed.y.toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + ' cm';
                         }
                         return label;
                     }
@@ -252,9 +252,9 @@ const chartOptions = computed(() => {
                     text: yAxisText
                 },
                 ticks: {
-                    callback: function(value: string | number) {
+                    callback: function (value: string | number) {
                         if (typeof value === 'number') {
-                            return value.toFixed(0);
+                            return value.toLocaleString('de-DE');
                         }
                         return value;
                     }

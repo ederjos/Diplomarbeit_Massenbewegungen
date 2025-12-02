@@ -27,8 +27,11 @@ class MeasurementValuesTableSeeder extends Seeder
             return strnatcmp($a->getFilename(), $b->getFilename());
         });
 
-        $points = DB::table('points')->pluck('id', 'name');
-        
+        // Cache existing points to avoid repeated DB queries
+        // We assume project_id = 1 for all points created here
+        $points = DB::table('points')->pluck('id', 'name')->toArray();
+        $projectId = 1;
+
         foreach ($files as $file) {
             if ($file->getFilename() === 'Zeitpunkte.csv') {
                 continue;
@@ -44,25 +47,45 @@ class MeasurementValuesTableSeeder extends Seeder
             $handle = fopen($file->getPathname(), 'r');
             $values = [];
             while (($line = fgetcsv($handle, 0, ',')) !== FALSE) {
-                $pointName = 'PP' . $line[0];
-                $pointId = $points[$pointName] ?? null;
-
-                if (!$pointId) {
+                // Skip empty lines or lines with insufficient data
+                if (count($line) < 4) {
                     continue;
                 }
 
-                // Skip if coordinates are missing or invalid
-                // e.g. FM10.csv
-                if (!isset($line[1]) || !isset($line[2]) || !isset($line[3]) || 
-                    $line[1] === '' || $line[2] === '' || $line[3] === '') {
+                $pointName = trim($line[0]);
+                
+                if ($pointName === '') {
+                    continue;
+                }
+
+                // Create point if it doesn't exist
+                if (!isset($points[$pointName])) {
+                    $pointId = DB::table('points')->insertGetId([
+                        'name' => $pointName,
+                        'project_id' => $projectId,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ]);
+                    $points[$pointName] = $pointId;
+                }
+
+                $pointId = $points[$pointName];
+
+                // Validate coordinates (indices 1, 2, 3)
+                // Ignore comments or extra columns
+                $x = $line[1];
+                $y = $line[2];
+                $z = $line[3];
+
+                if (!is_numeric($x) || !is_numeric($y) || !is_numeric($z)) {
                     continue;
                 }
 
                 $values[] = [
                     'point_id' => $pointId,
-                    'x' => $line[1],
-                    'y' => $line[2],
-                    'z' => $line[3],
+                    'x' => $x,
+                    'y' => $y,
+                    'z' => $z,
                     'measurement_id' => $measurement->id,
                     'created_at' => now(),
                     'updated_at' => now()
