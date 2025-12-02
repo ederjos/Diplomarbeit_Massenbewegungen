@@ -30,8 +30,8 @@ import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
 import {
     Chart as ChartJS,
-    CategoryScale,
     LinearScale,
+    TimeScale,
     PointElement,
     LineElement,
     Title,
@@ -39,10 +39,12 @@ import {
     Legend
 } from 'chart.js';
 import { Line } from 'vue-chartjs';
+import 'chartjs-adapter-date-fns';
+import { de } from 'date-fns/locale';
 
 ChartJS.register(
-    CategoryScale,
     LinearScale,
+    TimeScale,
     PointElement,
     LineElement,
     Title,
@@ -102,26 +104,15 @@ const getPointColor = (name: string, index: number) => {
 
 const pointStyles = ['rect', 'triangle', 'circle', 'rectRot', 'cross', 'star'];
 
-const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-};
-
 const chartData = computed(() => {
-    // 1. Collect all unique dates across all points to form the X-axis
-    const allDates = new Set<string>();
+    // 1. Collect all unique timestamps across all points
+    const allTimestamps = new Set<number>();
     points.value.forEach(p => {
         p.measurement_values.forEach(m => {
-            if (m.datetime) allDates.add(m.datetime);
+            if (m.datetime) allTimestamps.add(new Date(m.datetime).getTime());
         });
     });
-
-    const sortedDates = Array.from(allDates).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-    const labels = sortedDates.map(formatDate);
+    const sortedTimestamps = Array.from(allTimestamps).sort((a, b) => a - b);
 
     // 2. Create datasets
     const datasets = points.value.map((point, index) => {
@@ -137,13 +128,11 @@ const chartData = computed(() => {
         if (sortedValues.length === 0) return null;
 
         const initial = sortedValues[0];
-        const valueMap = new Map(sortedValues.map(v => [v.datetime, v]));
+        const valueMap = new Map(sortedValues.map(v => [new Date(v.datetime!).getTime(), v]));
 
-        // Map dates to values. If a date is missing for this point, we might want to skip or interpolate.
-        // Chart.js handles nulls by breaking the line.
-        const data = sortedDates.map(date => {
-            const val = valueMap.get(date);
-            if (!val) return null;
+        const data = sortedTimestamps.map(timestamp => {
+            const val = valueMap.get(timestamp);
+            if (!val) return { x: timestamp, y: null };
 
             const dx = val.x - initial.x;
             const dy = val.y - initial.y;
@@ -154,19 +143,21 @@ const chartData = computed(() => {
             const dy_cm = dy * 100;
             const dz_cm = dz * 100;
 
+            let yVal = 0;
+
             if (currentMode.value === 'horizontal') {
                 // Horizontal displacement magnitude, negated to show "shortening" or movement away from reference
                 // The legacy charts show negative values for horizontal movement.
-                return -Math.sqrt(dx_cm * dx_cm + dy_cm * dy_cm);
-            }
-
-            if (currentMode.value === 'vertical') {
+                yVal = -Math.sqrt(dx_cm * dx_cm + dy_cm * dy_cm);
+            } else if (currentMode.value === 'vertical') {
                 // Vertical displacement (Z), usually negative for settlement
-                return dz_cm;
+                yVal = dz_cm;
+            } else {
+                // Total 3D displacement, negated as per legacy charts
+                yVal = -Math.sqrt(dx_cm * dx_cm + dy_cm * dy_cm + dz_cm * dz_cm);
             }
 
-            // Total 3D displacement, negated as per legacy charts
-            return -Math.sqrt(dx_cm * dx_cm + dy_cm * dy_cm + dz_cm * dz_cm);
+            return { x: timestamp, y: yVal };
         });
 
         const color = getPointColor(point.name, index);
@@ -186,7 +177,6 @@ const chartData = computed(() => {
     }).filter(ds => ds !== null);
 
     return {
-        labels,
         datasets
     };
 });
@@ -214,13 +204,17 @@ const chartOptions = computed(() => {
     return {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+            mode: 'index' as const,
+            intersect: false
+        },
         plugins: {
             legend: {
                 position: 'bottom' as const,
             },
             tooltip: {
-                mode: 'index' as const,
-                intersect: false,
+                position: 'nearest' as const,
+                caretPadding: 10,
                 callbacks: {
                     label: function (context: any) {
                         let label = context.dataset.label || '';
@@ -241,9 +235,30 @@ const chartOptions = computed(() => {
         },
         scales: {
             x: {
+                type: 'time' as const,
+                time: {
+                    unit: 'month' as const,
+                    displayFormats: {
+                        day: 'dd.MM.yyyy',
+                        week: 'dd.MM.yyyy',
+                        month: 'MMM yyyy',
+                        year: 'yyyy'
+                    },
+                    tooltipFormat: 'dd.MM.yyyy'
+                },
+                adapters: {
+                    date: {
+                        locale: de
+                    }
+                },
                 ticks: {
-                    maxRotation: 90,
-                    minRotation: 90
+                    maxTicksLimit: 12,
+                    maxRotation: 45,
+                    minRotation: 45
+                },
+                title: {
+                    display: true,
+                    text: 'Datum'
                 }
             },
             y: {
