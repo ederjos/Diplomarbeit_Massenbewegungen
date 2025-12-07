@@ -244,14 +244,49 @@ onMounted(async () => {
         console.log('Zoom level changed to:', leafletMap.getZoom())
     })
 
-    L.tileLayer('https://api.maptiler.com/maps/hybrid/{z}/{x}/{y}.jpg?key=DGwAtMAEBbbrxqSn9k9p',
-        {
-            maxZoom: 23,
-            minZoom: 4,
-            tileSize: 512,
-            zoomOffset: -1,
-            attribution: '© MapTiler'
-        }).addTo(leafletMap)
+    var mainSatelliteMap = L.tileLayer('https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key=DGwAtMAEBbbrxqSn9k9p', {
+        maxZoom: 23,
+        minZoom: 4,
+        tileSize: 512,
+        zoomOffset: -1,
+        attribution: '© MapTiler'
+    })
+
+    var outdoorMap = L.tileLayer('https://api.maptiler.com/maps/outdoor-v4/{z}/{x}/{y}.png?key=DGwAtMAEBbbrxqSn9k9p', {
+        maxZoom: 23,
+        minZoom: 4,
+        tileSize: 512,
+        zoomOffset: -1,
+        attribution: '© MapTiler'
+    })
+
+    var mainMap = L.tileLayer('https://api.maptiler.com/maps/base-v4/{z}/{x}/{y}.png?key=DGwAtMAEBbbrxqSn9k9p', {
+        maxZoom: 23,
+        minZoom: 4,
+        tileSize: 512,
+        zoomOffset: -1,
+        attribution: '© MapTiler'
+    }).addTo(leafletMap) // show only this initially
+    
+    // WMS Layer by vogis for hillshade
+    var schummerung = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_schummerung_2023_r_wms.map', {
+        layers: 'schummerung_2023_oberflaeche_25cm',
+        format: 'image/png',
+        transparent: true,
+        maxZoom: 23,
+        minZoom: 4,
+        attribution: '© VOGIS CNV'
+    })
+
+    // Layer control: Change base layer and toggle hillshade
+    L.control.layers({
+        "Standard": mainMap,
+        "Satellit": mainSatelliteMap,
+        "Outdoor": outdoorMap,
+    }, {
+        "Schummerung 25cm": schummerung
+    }).addTo(leafletMap);
+
     // https://api.maptiler.com/tiles/contours-v2/{z}/{x}/{y}.pbf?key=DGwAtMAEBbbrxqSn9k9p
 
     const { data } = await axios.get<Point[]>('/api/projects/1/points-with-measurements')

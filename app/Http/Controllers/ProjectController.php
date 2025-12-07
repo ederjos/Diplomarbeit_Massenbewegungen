@@ -18,7 +18,11 @@ class ProjectController extends Controller
         // ensures measurementValues is loaded for each point and measurement for each value
         $points = $project->points()->with(['measurementValues.measurement'])->get(); // This line by Simon
         // return response()->json($points);
-        
+        /** "Eager loading"
+         * What is "Eager Loading"?
+         * Simply explained: Instead of going to the database separately for each single item to fetch its measurements (which would happen hundreds of times), you fetch everything at once in just three large batches.
+         */
+
         return response()->json($points->map(function ($point) {
             return [
                 'id' => $point->id,
