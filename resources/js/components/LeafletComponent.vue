@@ -9,7 +9,7 @@
                 :key="m.id"
                 :value="m.id"
                 >
-                {{ m.name }} ({{ new Date(m.date).toISOString().split('T')[0] }})
+                {{ m.name }} ({{ new Date(m.date).toLocaleDateString('de-AT')}})
                 </option>
             </select>
             </div>
@@ -21,7 +21,7 @@
                 :key="m.id"
                 :value="m.id"
                 >
-                {{ m.name }} ({{ new Date(m.date).toISOString().split('T')[0] }})
+                {{ m.name }} ({{ new Date(m.date).toLocaleDateString('de-AT') }})
                 </option>
             </select>
             </div>
@@ -31,25 +31,25 @@
             <div ref="mapContainer" class="flex-1 h-full relative z-0"></div>
             
             <div class="w-96 bg-gray-50 border-l overflow-y-auto p-4 shrink-0 shadow-lg z-10">
-                <h2 class="font-bold text-lg mb-4">Verschiebungen</h2>
-                <table class="w-full text-sm text-left border-collapse">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-100 sticky top-0">
+                <h2 class="font-bold text-lg mb-3">Verschiebungen</h2>
+                <table class="w-full text-sm text-left border-collapse relative">
+                    <thead class="top-0 z-10 bg-gray-100 text-xs uppercase border-b shadow-sm">
                         <tr>
-                            <th class="px-2 py-2 border-b">Punkt</th>
-                            <th class="px-2 py-2 border-b">Δ Lage [m]</th>
-                            <th class="px-2 py-2 border-b">Δ Höhe [m]</th>
+                            <th class="px-3 py-2 font-semibold text-gray-800">Punkt</th>
+                            <th class="px-3 py-2 font-semibold text-gray-800 text-right">Δ Lage [m]</th>
+                            <th class="px-3 py-2 font-semibold text-gray-800 text-right">Δ Höhe [m]</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="p in pointDeltas" :key="p.id" class="bg-white border-b hover:bg-gray-100 cursor-pointer" @click="zoomToPoint(p.id)">
-                            <td class="px-2 py-2 font-medium text-gray-900">{{ p.name }}</td>
-                            <td class="px-2 py-2">{{ p.d2d.toFixed(4) }}</td>
-                            <td class="px-2 py-2">
+                        <tr v-for="p in pointDeltas" :key="p.id" class="bg-white odd:bg-gray-50 border-b hover:bg-gray-100 cursor-pointer" @click="zoomToPoint(p.id)">
+                            <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
+                            <td class="px-3 py-2 tabular-nums text-right">{{ p.d2d.toFixed(4) }}</td>
+                            <td class="px-3 py-2 tabular-nums text-right">
                                 {{ p.dz > 0 ? '+' : '' }}{{ p.dz.toFixed(4) }}
                             </td>
                         </tr>
                         <tr v-if="pointDeltas.length === 0">
-                            <td colspan="3" class="px-2 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
+                            <td colspan="3" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
                         </tr>
                     </tbody>
                 </table>
@@ -105,14 +105,20 @@ const pointDeltas = computed(() => {
     if (!selectedReference.value || !selectedMeasurement.value) return []
     
     return points.value.map(p => {
+        // Find the measurement values for the selected reference and comparison epochs
         const ref = p.measurement_values.find(m => m.measurement_id === selectedReference.value)
         const m = p.measurement_values.find(m => m.measurement_id === selectedMeasurement.value)
         
+        // If either is missing for this point, we can't calculate a delta
         if (!ref || !m) return null
         
+        // Calculate differences in coordinates
         const dx = m.x - ref.x
         const dy = m.y - ref.y
         const dz = m.z - ref.z
+        
+        // Calculate 2D Euclidean distance (horizontal displacement)
+        // d = sqrt(dx^2 + dy^2) - distance 2d
         const d2d = Math.sqrt(dx*dx + dy*dy)
         
         return {
@@ -125,6 +131,7 @@ const pointDeltas = computed(() => {
             lat: m.lat,
             lon: m.lon
         }
+        // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
     }).filter((p): p is NonNullable<typeof p> => p !== null)
 })
 
@@ -153,12 +160,14 @@ function displayPointDetails(point: Point): void {
 function drawMap() {
     if (!map.value) return
     
+    // Clear existing layers before redrawing
     markersLayer.clearLayers()
 
     points.value.forEach(point => {
-        let measurements = point.measurement_values
+        // Create a shallow copy to avoid mutating the original array when sorting
+        let measurements = [...point.measurement_values]
 
-        // Filter if both are selected
+        // Filter if both are selected to show only the connection between reference and comparison
         if (selectedReference.value && selectedMeasurement.value) {
             measurements = measurements.filter(m => 
                 m.measurement_id === selectedReference.value || 
@@ -166,7 +175,7 @@ function drawMap() {
             )
         }
 
-        // Sort chronologically
+        // Sort chronologically to ensure the line is drawn in the correct order (from old to new)
         measurements.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
 
         if (!measurements.length) return
@@ -176,16 +185,17 @@ function drawMap() {
 
         // Draw polyline connecting measurements
         const currPolyline = L.polyline(latlngs, { color: 'white', weight: 2 })
-        currPolyline.on('click', () => displayPointDetails(point))
+        currPolyline.on('click', () => zoomToPoint(point.id))
         markersLayer.addLayer(currPolyline)
 
         // Add arrow head if we have a line (more than 1 point)
+        // This uses the leaflet-polylinedecorator plugin to draw an arrow at the end of the line
         if (latlngs.length > 1) {
              const decorator = L.polylineDecorator(currPolyline, {
                 patterns: [
                     {
-                        offset: '100%',
-                        repeat: 0,
+                        offset: '100%', // Arrow at the end
+                        repeat: 0,      // Only one arrow
                         symbol: L.Symbol.arrowHead({
                             pixelSize: 8,
                             polygon: false,
@@ -194,7 +204,7 @@ function drawMap() {
                     }
                 ]
             })
-            decorator.on('click', () => displayPointDetails(point))
+            decorator.on('click', () => zoomToPoint(point.id))
             markersLayer.addLayer(decorator)
         }
 
@@ -210,7 +220,7 @@ function drawMap() {
             })
             
 
-            marker.on('click', () => displayPointDetails(point))
+            marker.on('click', () => zoomToPoint(point.id))
             markersLayer.addLayer(marker)
         })
 
@@ -222,7 +232,7 @@ function drawMap() {
                 iconAnchor: [10, -10]
             })
         })
-        textMarker.on('click', () => displayPointDetails(point))
+        textMarker.on('click', () => zoomToPoint(point.id))
         markersLayer.addLayer(textMarker)
     })
 }
@@ -244,7 +254,7 @@ onMounted(async () => {
         console.log('Zoom level changed to:', leafletMap.getZoom())
     })
 
-    var mainSatelliteMap = L.tileLayer('https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key=DGwAtMAEBbbrxqSn9k9p', {
+    var mainSatelliteMap = L.tileLayer('https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.png?key=DGwAtMAEBbbrxqSn9k9p', {
         maxZoom: 23,
         minZoom: 4,
         tileSize: 512,
