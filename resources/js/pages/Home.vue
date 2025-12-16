@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts" setup>
-import { Head, useForm, router } from '@inertiajs/vue3'
+import { Head /*, useForm, router*/ } from '@inertiajs/vue3'
 // import { ref } from 'vue'
 import LeafletComponent from '../components/LeafletComponent.vue'
 import ProjectTimeline from '../components/ProjectTimeline.vue'
