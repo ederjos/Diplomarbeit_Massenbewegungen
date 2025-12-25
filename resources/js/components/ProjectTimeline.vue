@@ -11,11 +11,7 @@
             </div>
         </div>
 
-        <div v-if="loading" class="h-64 flex items-center justify-center text-gray-500">
-            Daten werden geladen...
-        </div>
-
-        <div v-else-if="!hasData" class="h-64 flex items-center justify-center text-gray-500">
+        <div v-if="!hasData" class="h-64 flex items-center justify-center text-gray-500">
             Keine Messdaten verfügbar.
         </div>
 
@@ -26,8 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
+import { ref, computed } from 'vue';
 import {
     Chart as ChartJS,
     LinearScale,
@@ -41,6 +36,7 @@ import {
 import { Line } from 'vue-chartjs';
 import 'chartjs-adapter-date-fns';
 import { de } from 'date-fns/locale';
+import { Point } from '@/@types/measurement';
 
 ChartJS.register(
     LinearScale,
@@ -52,26 +48,11 @@ ChartJS.register(
     Legend
 );
 
-interface MeasurementValue {
-    x: number;
-    y: number;
-    z: number;
-    measurement_id: number;
-    datetime: string | null;
-}
-
-interface Point {
-    id: number;
-    name: string;
-    measurement_values: MeasurementValue[];
-}
-
 const props = defineProps<{
-    projectId?: number
+    points: Point[];
+    pointColors: Record<number, string>;
 }>();
 
-const loading = ref(true);
-const points = ref<Point[]>([]);
 const currentMode = ref<'total' | 'horizontal' | 'vertical'>('total');
 
 const modes = [
@@ -80,34 +61,14 @@ const modes = [
     { label: 'Höhe', value: 'vertical' },
 ] as const;
 
-const hasData = computed(() => points.value.some(p => p.measurement_values.length > 0));
-
-const fetchPoints = async () => {
-    try {
-        const id = props.projectId || 1;
-        const response = await axios.get(`/api/projects/${id}/points-with-measurements`);
-        points.value = response.data;
-    } catch (error) {
-        console.error('Error fetching points:', error);
-    } finally {
-        loading.value = false;
-    }
-};
-
-const getPointColor = (name: string, index: number) => {
-    const colors = [
-        '#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd',
-        '#8c564b', '#e377c2', '#7f7f7f', '#bcbd22', '#17becf'
-    ];
-    return colors[index % colors.length];
-};
+const hasData = computed(() => props.points.some(p => p.measurement_values.length > 0));
 
 const pointStyles = ['rect', 'triangle', 'circle', 'rectRot', 'cross', 'star'];
 
 const chartData = computed(() => {
     // 1. Collect all unique timestamps across all points
     const allTimestamps = new Set<number>();
-    points.value.forEach(p => {
+    props.points.forEach(p => {
         p.measurement_values.forEach(m => {
             if (m.datetime) allTimestamps.add(new Date(m.datetime).getTime());
         });
@@ -115,7 +76,7 @@ const chartData = computed(() => {
     const sortedTimestamps = Array.from(allTimestamps).sort((a, b) => a - b);
 
     // 2. Create datasets
-    const datasets = points.value.map((point, index) => {
+    const datasets = props.points.map((point, index) => {
         // Filter and sort values by date
         const sortedValues = point.measurement_values
             .filter(v => v.datetime)
@@ -160,7 +121,7 @@ const chartData = computed(() => {
             return { x: timestamp, y: yVal };
         });
 
-        const color = getPointColor(point.name, index);
+        const color = props.pointColors[point.id] || '#000000';
         const pointStyle = pointStyles[index % pointStyles.length];
 
         return {
@@ -277,9 +238,5 @@ const chartOptions = computed(() => {
             }
         }
     };
-});
-
-onMounted(() => {
-    fetchPoints();
 });
 </script>

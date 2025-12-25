@@ -61,30 +61,16 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed } from 'vue'
 import L from 'leaflet'
-//import 'leaflet-polylinedecorator' // for arrows
-import axios from 'axios'
 import proj4 from 'proj4' // for epsg transformations
+import { Point } from '@/@types/measurement';
 
 // Define EPSG:31254 (MGI / Austria GK West): https://epsg.io/31254.mapfile
 proj4.defs("EPSG:31254", "+proj=tmerc +lat_0=0 +lon_0=10.3333333333333 +k=1 +x_0=0 +y_0=-5000000 +ellps=bessel +towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232 +units=m +no_defs");
 
-interface Measurement {
-  measurement_id: number
-  x: number
-  y: number
-  z: number
-  lat: number
-  lon: number
-  datetime: string
-  measurement_name: string
-}
-
-interface Point {
-  id: number
-  name: string
-  projection_id: number | null
-  measurement_values: Measurement[]
-}
+const props = defineProps<{
+  points: Point[]
+  pointColors: Record<number, string> // like hash map
+}>()
 
 /* Prompt (ChatGPT GPT-5)
  * "I created this code using my api to retrieve the data. now make it work with typescript. [old code in js]"
@@ -104,8 +90,7 @@ interface Point {
 
 const mapContainer = ref<HTMLDivElement | null>(null)
 const map = ref<L.Map | null>(null)
-const points = ref<Point[]>([])
-const availableMeasurements = ref<{ id: number, name: string, date: string }[]>([])
+// const points = ref<Point[]>([]) // Removed
 const selectedReference = ref<number | null>(null)
 const selectedMeasurement = ref<number | null>(null)
 const vectorScale = ref<number>(100)
@@ -113,11 +98,27 @@ const isGaitLine = ref<boolean>(false)
 const markersLayer = new L.LayerGroup()
 // https://leafletjs.com/examples/layers-control/
 
+const availableMeasurements = computed(() => {
+  const measurementsMap = new Map<number, { id: number, name: string, date: string }>()
+  props.points.forEach(p => {
+    p.measurement_values.forEach(m => {
+      if (!measurementsMap.has(m.measurement_id)) {
+        measurementsMap.set(m.measurement_id, {
+          id: m.measurement_id,
+          name: m.measurement_name,
+          date: m.datetime
+        })
+      }
+    })
+  })
+  return Array.from(measurementsMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+})
+
 // Point deltas for the table (sidebar)
 const pointDeltas = computed(() => {
   if (!selectedReference.value || !selectedMeasurement.value) return []
 
-  return points.value.map(p => {
+  return props.points.map(p => {
     // Find the measurement values for the selected reference and comparison epochs
     const ref = p.measurement_values.find(m => m.measurement_id === selectedReference.value)
     const m = p.measurement_values.find(m => m.measurement_id === selectedMeasurement.value)
@@ -150,7 +151,7 @@ const pointDeltas = computed(() => {
 
 function zoomToPoint(pointId: number) {
   // zoom to arrowhead of selected point
-  const point = points.value.find(p => p.id === pointId)
+  const point = props.points.find(p => p.id === pointId)
   if (point && map.value) {
     const m = point.measurement_values.find(m => m.measurement_id === selectedReference.value) || point.measurement_values[0]
     if (m) {
@@ -159,18 +160,13 @@ function zoomToPoint(pointId: number) {
   }
 }
 
-const colors = [
-  '#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231',
-  '#911eb4', '#46f0f0', '#f032e6', '#bcf60c', '#fabebe'
-]
-
 function drawMap() {
   if (!map.value) return
 
   // Clear existing layers before redrawing
   markersLayer.clearLayers()
 
-  points.value.forEach(point => {
+  props.points.forEach(point => {
     let latlngs: [number, number][] = []
 
     // If both reference and comparison are selected, calculate scaled vector
@@ -190,7 +186,7 @@ function drawMap() {
           vectorScale.value = 100000
         }
         const scale = vectorScale.value
-        console.log(typeof vectorScale.value, vectorScale.value)
+        // console.log(typeof vectorScale.value, vectorScale.value)
         const dxScaled = dx * scale
         const dyScaled = dy * scale
 
@@ -219,35 +215,18 @@ function drawMap() {
     if (!latlngs.length) return
 
     // Draw polyline connecting measurements
-    const currPolyline = L.polyline(latlngs, { color: 'white', weight: 2 })
+    const framePolyline = L.polyline(latlngs, {color: 'white', weight: 4})
+    const currPolyline = L.polyline(latlngs, { color: 'black', weight: 2 })
     currPolyline.on('click', () => zoomToPoint(point.id))
+    framePolyline.on('click', () => zoomToPoint(point.id))
+    markersLayer.addLayer(framePolyline)
     markersLayer.addLayer(currPolyline)
-
-    // Add arrow head if we have a line (more than 1 point)
-    // This uses the leaflet-polylinedecorator plugin to draw an arrow at the end of the line
-    /*if (latlngs.length > 1) {
-      const decorator = L.polylineDecorator(currPolyline, {
-        patterns: [
-          {
-            offset: '100%', // Arrow at the end
-            repeat: 0,      // Only one arrow
-            symbol: L.Symbol.arrowHead({
-              pixelSize: 8,
-              polygon: false,
-              pathOptions: { stroke: true, color: 'white', weight: 2 }
-            })
-          }
-        ]
-      })
-      decorator.on('click', () => zoomToPoint(point.id))
-      markersLayer.addLayer(decorator)
-    }*/
 
     // Draw small circle markers for the LAST measurement
     const lastCoord = latlngs[latlngs.length - 1];
     const marker = L.circleMarker(lastCoord, {
       radius: 3,
-      fillColor: colors[point.id % colors.length],
+      fillColor: props.pointColors[point.id] || 'gray',
       color: 'gray',
       weight: 1,
       opacity: 0.5,
@@ -276,6 +255,25 @@ watch([selectedReference, selectedMeasurement, vectorScale], () => {
   drawMap()
 })
 
+// Watch for points changes to redraw map and update selection if needed
+watch(() => props.points, () => {
+  // Preselect first and last as default measurements
+  if (!selectedReference.value && availableMeasurements.value.length) {
+    selectedReference.value = availableMeasurements.value[0].id
+  }
+  if (!selectedMeasurement.value && availableMeasurements.value.length > 1) {
+    selectedMeasurement.value = availableMeasurements.value[availableMeasurements.value.length - 1].id
+  }
+  drawMap()
+  
+  // Initial fit bounds (center the measurement data)
+  const allCoords: [number, number][] = []
+  props.points.forEach(p => p.measurement_values.forEach(m => allCoords.push([m.lat, m.lon])))
+  if (allCoords.length && map.value) {
+    map.value.fitBounds(allCoords, { padding: [50, 50] })
+  }
+}, { deep: true }) // not just ref change
+
 onMounted(async () => {
   if (!mapContainer.value)
     return
@@ -288,30 +286,14 @@ onMounted(async () => {
     console.log('Zoom level changed to:', leafletMap.getZoom())
   })
 
-  const mainSatelliteMap = L.tileLayer('https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.png?key=DGwAtMAEBbbrxqSn9k9p', {
-    maxZoom: 23,
-    minZoom: 4,
-    tileSize: 512,
-    zoomOffset: -1,
-    attribution: '&copy; MapTiler'
-  })
-
-  const outdoorMap = L.tileLayer('https://api.maptiler.com/maps/outdoor-v4/{z}/{x}/{y}.png?key=DGwAtMAEBbbrxqSn9k9p', {
-    maxZoom: 23,
-    minZoom: 4,
-    tileSize: 512,
-    zoomOffset: -1,
-    attribution: '&copy; MapTiler'
-  })
-
   const mainMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 23,
     minZoom: 4, // default tile size (256)
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(leafletMap) // show only this initially
 
-  // WMS Layer by vogis for hillshade
-  const schummerung = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_schummerung_2023_r_wms.map', {
+  // WMS Layers by vogis
+  const schummerung_surface = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_schummerung_2023_r_wms.map', {
     layers: 'schummerung_2023_oberflaeche_25cm',
     format: 'image/png',
     transparent: true,
@@ -320,45 +302,62 @@ onMounted(async () => {
     attribution: '&copy; VOGIS CNV'
   })
 
+  const schummerung_terrain = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_schummerung_2023_r_wms.map', {
+    layers: 'schummerung_2023_gelaende_25cm',
+    format: 'image/png',
+    transparent: true,
+    maxZoom: 23,
+    minZoom: 4,
+    attribution: '&copy; VOGIS CNV'
+  })
+
+  const aerial_2024 = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_luftbilder_r_wms.map', {
+    layers: 'wi2024-25_20cm',
+    format: 'image/png',
+    transparent: true,
+    maxZoom: 23,
+    minZoom: 4,
+    attribution: '&copy; VOGIS CNV'
+  })
+
+  const aerial_2018 = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_luftbilder_r_wms.map', {
+    layers: 'ef2018_10cm',
+    format: 'image/png',
+    transparent: true,
+    maxZoom: 23,
+    minZoom: 4,
+    attribution: '&copy; VOGIS CNV'
+  })
+
+
   // Layer control: Change base layer and toggle hillshade
   L.control.layers({
-    "Standard": mainMap,
-    "Satellit": mainSatelliteMap,
-    "Outdoor": outdoorMap,
-  }, {
-    "Schummerung 25cm": schummerung
+    "Standard Karte": mainMap,
+    "Schummerung Oberfläche": schummerung_surface,
+    "Schummerung Gelände": schummerung_terrain,
+    // Hier trennst du optisch
+    "--- LUFTBILDER ---": L.layerGroup(),
+    "Luftbild 2024": aerial_2024,
+    "Luftbild 2018": aerial_2018,
   }).addTo(leafletMap);
 
   // https://api.maptiler.com/tiles/contours-v2/{z}/{x}/{y}.pbf?key=DGwAtMAEBbbrxqSn9k9p
 
-  const { data } = await axios.get<Point[]>('/api/projects/1/points-with-measurements')
-  points.value = data
-
-  // Extract unique measurements
-  const measurementsMap = new Map<number, { id: number, name: string, date: string }>()
-  points.value.forEach(p => {
-    p.measurement_values.forEach(m => {
-      if (!measurementsMap.has(m.measurement_id)) {
-        measurementsMap.set(m.measurement_id, {
-          id: m.measurement_id,
-          name: m.measurement_name,
-          date: m.datetime
-        })
+  // Initial setup if points are already available
+  if (props.points.length > 0) {
+      if (!selectedReference.value && availableMeasurements.value.length) {
+        selectedReference.value = availableMeasurements.value[0].id
       }
-    })
-  })
-  availableMeasurements.value = Array.from(measurementsMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-
-  selectedReference.value = availableMeasurements.value.length ? availableMeasurements.value[0].id : null
-  selectedMeasurement.value = availableMeasurements.value.length > 1 ? availableMeasurements.value[availableMeasurements.value.length - 1].id : null
-
-  drawMap()
-
-  // Initial fit bounds
-  const allCoords: [number, number][] = []
-  points.value.forEach(p => p.measurement_values.forEach(m => allCoords.push([m.lat, m.lon])))
-  if (allCoords.length) {
-    map.value.fitBounds(allCoords, { padding: [50, 50] })
+      if (!selectedMeasurement.value && availableMeasurements.value.length > 1) {
+        selectedMeasurement.value = availableMeasurements.value[availableMeasurements.value.length - 1].id
+      }
+      drawMap()
+      
+      const allCoords: [number, number][] = []
+      props.points.forEach(p => p.measurement_values.forEach(m => allCoords.push([m.lat, m.lon])))
+      if (allCoords.length) {
+        map.value.fitBounds(allCoords, { padding: [50, 50] })
+      }
   }
 })
 </script>

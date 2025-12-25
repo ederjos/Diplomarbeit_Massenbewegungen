@@ -40,3 +40,5 @@ Let's add a column 'name' to the table `MEASUREMENT`
 
 * max zoom for maps (schummerung, ...)
 * which maps are needed
+
+## remove polyline-decorator plugin
