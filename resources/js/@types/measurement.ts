@@ -15,3 +15,9 @@ export interface Point {
     projection_id: number | null
     measurement_values: MeasurementValue[]
 }
+
+export interface Measurement {
+    id: number
+    name: string
+    date: string // Same as MeasurementValue
+}

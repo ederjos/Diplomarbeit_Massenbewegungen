@@ -3,7 +3,7 @@
     <div class="bg-white p-4 shadow z-10 flex gap-4 shrink-0 items-center">
       <div>
         <label class="block text-sm font-bold mb-1">Referenzepoche</label>
-        <select v-model.number="selectedReference" class="border rounded p-1">
+        <select v-model.number="selectedReference" class="border rounded p-1 disabled:text-gray-400" :disabled="isGaitLine">
           <option v-for="m in availableMeasurements" :key="m.id" :value="m.id">
             {{ m.name }} ({{ new Date(m.date).toLocaleDateString('de-AT') }})
           </option>
@@ -11,7 +11,7 @@
       </div>
       <div>
         <label class="block text-sm font-bold mb-1">Vergleichsepoche</label>
-        <select v-model.number="selectedMeasurement" class="border rounded p-1">
+        <select v-model.number="selectedMeasurement" class="border rounded p-1 disabled:text-gray-400" :disabled="isGaitLine">
           <option v-for="m in availableMeasurements" :key="m.id" :value="m.id">
             {{ m.name }} ({{ new Date(m.date).toLocaleDateString('de-AT') }})
           </option>
@@ -30,7 +30,7 @@
     <div class="flex flex-1 overflow-hidden">
       <div ref="mapContainer" class="flex-1 h-full relative z-0"></div>
 
-      <div class="w-96 bg-gray-50 border-l overflow-y-auto p-4 shrink-0 shadow-lg z-10">
+      <div v-if="!isGaitLine" class="w-96 bg-gray-50 border-l overflow-y-auto p-4 shrink-0 shadow-lg z-10" @vue:mounted="invalidateMap" @vue:unmounted="invalidateMap">
         <h2 class="font-bold text-lg mb-3">Verschiebungen</h2>
         <table class="w-full text-sm text-left border-collapse relative">
           <thead class="top-0 z-10 bg-gray-100 text-xs uppercase border-b shadow-sm">
@@ -42,7 +42,7 @@
           </thead>
           <tbody>
             <tr v-for="p in pointDeltas" :key="p.id"
-              class="bg-white odd:bg-gray-50 border-b hover:bg-gray-100 cursor-pointer" @click="zoomToPoint(p.id)">
+              class="bg-white odd:bg-gray-50 border-b hover:bg-gray-100 cursor-pointer" @click="zoomToPoint(p.id)" :data-point-id="p.id">
               <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
               <td class="px-3 py-2 tabular-nums text-right">{{ p.d2d.toFixed(4) }}</td>
               <td class="px-3 py-2 tabular-nums text-right">
@@ -62,7 +62,7 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import L from 'leaflet'
 import proj4 from 'proj4' // for epsg transformations
-import { Point } from '@/@types/measurement';
+import { Point, Measurement } from '@/@types/measurement';
 
 // Define EPSG:31254 (MGI / Austria GK West): https://epsg.io/31254.mapfile
 proj4.defs("EPSG:31254", "+proj=tmerc +lat_0=0 +lon_0=10.3333333333333 +k=1 +x_0=0 +y_0=-5000000 +ellps=bessel +towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232 +units=m +no_defs");
@@ -98,8 +98,9 @@ const isGaitLine = ref<boolean>(false)
 const markersLayer = new L.LayerGroup()
 // https://leafletjs.com/examples/layers-control/
 
+// Available measurements for the select boxes
 const availableMeasurements = computed(() => {
-  const measurementsMap = new Map<number, { id: number, name: string, date: string }>()
+  const measurementsMap = new Map<number, Measurement>()
   props.points.forEach(p => {
     p.measurement_values.forEach(m => {
       if (!measurementsMap.has(m.measurement_id)) {
@@ -149,6 +150,21 @@ const pointDeltas = computed(() => {
   }).filter((p): p is NonNullable<typeof p> => p !== null)
 })
 
+function invalidateMap() {
+  /**
+   * Prompt: Gemini 3 Pro
+   * "If the table is hidden, the leaflet map doesn't render correctly. fix this by telling leaflet when the table is mounted or unmounted"
+   */
+   
+   /**
+   * Forces the Leaflet map to recalculate its container size and redraw after a 100ms delay.
+   *
+   * - **invalidateSize**: A Leaflet method that checks if the map container's dimensions have changed and updates the map accordingly. This is necessary because Leaflet caches the container size for performance; if the container resizes (or becomes visible) without this call, the map may render incorrectly (e.g., missing tiles or wrong center).
+   * - **Overall Logic**: The `setTimeout` is used as a workaround to ensure the DOM has fully rendered or that CSS transitions (like opening a modal or tab) have completed before the map attempts to measure its container.
+   */
+  map.value?.invalidateSize()
+}
+
 function zoomToPoint(pointId: number) {
   // zoom to arrowhead of selected point
   const point = props.points.find(p => p.id === pointId)
@@ -156,6 +172,22 @@ function zoomToPoint(pointId: number) {
     const m = point.measurement_values.find(m => m.measurement_id === selectedReference.value) || point.measurement_values[0]
     if (m) {
       map.value.setView([m.lat, m.lon], 17)
+    }
+    // Also highlight the row in the table with a css animation (transform: scale, background: yellow fade out)
+    const row = document.querySelector(`tr[data-point-id="${pointId}"]`) as HTMLElement | null
+    if (row) {
+      //row.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      
+      // Apply temporary styles for the highlight effect
+      row.style.transition = 'transform 0.2s, background-color 1s'
+      row.style.transform = 'scale(1.02)' // zoom out a bit
+      row.style.backgroundColor = '#fef08a' // yellow-200
+      
+      // Remove styles 1s after animation
+      setTimeout(() => {
+        row.style.transform = ''
+        row.style.backgroundColor = ''
+      }, 1000)
     }
   }
 }
@@ -169,8 +201,17 @@ function drawMap() {
   props.points.forEach(point => {
     let latlngs: [number, number][] = []
 
+    // Validate scale globally for both modes
+    if (vectorScale.value <= 0 || typeof vectorScale.value !== 'number') {
+      vectorScale.value = 1
+    }
+    if (vectorScale.value > 100000) {
+      vectorScale.value = 100000
+    }
+    const scale = vectorScale.value
+
     // If both reference and comparison are selected, calculate scaled vector
-    if (selectedReference.value && selectedMeasurement.value) {
+    if (selectedReference.value && selectedMeasurement.value && !isGaitLine.value) {
       const refM = point.measurement_values.find(m => m.measurement_id === selectedReference.value)
       const compM = point.measurement_values.find(m => m.measurement_id === selectedMeasurement.value)
 
@@ -178,15 +219,6 @@ function drawMap() {
         const dx = compM.x - refM.x
         const dy = compM.y - refM.y
         
-        // If user enters invalid scale, default to 1
-        if (vectorScale.value <= 0 || typeof vectorScale.value !== 'number') {
-          vectorScale.value = 1
-        }
-        if (vectorScale.value > 100000) {
-          vectorScale.value = 100000
-        }
-        const scale = vectorScale.value
-        // console.log(typeof vectorScale.value, vectorScale.value)
         const dxScaled = dx * scale
         const dyScaled = dy * scale
 
@@ -206,10 +238,32 @@ function drawMap() {
         ]
       }
     } else {
-      // Fallback: show all measurements connected chronologically
+      // Fallback: show all measurements connected chronologically (Gait Line)
+      // Apply vector scaling to the gait line as well
       const measurements = [...point.measurement_values] // don't mutate original
       measurements.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
-      latlngs = measurements.map(m => [m.lat, m.lon])
+      
+      if (measurements.length > 0) {
+        var origin = measurements[0]
+        
+        latlngs = measurements.map(m => {
+          // Calculate delta from origin
+          const dx = m.x - origin.x
+          const dy = m.y - origin.y
+          
+          // Scale the delta
+          const dxScaled = dx * scale
+          const dyScaled = dy * scale
+          
+          // Apply scaled delta to origin
+          const newX = origin.x + dxScaled
+          const newY = origin.y + dyScaled
+          
+          // Convert back to lat/lon
+          const newCoords = proj4('EPSG:31254', 'EPSG:4326', [newX, newY])
+          return [newCoords[1], newCoords[0]]
+        })
+      }
     }
 
     if (!latlngs.length) return
@@ -250,31 +304,12 @@ function drawMap() {
   })
 }
 
-watch([selectedReference, selectedMeasurement, vectorScale], () => {
+watch([selectedReference, selectedMeasurement, vectorScale, isGaitLine], () => {
   // As soon as selection changes, redraw the map
   drawMap()
 })
 
-// Watch for points changes to redraw map and update selection if needed
-watch(() => props.points, () => {
-  // Preselect first and last as default measurements
-  if (!selectedReference.value && availableMeasurements.value.length) {
-    selectedReference.value = availableMeasurements.value[0].id
-  }
-  if (!selectedMeasurement.value && availableMeasurements.value.length > 1) {
-    selectedMeasurement.value = availableMeasurements.value[availableMeasurements.value.length - 1].id
-  }
-  drawMap()
-  
-  // Initial fit bounds (center the measurement data)
-  const allCoords: [number, number][] = []
-  props.points.forEach(p => p.measurement_values.forEach(m => allCoords.push([m.lat, m.lon])))
-  if (allCoords.length && map.value) {
-    map.value.fitBounds(allCoords, { padding: [50, 50] })
-  }
-}, { deep: true }) // not just ref change
-
-onMounted(async () => {
+onMounted(() => {
   if (!mapContainer.value)
     return
 
@@ -329,7 +364,6 @@ onMounted(async () => {
     attribution: '&copy; VOGIS CNV'
   })
 
-
   // Layer control: Change base layer and toggle hillshade
   L.control.layers({
     "Standard Karte": mainMap,
@@ -343,7 +377,7 @@ onMounted(async () => {
 
   // https://api.maptiler.com/tiles/contours-v2/{z}/{x}/{y}.pbf?key=DGwAtMAEBbbrxqSn9k9p
 
-  // Initial setup if points are already available
+  // Initial setup
   if (props.points.length > 0) {
       if (!selectedReference.value && availableMeasurements.value.length) {
         selectedReference.value = availableMeasurements.value[0].id
