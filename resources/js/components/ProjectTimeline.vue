@@ -61,7 +61,7 @@ const modes = [
     { label: 'Höhe', value: 'vertical' },
 ] as const;
 
-const hasData = computed(() => props.points.some(p => p.measurement_values.length > 0));
+const hasData = computed(() => props.points.some(p => p.measurementValues.length > 0));
 
 const pointStyles = ['rect', 'triangle', 'circle', 'rectRot', 'cross', 'star'];
 
@@ -69,7 +69,7 @@ const chartData = computed(() => {
     // 1. Collect all unique timestamps across all points
     const allTimestamps = new Set<number>();
     props.points.forEach(p => {
-        p.measurement_values.forEach(m => {
+        p.measurementValues.forEach(m => {
             if (m.datetime) allTimestamps.add(new Date(m.datetime).getTime());
         });
     });
@@ -78,7 +78,7 @@ const chartData = computed(() => {
     // 2. Create datasets
     const datasets = props.points.map((point, index) => {
         // Filter and sort values by date
-        const sortedValues = point.measurement_values
+        const sortedValues = point.measurementValues
             .filter(v => v.datetime)
             .sort((a, b) => {
                 const da = new Date(a.datetime!).getTime();

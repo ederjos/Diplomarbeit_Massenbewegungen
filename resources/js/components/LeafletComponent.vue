@@ -44,7 +44,7 @@
             <tr v-for="p in pointDeltas" :key="p.id"
               class="bg-white odd:bg-gray-50 border-b hover:bg-gray-100 cursor-pointer" @click="zoomToPoint(p.id)" :data-point-id="p.id">
               <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
-              <td class="px-3 py-2 tabular-nums text-right">{{ p.d2d.toFixed(4) }}</td>
+              <td class="px-3 py-2 tabular-nums text-right">{{ p.distance2d.toFixed(4) }}</td>
               <td class="px-3 py-2 tabular-nums text-right">
                 {{ p.dz > 0 ? '+' : '' }}{{ p.dz.toFixed(4) }}
               </td>
@@ -102,11 +102,11 @@ const markersLayer = new L.LayerGroup()
 const availableMeasurements = computed(() => {
   const measurementsMap = new Map<number, Measurement>()
   props.points.forEach(p => {
-    p.measurement_values.forEach(m => {
-      if (!measurementsMap.has(m.measurement_id)) {
-        measurementsMap.set(m.measurement_id, {
-          id: m.measurement_id,
-          name: m.measurement_name,
+    p.measurementValues.forEach(m => {
+      if (!measurementsMap.has(m.measurementId)) {
+        measurementsMap.set(m.measurementId, {
+          id: m.measurementId,
+          name: m.measurementName,
           date: m.datetime
         })
       }
@@ -121,8 +121,8 @@ const pointDeltas = computed(() => {
 
   return props.points.map(p => {
     // Find the measurement values for the selected reference and comparison epochs
-    const ref = p.measurement_values.find(m => m.measurement_id === selectedReference.value)
-    const m = p.measurement_values.find(m => m.measurement_id === selectedMeasurement.value)
+    const ref = p.measurementValues.find(m => m.measurementId === selectedReference.value)
+    const m = p.measurementValues.find(m => m.measurementId === selectedMeasurement.value)
 
     // If either is missing for this point, we can't calculate a delta
     if (!ref || !m) return null
@@ -134,7 +134,7 @@ const pointDeltas = computed(() => {
 
     // Calculate 2D Euclidean distance (horizontal displacement)
     // d = sqrt(dx^2 + dy^2) - distance 2d
-    const d2d = Math.sqrt(dx * dx + dy * dy)
+    const distance2d = Math.sqrt(dx * dx + dy * dy)
 
     return {
       id: p.id,
@@ -142,7 +142,7 @@ const pointDeltas = computed(() => {
       dx,
       dy,
       dz,
-      d2d,
+      distance2d: distance2d,
       lat: m.lat,
       lon: m.lon
     }
@@ -169,7 +169,7 @@ function zoomToPoint(pointId: number) {
   // zoom to arrowhead of selected point
   const point = props.points.find(p => p.id === pointId)
   if (point && map.value) {
-    const m = point.measurement_values.find(m => m.measurement_id === selectedReference.value) || point.measurement_values[0]
+    const m = point.measurementValues.find(m => m.measurementId === selectedReference.value) || point.measurementValues[0]
     if (m) {
       map.value.setView([m.lat, m.lon], 17)
     }
@@ -212,8 +212,8 @@ function drawMap() {
 
     // If both reference and comparison are selected, calculate scaled vector
     if (selectedReference.value && selectedMeasurement.value && !isGaitLine.value) {
-      const refM = point.measurement_values.find(m => m.measurement_id === selectedReference.value)
-      const compM = point.measurement_values.find(m => m.measurement_id === selectedMeasurement.value)
+      const refM = point.measurementValues.find(m => m.measurementId === selectedReference.value)
+      const compM = point.measurementValues.find(m => m.measurementId === selectedMeasurement.value)
 
       if (refM && compM) {
         const dx = compM.x - refM.x
@@ -240,7 +240,7 @@ function drawMap() {
     } else {
       // Fallback: show all measurements connected chronologically (Gait Line)
       // Apply vector scaling to the gait line as well
-      const measurements = [...point.measurement_values] // don't mutate original
+      const measurements = [...point.measurementValues] // don't mutate original
       measurements.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
       
       if (measurements.length > 0) {
@@ -388,7 +388,7 @@ onMounted(() => {
       drawMap()
       
       const allCoords: [number, number][] = []
-      props.points.forEach(p => p.measurement_values.forEach(m => allCoords.push([m.lat, m.lon])))
+      props.points.forEach(p => p.measurementValues.forEach(m => allCoords.push([m.lat, m.lon])))
       if (allCoords.length) {
         map.value.fitBounds(allCoords, { padding: [50, 50] })
       }

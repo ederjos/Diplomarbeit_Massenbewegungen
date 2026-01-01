@@ -19,6 +19,11 @@ class Project extends Model
         return $this->hasMany(Point::class);
     }
 
+    public function measurements()
+    {
+        return $this->hasMany(Measurement::class);
+    }
+
     // Example usage
     /*
     Add user as contact person

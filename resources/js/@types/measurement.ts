@@ -1,19 +1,19 @@
 export interface MeasurementValue {
-    measurement_id: number
+    measurementId: number
     x: number
     y: number
     z: number
     lat: number
     lon: number
     datetime: string
-    measurement_name: string
+    measurementName: string
 }
 
 export interface Point {
     id: number
     name: string
-    projection_id: number | null
-    measurement_values: MeasurementValue[]
+    projectionId: number | null
+    measurementValues: MeasurementValue[]
 }
 
 export interface Measurement {
