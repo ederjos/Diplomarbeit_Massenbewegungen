@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 
 class MeasurementValuesTableSeeder extends Seeder
 {
@@ -86,6 +87,7 @@ class MeasurementValuesTableSeeder extends Seeder
                     'x' => $x,
                     'y' => $y,
                     'z' => $z,
+                    'geom' => MagellanPoint::make($x, $y, $z, null, 31254),
                     'measurement_id' => $measurement->id,
                     'created_at' => now(),
                     'updated_at' => now()

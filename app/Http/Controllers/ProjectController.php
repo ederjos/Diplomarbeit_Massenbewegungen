@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Measurement;
 use Inertia\Inertia;
+use Clickbar\Magellan\Database\PostgisFunctions\ST;
 
 class ProjectController extends Controller
 {
@@ -49,25 +50,30 @@ class ProjectController extends Controller
     {
         return Inertia::render('Project', [
             'project' => $project,
-            'points' => $this->pointsWithMeasurements($project)
+            'points' => $this->points($project),
+            'measurements' => $this->measurements($project)
         ]);
     }
 
     /** Prompt (ChatGPT GPT-5 mini)
      * "what comes into ProjectController.php to get all points and measurements with their measurement values?"
+     * "Fix the issue in README.md to load measurement values chronologically"
      */
-    public function pointsWithMeasurements(Project $project)
+    public function points(Project $project)
     {
         // ensures measurementValues is loaded for each point and measurement for each value
         // CAN GET VERY LARGE IF MANY MEASUREMENTS EXIST -> Nice2Have: Implement Level of Detail (LOD)
         $points = $project->points()->with([
             'measurementValues' => function ($query) {
-                $query->select('*')
+                $query->select('measurement_values.*') // select all fields from measurement_values but none from measurements (joined only for ordering)
+                    // Order by datetime here (on the db directly) to have this not done in Vue later
+                    ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
+                    ->orderBy('measurements.measurement_datetime')
                     // with selects here and not in the model, we prevent queries for each measurement value
-                    ->selectRaw('ST_Y(ST_Transform(geom, 4326)) as lat')
-                    ->selectRaw('ST_X(ST_Transform(geom, 4326)) as lon');
+                    ->addSelect(ST::y(ST::transform('measurement_values.geom', 4326))->as('lat'))
+                    ->addSelect(ST::x(ST::transform('measurement_values.geom', 4326))->as('lon'));
             },
-            'measurementValues.measurement'
+            'measurementValues.measurement' // Only temporary (so long as ProjectTimeline needs the datetime)
         ])->get();
         /** "Eager loading"
          * What is "Eager Loading"?
@@ -87,10 +93,20 @@ class ProjectController extends Controller
                         'lat' => $m->lat,
                         'lon' => $m->lon,
                         'measurementId' => $m->measurement_id,
-                        'measurementName' => $m->measurement->name,
-                        'datetime' => $m->measurement->measurement_datetime
+                        'datetime' => $m->measurement->measurement_datetime // only temporary
                     ];
                 })
+            ];
+        });
+    }
+
+    public function measurements(Project $project)
+    {
+        return $project->measurements()->orderBy('measurement_datetime')->get()->map(function ($measurement) {
+            return [
+                'id' => $measurement->id,
+                'name' => $measurement->name,
+                'datetime' => $measurement->measurement_datetime
             ];
         });
     }

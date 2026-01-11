@@ -4,16 +4,16 @@
       <div>
         <label class="block text-sm font-bold mb-1">Referenzepoche</label>
         <select v-model.number="selectedReference" class="border rounded p-1 disabled:text-gray-400" :disabled="isGaitLine">
-          <option v-for="m in availableMeasurements" :key="m.id" :value="m.id">
-            {{ m.name }} ({{ new Date(m.date).toLocaleDateString('de-AT') }})
+          <option v-for="m in props.measurements" :key="m.id" :value="m.id">
+            {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
           </option>
         </select>
       </div>
       <div>
         <label class="block text-sm font-bold mb-1">Vergleichsepoche</label>
         <select v-model.number="selectedMeasurement" class="border rounded p-1 disabled:text-gray-400" :disabled="isGaitLine">
-          <option v-for="m in availableMeasurements" :key="m.id" :value="m.id">
-            {{ m.name }} ({{ new Date(m.date).toLocaleDateString('de-AT') }})
+          <option v-for="m in props.measurements" :key="m.id" :value="m.id">
+            {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
           </option>
         </select>
       </div>
@@ -68,8 +68,9 @@ import { Point, Measurement } from '@/@types/measurement';
 proj4.defs("EPSG:31254", "+proj=tmerc +lat_0=0 +lon_0=10.3333333333333 +k=1 +x_0=0 +y_0=-5000000 +ellps=bessel +towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232 +units=m +no_defs");
 
 const props = defineProps<{
-  points: Point[]
-  pointColors: Record<number, string> // like hash map
+  points: Point[],
+  pointColors: Record<number, string>, // like hash map
+  measurements: Measurement[]
 }>()
 
 /* Prompt (ChatGPT GPT-5)
@@ -97,23 +98,6 @@ const vectorScale = ref<number>(100)
 const isGaitLine = ref<boolean>(false)
 const markersLayer = new L.LayerGroup()
 // https://leafletjs.com/examples/layers-control/
-
-// Available measurements for the select boxes
-const availableMeasurements = computed(() => {
-  const measurementsMap = new Map<number, Measurement>()
-  props.points.forEach(p => {
-    p.measurementValues.forEach(m => {
-      if (!measurementsMap.has(m.measurementId)) {
-        measurementsMap.set(m.measurementId, {
-          id: m.measurementId,
-          name: m.measurementName,
-          date: m.datetime
-        })
-      }
-    })
-  })
-  return Array.from(measurementsMap.values()).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-})
 
 // Point deltas for the table (sidebar)
 const pointDeltas = computed(() => {
@@ -241,10 +225,9 @@ function drawMap() {
       // Fallback: show all measurements connected chronologically (Gait Line)
       // Apply vector scaling to the gait line as well
       const measurements = [...point.measurementValues] // don't mutate original
-      measurements.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
       
       if (measurements.length > 0) {
-        var origin = measurements[0]
+        const origin = measurements[0]
         
         latlngs = measurements.map(m => {
           // Calculate delta from origin
@@ -369,7 +352,6 @@ onMounted(() => {
     "Standard Karte": mainMap,
     "Schummerung Oberfläche": schummerung_surface,
     "Schummerung Gelände": schummerung_terrain,
-    // Hier trennst du optisch
     "--- LUFTBILDER ---": L.layerGroup(),
     "Luftbild 2024": aerial_2024,
     "Luftbild 2018": aerial_2018,
@@ -379,11 +361,11 @@ onMounted(() => {
 
   // Initial setup
   if (props.points.length > 0) {
-      if (!selectedReference.value && availableMeasurements.value.length) {
-        selectedReference.value = availableMeasurements.value[0].id
+      if (!selectedReference.value && props.measurements.length) {
+        selectedReference.value = props.measurements[0].id
       }
-      if (!selectedMeasurement.value && availableMeasurements.value.length > 1) {
-        selectedMeasurement.value = availableMeasurements.value[availableMeasurements.value.length - 1].id
+      if (!selectedMeasurement.value && props.measurements.length > 1) {
+        selectedMeasurement.value = props.measurements[props.measurements.length - 1].id
       }
       drawMap()
       

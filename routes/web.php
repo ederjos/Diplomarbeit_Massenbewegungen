@@ -21,24 +21,6 @@ database/migrations/xxxx_xx_xx_create_municipalities_table.php
 Then edit create_table.php and execute `sail artisan migrate`
 */
 
-/*Route::get('/', function () {
-    //$municipalities = Municipality::orderBy('id')->take(50)->get();
-
-    // Alternatives:
-    // $municipalities = DB::select('select * from municipalities order by id limit 50'); // Complex queries, think about injection!
-    // $municipalities = DB::table('municipalities')->orderBy('id')->take(50)->get();
-
-    // X,Y,Z Werte im EPSG 31254
-    // $location = new MeasurementValue();
-    // $location->x = 500000;
-    // $location->y = 200000;
-    // $location->z = 350;
-    // $location->save();
-
-    // return Inertia::render('Home');
-
-})->name('home');*/
-
 /* Prompt (Gemini 3 Pro)
  * "please review these vue files and grade them. if you find sensible simplifications or corrections, point them out to me!"
  */

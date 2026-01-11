@@ -9,12 +9,15 @@ Auf Linux or via WSL:
 3. Docker starten.
 4. Bash-Skript `setup.sh` ausführen. Dies kann einige Zeit in Anspruch nehmen.
 
-Zum Starten: `start.sh` ausführen  
-Zum Stoppen: `start.sh` stoppen sowie `stop.sh` ausführen
+Zum Starten: `./start.sh` ausführen  
+Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 ## TBD/TODO
 
-Load measurement values chronologically (since the last update, the files are loaded by filename, not by their correct time order)
+
+* change db password
+* in time series: show name of measurement (NM, FM42)
+* update projectTimeline to not use measurement_value.datetime anymore (remove in measurements.ts and in ProjectController) but implement the measurements prop
 
 ## Changes
 
@@ -31,14 +34,7 @@ Let's add a column 'name' to the table `MEASUREMENT`
 - Changed in Seeder    -> [x]
 - Changed in ERM       -> [x]
 
-## Projektplanungsdiagramme
-
-* Prozessdiagramm (Flussdiagramm)
-* Softwareentwurf Diagramme
-
 ## To be determined:
 
 * max zoom for maps (schummerung, ...)
 * which maps are needed
-
-## remove polyline-decorator plugin

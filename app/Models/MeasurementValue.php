@@ -3,12 +3,30 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
+use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 
 class MeasurementValue extends Model
 {
 
-    protected $fillable = ['x', 'y', 'z', 'name', 'point_id', 'measurement_id', 'addition_id'];
+    protected $fillable = ['x', 'y', 'z', 'point_id', 'measurement_id', 'addition_id'];
+
+    protected $casts = [
+        'geom' => MagellanPoint::class,
+    ];
+
+    /* Prompt (Gemini 3 Pro)
+     * "When removing the triggers by magellan, what code will make the geom field?"
+     */
+    protected static function booted()
+    {
+        // Listens to saving event
+        static::saving(function ($measurementValue) {
+            // Automatically sync geom from x,y,z if geom is missing
+            if (!$measurementValue->geom && isset($measurementValue->x, $measurementValue->y, $measurementValue->z)) {
+                $measurementValue->geom = MagellanPoint::make($measurementValue->x, $measurementValue->y, $measurementValue->z, null, 31254);
+            }
+        });
+    }
 
     public function point()
     {

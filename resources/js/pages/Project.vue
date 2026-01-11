@@ -2,7 +2,7 @@
   <Head :title="`${project.name}`" />
   <div class="flex justify-center flex-col items-center gap-8">
     <Link href="/" class="text-blue-500 hover:underline">Zur Startseite</Link>
-    <LeafletComponent :points="points" :point-colors="pointColors" />
+    <LeafletComponent :points="points" :point-colors="pointColors" :measurements="measurements" />
     <ProjectTimeline class="w-full max-w-4xl" :points="points" :point-colors="pointColors" />
   </div>
 </template>
@@ -12,12 +12,13 @@ import { Head, Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import LeafletComponent from '../components/LeafletComponent.vue'
 import ProjectTimeline from '../components/ProjectTimeline.vue'
-import { Point } from '@/@types/measurement'
+import { Measurement, Point } from '@/@types/measurement'
 import { Project } from '@/@types/project'
 
 const props = defineProps<{
   project: Project,
-  points: Point[]
+  points: Point[],
+  measurements: Measurement[]
 }>();
 
 // Distinct colors (from Simon's file)

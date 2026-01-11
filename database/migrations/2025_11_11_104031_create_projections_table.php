@@ -21,26 +21,6 @@ return new class extends Migration
             $table->double('ay');
             $table->timestamps();
         });
-
-        DB::statement('
-            CREATE OR REPLACE FUNCTION set_start_point_from_px_py()
-            RETURNS trigger AS
-            $$
-            BEGIN
-                -- start_point als PostGIS Point setzen
-                NEW.start_point := ST_MakePoint(NEW.px, NEW.py);
-                RETURN NEW;
-            END;
-            $$
-            LANGUAGE plpgsql;
-        ');
-
-        DB::statement('
-            CREATE TRIGGER projections_start_point_trigger
-            BEFORE INSERT OR UPDATE ON projections
-            FOR EACH ROW
-            EXECUTE FUNCTION set_start_point_from_px_py();
-        ');
     }
 
     /**
@@ -48,8 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('DROP TRIGGER IF EXISTS projections_start_point_trigger ON projections');
-        DB::statement('DROP FUNCTION IF EXISTS set_start_point_from_px_py()');
         Schema::dropIfExists('projections');
     }
 };
