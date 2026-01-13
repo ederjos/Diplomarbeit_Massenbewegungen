@@ -1,10 +1,13 @@
 <template>
   <Head :title="`${project.name}`" />
-  <div class="flex justify-center flex-col items-center gap-8">
-    <Link href="/" class="text-blue-500 hover:underline">Zur Startseite</Link>
+  <AuthenticatedLayout>
+    <template #header-left>
+        <Link href="/" class="text-blue-500 hover:underline">Zur Startseite</Link>
+    </template>
+    
     <LeafletComponent :points="points" :point-colors="pointColors" :measurements="measurements" />
     <ProjectTimeline class="w-full max-w-4xl" :points="points" :point-colors="pointColors" :measurements="measurements" />
-  </div>
+  </AuthenticatedLayout>
 </template>
 
 <script lang="ts" setup>
@@ -12,6 +15,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import { computed } from 'vue'
 import LeafletComponent from '../components/LeafletComponent.vue'
 import ProjectTimeline from '../components/ProjectTimeline.vue'
+import AuthenticatedLayout from '../layouts/AuthenticatedLayout.vue'
 import { Measurement, Point } from '@/@types/measurement'
 import { Project } from '@/@types/project'
 

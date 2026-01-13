@@ -24,9 +24,12 @@ Then edit create_table.php and execute `sail artisan migrate`
 /* Prompt (Gemini 3 Pro)
  * "please review these vue files and grade them. if you find sensible simplifications or corrections, point them out to me!"
  */
-Route::get('/', [ProjectController::class, 'index'])->name('home');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/', [ProjectController::class, 'index'])->name('home');
 
-Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project');
+    Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project');
+});
+
 
 /*
 Route::post('/municipalities', function(Request $request) {

@@ -1,6 +1,6 @@
 <template>
   <Head title="Home" />
-  <div class="flex justify-center flex-col items-center gap-8">
+  <AuthenticatedLayout>
     <h1 class="text-2xl font-bold">Projekte</h1>
     <div class="w-full max-w-4xl flex flex-col gap-4">
       <div class="flex justify-end items-center gap-2">
@@ -72,7 +72,7 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </AuthenticatedLayout>
 </template>
 
 <script lang="ts" setup>
@@ -80,6 +80,7 @@ import { Head, Link } from '@inertiajs/vue3'
 import { ref, computed } from 'vue'
 import { Project } from '@/@types/project'
 import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-vue-next'
+import AuthenticatedLayout from '../layouts/AuthenticatedLayout.vue'
 
 // Get data directly from inertia without an additional API call
 const props = defineProps<{
