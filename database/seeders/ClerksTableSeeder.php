@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -19,5 +18,9 @@ class ClerksTableSeeder extends Seeder
             'created_at' => now(),
             'updated_at' => now()
         ]);
+
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement("SELECT setval('clerks_id_seq', (SELECT MAX(id) FROM clerks));");
+        }
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -30,5 +29,9 @@ class RolesTableSeeder extends Seeder
                 'updated_at' => now()
             ]
         ]);
+
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement("SELECT setval('roles_id_seq', (SELECT MAX(id) FROM roles));");
+        }
     }
 }

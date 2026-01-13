@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -21,5 +20,9 @@ class CommentsTableSeeder extends Seeder
             'created_at' => '2025-09-17 15:15:00', // comment datetime
             'updated_at' => now()
         ]);
+
+        if (DB::getDriverName() === 'pgsql') {
+            DB::statement("SELECT setval('comments_id_seq', (SELECT MAX(id) FROM comments));");
+        }
     }
 }
