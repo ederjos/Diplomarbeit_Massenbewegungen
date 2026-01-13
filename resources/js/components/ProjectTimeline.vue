@@ -36,7 +36,7 @@ import {
 import { Line } from 'vue-chartjs';
 import 'chartjs-adapter-date-fns';
 import { de } from 'date-fns/locale';
-import { Point } from '@/@types/measurement';
+import { Point, Measurement, MeasurementValue } from '@/@types/measurement';
 
 ChartJS.register(
     LinearScale,
@@ -51,6 +51,7 @@ ChartJS.register(
 const props = defineProps<{
     points: Point[];
     pointColors: Record<number, string>;
+    measurements: Measurement[]; // loaded ordered by datetime asc
 }>();
 
 const currentMode = ref<'total' | 'horizontal' | 'vertical'>('total');
@@ -66,33 +67,16 @@ const hasData = computed(() => props.points.some(p => p.measurementValues.length
 const pointStyles = ['rect', 'triangle', 'circle', 'rectRot', 'cross', 'star'];
 
 const chartData = computed(() => {
-    // 1. Collect all unique timestamps across all points
-    const allTimestamps = new Set<number>();
-    props.points.forEach(p => {
-        p.measurementValues.forEach(m => {
-            if (m.datetime) allTimestamps.add(new Date(m.datetime).getTime());
-        });
-    });
-    const sortedTimestamps = Array.from(allTimestamps).sort((a, b) => a - b);
-
     // 2. Create datasets
     const datasets = props.points.map((point, index) => {
-        // Filter and sort values by date
-        const sortedValues = point.measurementValues
-            .filter(v => v.datetime)
-            .sort((a, b) => {
-                const da = new Date(a.datetime!).getTime();
-                const db = new Date(b.datetime!).getTime();
-                return da - db;
-            });
+        if (point.measurementValues.length === 0) return null;
 
-        if (sortedValues.length === 0) return null;
+        const initial = point.measurementValues[0];
+        const valueMap = new Map(point.measurementValues.map(v => [v.measurementId, v]));
 
-        const initial = sortedValues[0];
-        const valueMap = new Map(sortedValues.map(v => [new Date(v.datetime!).getTime(), v]));
-
-        const data = sortedTimestamps.map(timestamp => {
-            const val = valueMap.get(timestamp);
+        const data = props.measurements.map(measurement => {
+            const timestamp = new Date(measurement.datetime).getTime();
+            const val = valueMap.get(measurement.id);
             if (!val) return { x: timestamp, y: null };
 
             const dx = val.x - initial.x;

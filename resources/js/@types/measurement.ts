@@ -5,7 +5,6 @@ export interface MeasurementValue {
     z: number
     lat: number
     lon: number
-    datetime: string
 }
 
 export interface Point {
@@ -18,5 +17,5 @@ export interface Point {
 export interface Measurement {
     id: number
     name: string
-    datetime: string // Same as MeasurementValue
+    datetime: string
 }

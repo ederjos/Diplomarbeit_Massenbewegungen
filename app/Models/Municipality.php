@@ -10,4 +10,9 @@ class Municipality extends Model
     // protected $fillable = [
     //     'name', // add all fields we plan to mass assign
     // ];
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
 }

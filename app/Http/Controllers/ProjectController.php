@@ -72,8 +72,7 @@ class ProjectController extends Controller
                     // with selects here and not in the model, we prevent queries for each measurement value
                     ->addSelect(ST::y(ST::transform('measurement_values.geom', 4326))->as('lat'))
                     ->addSelect(ST::x(ST::transform('measurement_values.geom', 4326))->as('lon'));
-            },
-            'measurementValues.measurement' // Only temporary (so long as ProjectTimeline needs the datetime)
+            }
         ])->get();
         /** "Eager loading"
          * What is "Eager Loading"?
@@ -92,8 +91,7 @@ class ProjectController extends Controller
                         'z' => $m->z,
                         'lat' => $m->lat,
                         'lon' => $m->lon,
-                        'measurementId' => $m->measurement_id,
-                        'datetime' => $m->measurement->measurement_datetime // only temporary
+                        'measurementId' => $m->measurement_id
                     ];
                 })
             ];

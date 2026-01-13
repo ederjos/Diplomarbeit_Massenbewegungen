@@ -87,7 +87,7 @@ class MeasurementValuesTableSeeder extends Seeder
                     'x' => $x,
                     'y' => $y,
                     'z' => $z,
-                    'geom' => MagellanPoint::make($x, $y, $z, null, 31254),
+                    'geom' => MagellanPoint::make($x, $y, $z, srid:31254), // No SRID needed bc the DB layer will handle it (better save than sorry, maybe another srid in the future as well, who knows ...)
                     'measurement_id' => $measurement->id,
                     'created_at' => now(),
                     'updated_at' => now()

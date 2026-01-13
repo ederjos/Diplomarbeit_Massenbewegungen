@@ -37,4 +37,9 @@ class MeasurementValue extends Model
     {
         return $this->belongsTo(Measurement::class);
     }
+
+    public function addition()
+    {
+        return $this->belongsTo(Addition::class);
+    }
 }

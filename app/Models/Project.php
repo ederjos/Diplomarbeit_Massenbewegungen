@@ -24,6 +24,21 @@ class Project extends Model
         return $this->hasMany(Measurement::class);
     }
 
+    public function municipality()
+    {
+        return $this->belongsTo(Municipality::class);
+    }
+
+    public function type()
+    {
+        return $this->belongsTo(Type::class);
+    }
+
+    public function clerk()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     // Example usage
     /*
     Add user as contact person

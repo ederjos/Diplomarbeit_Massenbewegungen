@@ -3,7 +3,7 @@
   <div class="flex justify-center flex-col items-center gap-8">
     <Link href="/" class="text-blue-500 hover:underline">Zur Startseite</Link>
     <LeafletComponent :points="points" :point-colors="pointColors" :measurements="measurements" />
-    <ProjectTimeline class="w-full max-w-4xl" :points="points" :point-colors="pointColors" />
+    <ProjectTimeline class="w-full max-w-4xl" :points="points" :point-colors="pointColors" :measurements="measurements" />
   </div>
 </template>
 

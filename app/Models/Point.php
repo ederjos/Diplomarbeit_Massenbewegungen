@@ -10,4 +10,16 @@ class Point extends Model
     {
         return $this->hasMany(MeasurementValue::class);
     }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function projection()
+    {
+        return $this->belongsTo(Projection::class);
+    }
+
+
 }

@@ -13,6 +13,11 @@ class Projection extends Model
         'start_point' => MagellanPoint::class,
     ];
 
+    public function point()
+    {
+        return $this->hasOne(Point::class);
+    }
+
     protected static function booted()
     {
         // Like in MeasurementValue
