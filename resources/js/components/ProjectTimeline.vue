@@ -36,7 +36,7 @@ import {
 import { Line } from 'vue-chartjs';
 import 'chartjs-adapter-date-fns';
 import { de } from 'date-fns/locale';
-import { Point, Measurement, MeasurementValue } from '@/@types/measurement';
+import { Point, Measurement } from '@/@types/measurement';
 
 ChartJS.register(
     LinearScale,
