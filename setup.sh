@@ -8,7 +8,8 @@ php artisan sail:add pgsql
 php artisan key:generate
 
 ./vendor/bin/sail up -d
-./vendor/bin/sail artisan migrate
+sleep 10
+./vendor/bin/sail artisan migrate:fresh --seed
 
 ./vendor/bin/sail npm install
 ./vendor/bin/sail npm run dev
