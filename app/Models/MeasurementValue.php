@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class MeasurementValue extends Model
 {
+    use HasFactory;
 
     protected $fillable = ['x', 'y', 'z', 'point_id', 'measurement_id', 'addition_id'];
 

@@ -3,9 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Project extends Model
 {
+    use HasFactory; // Enough bc Factories keep to naming conventions
+
+    protected $casts = [
+        'is_active' => 'boolean', // always boolean (not 0/1)
+    ];
+    
     // Prompt: What is the code for the models to use a pivot table
     public function users()
     {
