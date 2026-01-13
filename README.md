@@ -16,8 +16,6 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 
 * change db password
-* in time series: show name of measurement (NM, FM42)
-* Add button to select/deselect all points from time series (or implement this in another way, e.g. dbl click)
 
 ## Changes
 

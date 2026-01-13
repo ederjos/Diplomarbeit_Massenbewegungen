@@ -8,6 +8,17 @@
                     :class="currentMode === mode.value ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
                     {{ mode.label }}
                 </button>
+                <div class="w-px bg-gray-200 mx-1"></div>
+                <button @click="toggleAll(true)"
+                    class="px-3 py-1 rounded text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                    title="Alle Punkte einblenden">
+                    Alle
+                </button>
+                <button @click="toggleAll(false)"
+                    class="px-3 py-1 rounded text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                    title="Alle Punkte ausblenden">
+                    Keine
+                </button>
             </div>
         </div>
 
@@ -16,7 +27,7 @@
         </div>
 
         <div v-else class="h-[600px] w-full">
-            <Line :data="chartData" :options="chartOptions" />
+            <Line ref="chartRef" :data="chartData" :options="chartOptions" />
         </div>
     </div>
 </template>
@@ -48,6 +59,8 @@ ChartJS.register(
     Legend
 );
 
+const chartRef = ref<any>(null);
+
 const props = defineProps<{
     points: Point[];
     pointColors: Record<number, string>;
@@ -61,6 +74,16 @@ const modes = [
     { label: 'Lage', value: 'horizontal' },
     { label: 'Höhe', value: 'vertical' },
 ] as const;
+
+const toggleAll = (show: boolean) => {
+    const chart = chartRef.value?.chart;
+    if (chart) {
+        chart.data.datasets.forEach((_ds: any, index: number) => {
+            chart.setDatasetVisibility(index, show);
+        });
+        chart.update();
+    }
+};
 
 const hasData = computed(() => props.points.some(p => p.measurementValues.length > 0));
 
@@ -161,6 +184,13 @@ const chartOptions = computed(() => {
                 position: 'nearest' as const,
                 caretPadding: 10,
                 callbacks: {
+                    title: (tooltipItems: any[]) => {
+                        if (!tooltipItems.length) return '';
+                        const index = tooltipItems[0].dataIndex;
+                        const m = props.measurements[index];
+                        if (!m) return '';
+                        return `${m.name} (${new Date(m.datetime).toLocaleDateString('de-DE')})`;
+                    },
                     label: function (context: any) {
                         let label = context.dataset.label || '';
                         if (label) {
