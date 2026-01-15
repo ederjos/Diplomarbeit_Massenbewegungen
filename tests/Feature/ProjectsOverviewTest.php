@@ -2,6 +2,7 @@
 
 use App\Models\Project;
 use App\Models\Measurement;
+use App\Models\User;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -29,7 +30,9 @@ test('projects in home calculate next measurement correctly', function () {
         'measurement_datetime' => '2000-01-01 10:00:00',
     ]);
 
-    $response = $this->get(route('home')); // the names from web.php
+    /** @var \App\Models\User $user */
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->get(route('home')); // the names from web.php
 
     // Check the next measurement is calculated correctly (1 year later)
     $response->assertStatus(200)
@@ -55,7 +58,9 @@ test('inactive projects don\'t show next measurement', function () {
         'measurement_datetime' => '2000-01-01 10:00:00',
     ]);
 
-    $response = $this->get(route('home'));
+    /** @var \App\Models\User $user */
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->get(route('home'));
 
     $response->assertStatus(200)
         ->assertInertia(
@@ -74,7 +79,9 @@ test('projects without any measurements show no measurement dates at all', funct
         'is_active' => false
     ]);
 
-    $response = $this->get(route('home'));
+    /** @var \App\Models\User $user */
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->get(route('home'));
 
     $response->assertStatus(200)
         ->assertInertia(

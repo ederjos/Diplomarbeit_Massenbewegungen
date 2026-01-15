@@ -4,6 +4,7 @@ use App\Models\Project;
 use App\Models\Measurement;
 use App\Models\Point;
 use App\Models\MeasurementValue;
+use App\Models\User;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -30,8 +31,10 @@ test('measurements on project page are loaded chronologically', function () {
 
     // Assert that measurement values were created
     $this->assertDatabaseCount('measurement_values', 3);
-
-    $response = $this->get(route('project', $project));
+    
+    /** @var \App\Models\User $user */
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->get(route('project', $project));
 
     $response->assertStatus(200)
         ->assertInertia(
@@ -72,8 +75,10 @@ test('project details include valid coordinates converted to lat/lon', function 
         // Otherwise, the factory uses random numbers for geom
         'geom' => MagellanPoint::make($inputX, $inputY, $inputZ, srid: 31254)
     ]);
-
-    $response = $this->get(route('project', $project));
+    
+    /** @var \App\Models\User $user */
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->get(route('project', $project));
 
     $response->assertInertia(
             fn(Assert $page) => $page
@@ -86,7 +91,10 @@ test('project details include valid coordinates converted to lat/lon', function 
 
 test('returns error 404 if project doesn\'t exist', function () {
     /** @var \Tests\TestCase $this */
-    $response = $this->get(route('project', ['project' => '12345']));
+
+    /** @var \App\Models\User $user */
+    $user = User::factory()->create();
+    $response = $this->actingAs($user)->get(route('project', ['project' => '12345']));
 
     $response->assertStatus(404);
 });
