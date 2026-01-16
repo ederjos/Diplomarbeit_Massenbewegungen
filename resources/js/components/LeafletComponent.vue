@@ -36,8 +36,8 @@
           <thead class="top-0 z-10 bg-gray-100 text-xs uppercase border-b shadow-sm">
             <tr>
               <th class="px-3 py-2 font-semibold text-gray-800">Punkt</th>
-              <th class="px-3 py-2 font-semibold text-gray-800 text-right">Δ Lage [m]</th>
-              <th class="px-3 py-2 font-semibold text-gray-800 text-right">Δ Höhe [m]</th>
+              <th class="px-3 py-2 font-semibold text-gray-800 text-right">Δ Lage [cm]</th>
+              <th class="px-3 py-2 font-semibold text-gray-800 text-right">Δ Höhe [cm]</th>
             </tr>
           </thead>
           <tbody>

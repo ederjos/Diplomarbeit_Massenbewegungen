@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
@@ -12,53 +16,53 @@ class Project extends Model
     protected $casts = [
         'is_active' => 'boolean', // always boolean (not 0/1)
     ];
+
+    public function scopeWithLastAndNextMeasurementDate(Builder $query): void
+    {
+        // Can be queried in the Controller
+        // Using raw sql allows us to calculate the 'next_measurement' date directly on the database part.
+        $query->addSelect([
+            'last_measurement' => Measurement::select('measurement_datetime')
+                ->whereColumn('project_id', 'projects.id')
+                ->latest('measurement_datetime')
+                ->limit(1),
+            'next_measurement' => Measurement::selectRaw('measurement_datetime + projects.period')
+                ->whereColumn('project_id', 'projects.id')
+                ->latest('measurement_datetime')
+                ->limit(1)
+        ]);
+    }
     
     // Prompt: What is the code for the models to use a pivot table
-    public function users()
+    public function users() : BelongsToMany
     {
         return $this->belongsToMany(User::class) // n:m relationship with User
             ->withPivot('is_contact_person') // all values stored in pivot table
             ->withTimestamps();
     }
 
-    public function points()
+    public function points() : HasMany
     {
         return $this->hasMany(Point::class);
     }
 
-    public function measurements()
+    public function measurements() : HasMany
     {
         return $this->hasMany(Measurement::class);
     }
 
-    public function municipality()
+    public function municipality() : BelongsTo
     {
         return $this->belongsTo(Municipality::class);
     }
 
-    public function type()
+    public function type() : BelongsTo
     {
         return $this->belongsTo(Type::class);
     }
 
-    public function clerk()
+    public function clerk() : BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-
-    // Example usage
-    /*
-    Add user as contact person
-        $project->users()->attach($user->id, ['is_contact_person' => true]);
-    Remove user
-        $project->users()->detach($user->id);
-
-
-    $project = Project::find(1); // get project with id 1
-    foreach ($project->users as $user) {
-        if ($user->pivot->is_contact_person) {
-            echo $user->name . ' is contact person\n';
-        }
-    }
-     */
 }

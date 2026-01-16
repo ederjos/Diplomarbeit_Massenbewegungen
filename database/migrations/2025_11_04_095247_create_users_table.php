@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('password');
             $table->foreignId('role_id')->constrained()->onDelete('restrict');
             // $table->foreignId('role_id')->default(1)->constrained()->onDelete('set default');
+            $table->rememberToken();
             $table->timestamps();
         });
     }

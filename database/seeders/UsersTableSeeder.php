@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class UsersTableSeeder extends Seeder
 {
@@ -16,7 +17,7 @@ class UsersTableSeeder extends Seeder
             'id' => 1,
             'name' => 'Josef',
             'email' => 'josef.eder@student.htl-rankweil.at',
-            'password' => 'secret',
+            'password' => Hash::make('secret'),
             'role_id' => 1,
             'created_at' => now(),
             'updated_at' => now()

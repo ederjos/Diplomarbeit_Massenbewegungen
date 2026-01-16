@@ -1,8 +1,7 @@
 <?php
-// Prompt: Please give me the command to create a privot table between project and user.
-// GPT: `php artisan make:migration create_project_user_table --create=project_user`
+
+// Command to create pivot tables: `php artisan make:migration create_project_user_table --create=project_user`
 // pivot table = Kreuztabelle
-// Name of the migration & scheme/table
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
