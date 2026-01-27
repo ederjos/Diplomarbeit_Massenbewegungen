@@ -1,10 +1,6 @@
 <template>
     <Head :title="`${project.name}`" />
     <AuthenticatedLayout>
-        <template #header-left>
-            <Link href="/" class="text-blue-500 hover:underline">Zur Startseite</Link>
-        </template>
-
         <LeafletComponent :points="points" :point-colors="pointColors" :measurements="measurements" />
         <ProjectTimeline
             class="w-full max-w-4xl"
@@ -18,7 +14,7 @@
 <script lang="ts" setup>
 import { Measurement, Point } from '@/@types/measurement';
 import { Project } from '@/@types/project';
-import { Head, Link } from '@inertiajs/vue3';
+import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import LeafletComponent from '../components/LeafletComponent.vue';
 import ProjectTimeline from '../components/ProjectTimeline.vue';
