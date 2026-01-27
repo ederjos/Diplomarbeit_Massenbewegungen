@@ -1,77 +1,111 @@
 <template>
-  <div class="flex flex-col h-screen w-screen overflow-hidden">
-    <div class="bg-white p-4 shadow z-10 flex gap-4 shrink-0 items-center">
-      <div>
-        <label class="block text-sm font-bold mb-1">Referenzepoche</label>
-        <select v-model.number="selectedReference" class="border rounded p-1 disabled:text-gray-400" :disabled="isGaitLine">
-          <option v-for="m in props.measurements" :key="m.id" :value="m.id">
-            {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
-          </option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-sm font-bold mb-1">Vergleichsepoche</label>
-        <select v-model.number="selectedMeasurement" class="border rounded p-1 disabled:text-gray-400" :disabled="isGaitLine">
-          <option v-for="m in props.measurements" :key="m.id" :value="m.id">
-            {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
-          </option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-sm font-bold mb-1">Vektormaßstab M 1&nbsp;:&nbsp;</label>
-        <input v-model.number="vectorScale" type="number" class="border rounded p-1 w-28" min="1" max="100000" />
-      </div>
-      <div class="flex me-4 items-center">
-        <input type="checkbox" v-model="isGaitLine" id="checkboxIsGaitLine" class="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium" />
-        <label class="select-none block ml-2 text-sm font-bold text-heading" for="checkboxIsGaitLine">Ganglinie</label>
-      </div>
-    </div>
+    <div class="flex h-screen w-screen flex-col overflow-hidden">
+        <div class="z-10 flex shrink-0 items-center gap-4 bg-white p-4 shadow">
+            <div>
+                <label class="mb-1 block text-sm font-bold">Referenzepoche</label>
+                <select
+                    v-model.number="selectedReference"
+                    class="rounded border p-1 disabled:text-gray-400"
+                    :disabled="isGaitLine"
+                >
+                    <option v-for="m in props.measurements" :key="m.id" :value="m.id">
+                        {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
+                    </option>
+                </select>
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-bold">Vergleichsepoche</label>
+                <select
+                    v-model.number="selectedMeasurement"
+                    class="rounded border p-1 disabled:text-gray-400"
+                    :disabled="isGaitLine"
+                >
+                    <option v-for="m in props.measurements" :key="m.id" :value="m.id">
+                        {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
+                    </option>
+                </select>
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-bold">Vektormaßstab M 1&nbsp;:&nbsp;</label>
+                <input
+                    v-model.number="vectorScale"
+                    type="number"
+                    class="w-28 rounded border p-1"
+                    min="1"
+                    max="100000"
+                />
+            </div>
+            <div class="me-4 flex items-center">
+                <input
+                    type="checkbox"
+                    v-model="isGaitLine"
+                    id="checkboxIsGaitLine"
+                    class="border-default-medium bg-neutral-secondary-medium h-4 w-4 rounded-xs border"
+                />
+                <label class="text-heading ml-2 block text-sm font-bold select-none" for="checkboxIsGaitLine"
+                    >Ganglinie</label
+                >
+            </div>
+        </div>
 
-    <div class="flex flex-1 overflow-hidden">
-      <div ref="mapContainer" class="flex-1 h-full relative z-0"></div>
+        <div class="flex flex-1 overflow-hidden">
+            <div ref="mapContainer" class="relative z-0 h-full flex-1"></div>
 
-      <div v-if="!isGaitLine" class="w-96 bg-gray-50 border-l overflow-y-auto p-4 shrink-0 shadow-lg z-10" @vue:mounted="invalidateMap" @vue:unmounted="invalidateMap">
-        <h2 class="font-bold text-lg mb-3">Verschiebungen</h2>
-        <table class="w-full text-sm text-left border-collapse relative">
-          <thead class="top-0 z-10 bg-gray-100 text-xs uppercase border-b shadow-sm">
-            <tr>
-              <th class="px-3 py-2 font-semibold text-gray-800">Punkt</th>
-              <th class="px-3 py-2 font-semibold text-gray-800 text-right">Δ Lage [cm]</th>
-              <th class="px-3 py-2 font-semibold text-gray-800 text-right">Δ Höhe [cm]</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="p in pointDeltas" :key="p.id"
-              class="bg-white odd:bg-gray-50 border-b hover:bg-gray-100 cursor-pointer" @click="zoomToPoint(p.id)" :data-point-id="p.id">
-              <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
-              <td class="px-3 py-2 tabular-nums text-right">{{ p.distance2d.toFixed(4) }}</td>
-              <td class="px-3 py-2 tabular-nums text-right">
-                {{ p.dz > 0 ? '+' : '' }}{{ p.dz.toFixed(4) }}
-              </td>
-            </tr>
-            <tr v-if="pointDeltas.length === 0">
-              <td colspan="3" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            <div
+                v-if="!isGaitLine"
+                class="z-10 w-96 shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
+                @vue:mounted="invalidateMap"
+                @vue:unmounted="invalidateMap"
+            >
+                <h2 class="mb-3 text-lg font-bold">Verschiebungen</h2>
+                <table class="relative w-full border-collapse text-left text-sm">
+                    <thead class="top-0 z-10 border-b bg-gray-100 text-xs uppercase shadow-sm">
+                        <tr>
+                            <th class="px-3 py-2 font-semibold text-gray-800">Punkt</th>
+                            <th class="px-3 py-2 text-right font-semibold text-gray-800">Δ Lage [cm]</th>
+                            <th class="px-3 py-2 text-right font-semibold text-gray-800">Δ Höhe [cm]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                            v-for="p in pointDeltas"
+                            :key="p.id"
+                            class="cursor-pointer border-b bg-white odd:bg-gray-50 hover:bg-gray-100"
+                            @click="zoomToPoint(p.id)"
+                            :data-point-id="p.id"
+                        >
+                            <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
+                            <td class="px-3 py-2 text-right tabular-nums">{{ p.distance2d.toFixed(4) }}</td>
+                            <td class="px-3 py-2 text-right tabular-nums">
+                                {{ p.dz > 0 ? '+' : '' }}{{ p.dz.toFixed(4) }}
+                            </td>
+                        </tr>
+                        <tr v-if="pointDeltas.length === 0">
+                            <td colspan="3" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue'
-import L from 'leaflet'
-import proj4 from 'proj4' // for epsg transformations
-import { Point, Measurement } from '@/@types/measurement';
+import { Measurement, Point } from '@/@types/measurement';
+import L from 'leaflet';
+import proj4 from 'proj4'; // for epsg transformations
+import { computed, onMounted, ref, watch } from 'vue';
 
 // Define EPSG:31254 (MGI / Austria GK West): https://epsg.io/31254.mapfile
-proj4.defs("EPSG:31254", "+proj=tmerc +lat_0=0 +lon_0=10.3333333333333 +k=1 +x_0=0 +y_0=-5000000 +ellps=bessel +towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232 +units=m +no_defs");
+proj4.defs(
+    'EPSG:31254',
+    '+proj=tmerc +lat_0=0 +lon_0=10.3333333333333 +k=1 +x_0=0 +y_0=-5000000 +ellps=bessel +towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232 +units=m +no_defs',
+);
 
 const props = defineProps<{
-  points: Point[],
-  pointColors: Record<number, string>, // like hash map
-  measurements: Measurement[]
-}>()
+    points: Point[];
+    pointColors: Record<number, string>; // like hash map
+    measurements: Measurement[];
+}>();
 
 /* Prompt (ChatGPT GPT-5)
  * "I created this code using my api to retrieve the data. now make it work with typescript. [old code in js]"
@@ -89,291 +123,301 @@ const props = defineProps<{
  * "i have this file where i get coordinates data in lat, lon and a special epsg 31254. now, i want to scale up the distances so that a distance of 1 cm looks like 1 m. for that I created the vectorScale variable. Now, you should update the lat, lon (leaflet only knows those coords) based on the epsg x,y upscaled based on the initial difference (p1->p2) but the value of the vector is into the same direction the vectorScale times as high. i urge you to use proj4 to work with the exact coordinates!"
  */
 
-const mapContainer = ref<HTMLDivElement | null>(null)
-const map = ref<L.Map | null>(null)
+const mapContainer = ref<HTMLDivElement | null>(null);
+const map = ref<L.Map | null>(null);
 // const points = ref<Point[]>([]) // Removed
-const selectedReference = ref<number | null>(null)
-const selectedMeasurement = ref<number | null>(null)
-const vectorScale = ref<number>(100)
-const isGaitLine = ref<boolean>(false)
-const markersLayer = new L.LayerGroup()
+const selectedReference = ref<number | null>(null);
+const selectedMeasurement = ref<number | null>(null);
+const vectorScale = ref<number>(100);
+const isGaitLine = ref<boolean>(false);
+const markersLayer = new L.LayerGroup();
 // https://leafletjs.com/examples/layers-control/
 
 // Point deltas for the table (sidebar)
 const pointDeltas = computed(() => {
-  if (!selectedReference.value || !selectedMeasurement.value) return []
+    if (!selectedReference.value || !selectedMeasurement.value) return [];
 
-  return props.points.map(p => {
-    // Find the measurement values for the selected reference and comparison epochs
-    const ref = p.measurementValues.find(m => m.measurementId === selectedReference.value)
-    const m = p.measurementValues.find(m => m.measurementId === selectedMeasurement.value)
+    return props.points
+        .map((p) => {
+            // Find the measurement values for the selected reference and comparison epochs
+            const ref = p.measurementValues.find((m) => m.measurementId === selectedReference.value);
+            const m = p.measurementValues.find((m) => m.measurementId === selectedMeasurement.value);
 
-    // If either is missing for this point, we can't calculate a delta
-    if (!ref || !m) return null
+            // If either is missing for this point, we can't calculate a delta
+            if (!ref || !m) return null;
 
-    // Calculate differences in coordinates
-    const dx = m.x - ref.x
-    const dy = m.y - ref.y
-    const dz = m.z - ref.z
+            // Calculate differences in coordinates
+            const dx = m.x - ref.x;
+            const dy = m.y - ref.y;
+            const dz = m.z - ref.z;
 
-    // Calculate 2D Euclidean distance (horizontal displacement)
-    // d = sqrt(dx^2 + dy^2) - distance 2d
-    const distance2d = Math.sqrt(dx * dx + dy * dy)
+            // Calculate 2D Euclidean distance (horizontal displacement)
+            // d = sqrt(dx^2 + dy^2) - distance 2d
+            const distance2d = Math.sqrt(dx * dx + dy * dy);
 
-    return {
-      id: p.id,
-      name: p.name,
-      dx,
-      dy,
-      dz,
-      distance2d: distance2d,
-      lat: m.lat,
-      lon: m.lon
-    }
-    // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
-  }).filter((p): p is NonNullable<typeof p> => p !== null)
-})
+            return {
+                id: p.id,
+                name: p.name,
+                dx,
+                dy,
+                dz,
+                distance2d: distance2d,
+                lat: m.lat,
+                lon: m.lon,
+            };
+            // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
+        })
+        .filter((p): p is NonNullable<typeof p> => p !== null);
+});
 
 function invalidateMap() {
-  /**
-   * Prompt: Gemini 3 Pro
-   * "If the table is hidden, the leaflet map doesn't render correctly. fix this by telling leaflet when the table is mounted or unmounted"
-   */
-   
-   /**
-   * Forces the Leaflet map to recalculate its container size and redraw after a 100ms delay.
-   *
-   * - **invalidateSize**: A Leaflet method that checks if the map container's dimensions have changed and updates the map accordingly. This is necessary because Leaflet caches the container size for performance; if the container resizes (or becomes visible) without this call, the map may render incorrectly (e.g., missing tiles or wrong center).
-   * - **Overall Logic**: The `setTimeout` is used as a workaround to ensure the DOM has fully rendered or that CSS transitions (like opening a modal or tab) have completed before the map attempts to measure its container.
-   */
-  map.value?.invalidateSize()
+    /**
+     * Prompt: Gemini 3 Pro
+     * "If the table is hidden, the leaflet map doesn't render correctly. fix this by telling leaflet when the table is mounted or unmounted"
+     */
+
+    /**
+     * Forces the Leaflet map to recalculate its container size and redraw after a 100ms delay.
+     *
+     * - **invalidateSize**: A Leaflet method that checks if the map container's dimensions have changed and updates the map accordingly. This is necessary because Leaflet caches the container size for performance; if the container resizes (or becomes visible) without this call, the map may render incorrectly (e.g., missing tiles or wrong center).
+     * - **Overall Logic**: The `setTimeout` is used as a workaround to ensure the DOM has fully rendered or that CSS transitions (like opening a modal or tab) have completed before the map attempts to measure its container.
+     */
+    map.value?.invalidateSize();
 }
 
 function zoomToPoint(pointId: number) {
-  // zoom to arrowhead of selected point
-  const point = props.points.find(p => p.id === pointId)
-  if (point && map.value) {
-    const m = point.measurementValues.find(m => m.measurementId === selectedReference.value) || point.measurementValues[0]
-    if (m) {
-      map.value.setView([m.lat, m.lon], 17)
+    // zoom to arrowhead of selected point
+    const point = props.points.find((p) => p.id === pointId);
+    if (point && map.value) {
+        const m =
+            point.measurementValues.find((m) => m.measurementId === selectedReference.value) ||
+            point.measurementValues[0];
+        if (m) {
+            map.value.setView([m.lat, m.lon], 17);
+        }
+        // Also highlight the row in the table with a css animation (transform: scale, background: yellow fade out)
+        const row = document.querySelector(`tr[data-point-id="${pointId}"]`) as HTMLElement | null;
+        if (row) {
+            //row.scrollIntoView({ behavior: 'smooth', block: 'center' })
+
+            // Apply temporary styles for the highlight effect
+            row.style.transition = 'transform 0.2s, background-color 1s';
+            row.style.transform = 'scale(1.02)'; // zoom out a bit
+            row.style.backgroundColor = '#fef08a'; // yellow-200
+
+            // Remove styles 1s after animation
+            setTimeout(() => {
+                row.style.transform = '';
+                row.style.backgroundColor = '';
+            }, 1000);
+        }
     }
-    // Also highlight the row in the table with a css animation (transform: scale, background: yellow fade out)
-    const row = document.querySelector(`tr[data-point-id="${pointId}"]`) as HTMLElement | null
-    if (row) {
-      //row.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      
-      // Apply temporary styles for the highlight effect
-      row.style.transition = 'transform 0.2s, background-color 1s'
-      row.style.transform = 'scale(1.02)' // zoom out a bit
-      row.style.backgroundColor = '#fef08a' // yellow-200
-      
-      // Remove styles 1s after animation
-      setTimeout(() => {
-        row.style.transform = ''
-        row.style.backgroundColor = ''
-      }, 1000)
-    }
-  }
 }
 
 function drawMap() {
-  if (!map.value) return
+    if (!map.value) return;
 
-  // Clear existing layers before redrawing
-  markersLayer.clearLayers()
+    // Clear existing layers before redrawing
+    markersLayer.clearLayers();
 
-  props.points.forEach(point => {
-    let latlngs: [number, number][] = []
+    props.points.forEach((point) => {
+        let latlngs: [number, number][] = [];
 
-    // Validate scale globally for both modes
-    if (vectorScale.value <= 0 || typeof vectorScale.value !== 'number') {
-      vectorScale.value = 1
-    }
-    if (vectorScale.value > 100000) {
-      vectorScale.value = 100000
-    }
-    const scale = vectorScale.value
+        // Validate scale globally for both modes
+        if (vectorScale.value <= 0 || typeof vectorScale.value !== 'number') {
+            vectorScale.value = 1;
+        }
+        if (vectorScale.value > 100000) {
+            vectorScale.value = 100000;
+        }
+        const scale = vectorScale.value;
 
-    // If both reference and comparison are selected, calculate scaled vector
-    if (selectedReference.value && selectedMeasurement.value && !isGaitLine.value) {
-      const refM = point.measurementValues.find(m => m.measurementId === selectedReference.value)
-      const compM = point.measurementValues.find(m => m.measurementId === selectedMeasurement.value)
+        // If both reference and comparison are selected, calculate scaled vector
+        if (selectedReference.value && selectedMeasurement.value && !isGaitLine.value) {
+            const refM = point.measurementValues.find((m) => m.measurementId === selectedReference.value);
+            const compM = point.measurementValues.find((m) => m.measurementId === selectedMeasurement.value);
 
-      if (refM && compM) {
-        const dx = compM.x - refM.x
-        const dy = compM.y - refM.y
-        
-        const dxScaled = dx * scale
-        const dyScaled = dy * scale
+            if (refM && compM) {
+                const dx = compM.x - refM.x;
+                const dy = compM.y - refM.y;
 
-        // Calculate new position in EPSG:31254
-        const newX = refM.x + dxScaled
-        const newY = refM.y + dyScaled
+                const dxScaled = dx * scale;
+                const dyScaled = dy * scale;
 
-        // Convert back to WGS84 (lat, lon) using proj4
-        const newCoords = proj4('EPSG:31254', 'EPSG:4326', [newX, newY])
-        // proj4 returns [lon, lat], leaflet needs [lat, lon]
-        const newLat = newCoords[1]
-        const newLon = newCoords[0]
+                // Calculate new position in EPSG:31254
+                const newX = refM.x + dxScaled;
+                const newY = refM.y + dyScaled;
 
-        latlngs = [
-          [refM.lat, refM.lon],
-          [newLat, newLon]
-        ]
-      }
-    } else {
-      // Fallback: show all measurements connected chronologically (Gait Line)
-      // Apply vector scaling to the gait line as well
-      const measurements = [...point.measurementValues] // don't mutate original
-      
-      if (measurements.length > 0) {
-        const origin = measurements[0]
-        
-        latlngs = measurements.map(m => {
-          // Calculate delta from origin
-          const dx = m.x - origin.x
-          const dy = m.y - origin.y
-          
-          // Scale the delta
-          const dxScaled = dx * scale
-          const dyScaled = dy * scale
-          
-          // Apply scaled delta to origin
-          const newX = origin.x + dxScaled
-          const newY = origin.y + dyScaled
-          
-          // Convert back to lat/lon
-          const newCoords = proj4('EPSG:31254', 'EPSG:4326', [newX, newY])
-          return [newCoords[1], newCoords[0]]
-        })
-      }
-    }
+                // Convert back to WGS84 (lat, lon) using proj4
+                const newCoords = proj4('EPSG:31254', 'EPSG:4326', [newX, newY]);
+                // proj4 returns [lon, lat], leaflet needs [lat, lon]
+                const newLat = newCoords[1];
+                const newLon = newCoords[0];
 
-    if (!latlngs.length) return
+                latlngs = [
+                    [refM.lat, refM.lon],
+                    [newLat, newLon],
+                ];
+            }
+        } else {
+            // Fallback: show all measurements connected chronologically (Gait Line)
+            // Apply vector scaling to the gait line as well
+            const measurements = [...point.measurementValues]; // don't mutate original
 
-    // Draw polyline connecting measurements
-    const framePolyline = L.polyline(latlngs, {color: 'white', weight: 4})
-    const currPolyline = L.polyline(latlngs, { color: 'black', weight: 2 })
-    currPolyline.on('click', () => zoomToPoint(point.id))
-    framePolyline.on('click', () => zoomToPoint(point.id))
-    markersLayer.addLayer(framePolyline)
-    markersLayer.addLayer(currPolyline)
+            if (measurements.length > 0) {
+                const origin = measurements[0];
 
-    // Draw small circle markers for the LAST measurement
-    const lastCoord = latlngs[latlngs.length - 1];
-    const marker = L.circleMarker(lastCoord, {
-      radius: 3,
-      fillColor: props.pointColors[point.id] || 'gray',
-      color: 'gray',
-      weight: 1,
-      opacity: 0.5,
-      fillOpacity: 0.8
-    })
+                latlngs = measurements.map((m) => {
+                    // Calculate delta from origin
+                    const dx = m.x - origin.x;
+                    const dy = m.y - origin.y;
 
+                    // Scale the delta
+                    const dxScaled = dx * scale;
+                    const dyScaled = dy * scale;
 
-    marker.on('click', () => zoomToPoint(point.id))
-    markersLayer.addLayer(marker)
+                    // Apply scaled delta to origin
+                    const newX = origin.x + dxScaled;
+                    const newY = origin.y + dyScaled;
 
-    const textMarker = L.marker(latlngs[latlngs.length - 1], {
-      icon: L.divIcon({
-        className: 'text-labels text-black text-xs font-bold',   // Set class for CSS styling
-        html: `<span style="text-shadow: 1px 1px 0px white, -1px 1px 0px white, 1px -1px 0px white, -1px -1px 0px white;">${point.name}</span>`,
-        iconSize: [0, 0],
-        iconAnchor: [10, -10]
-      })
-    })
-    textMarker.on('click', () => zoomToPoint(point.id))
-    markersLayer.addLayer(textMarker)
-  })
+                    // Convert back to lat/lon
+                    const newCoords = proj4('EPSG:31254', 'EPSG:4326', [newX, newY]);
+                    return [newCoords[1], newCoords[0]];
+                });
+            }
+        }
+
+        if (!latlngs.length) return;
+
+        // Draw polyline connecting measurements
+        const framePolyline = L.polyline(latlngs, { color: 'white', weight: 4 });
+        const currPolyline = L.polyline(latlngs, { color: 'black', weight: 2 });
+        currPolyline.on('click', () => zoomToPoint(point.id));
+        framePolyline.on('click', () => zoomToPoint(point.id));
+        markersLayer.addLayer(framePolyline);
+        markersLayer.addLayer(currPolyline);
+
+        // Draw small circle markers for the LAST measurement
+        const lastCoord = latlngs[latlngs.length - 1];
+        const marker = L.circleMarker(lastCoord, {
+            radius: 3,
+            fillColor: props.pointColors[point.id] || 'gray',
+            color: 'gray',
+            weight: 1,
+            opacity: 0.5,
+            fillOpacity: 0.8,
+        });
+
+        marker.on('click', () => zoomToPoint(point.id));
+        markersLayer.addLayer(marker);
+
+        const textMarker = L.marker(latlngs[latlngs.length - 1], {
+            icon: L.divIcon({
+                className: 'text-labels text-black text-xs font-bold', // Set class for CSS styling
+                html: `<span style="text-shadow: 1px 1px 0px white, -1px 1px 0px white, 1px -1px 0px white, -1px -1px 0px white;">${point.name}</span>`,
+                iconSize: [0, 0],
+                iconAnchor: [10, -10],
+            }),
+        });
+        textMarker.on('click', () => zoomToPoint(point.id));
+        markersLayer.addLayer(textMarker);
+    });
 }
 
 watch([selectedReference, selectedMeasurement, vectorScale, isGaitLine], () => {
-  // As soon as selection changes, redraw the map
-  drawMap()
-})
+    // As soon as selection changes, redraw the map
+    drawMap();
+});
 
 onMounted(() => {
-  if (!mapContainer.value)
-    return
+    if (!mapContainer.value) return;
 
-  const leafletMap = L.map(mapContainer.value).setView([47.5, 9.75], 13)
-  map.value = leafletMap
-  markersLayer.addTo(leafletMap)
+    const leafletMap = L.map(mapContainer.value).setView([47.5, 9.75], 13);
+    map.value = leafletMap;
+    markersLayer.addTo(leafletMap);
 
-  leafletMap.on('zoom', () => {
-    console.log('Zoom level changed to:', leafletMap.getZoom())
-  })
+    leafletMap.on('zoom', () => {
+        console.log('Zoom level changed to:', leafletMap.getZoom());
+    });
 
-  const mainMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 23,
-    minZoom: 4, // default tile size (256)
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(leafletMap) // show only this initially
+    const mainMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 23,
+        minZoom: 4, // default tile size (256)
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(leafletMap); // show only this initially
 
-  // WMS Layers by vogis
-  const schummerung_surface = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_schummerung_2023_r_wms.map', {
-    layers: 'schummerung_2023_oberflaeche_25cm',
-    format: 'image/png',
-    transparent: true,
-    maxZoom: 23,
-    minZoom: 4,
-    attribution: '&copy; VOGIS CNV'
-  })
+    // WMS Layers by vogis
+    const schummerung_surface = L.tileLayer.wms(
+        'https://vogis.cnv.at/mapserver/mapserv?map=i_schummerung_2023_r_wms.map',
+        {
+            layers: 'schummerung_2023_oberflaeche_25cm',
+            format: 'image/png',
+            transparent: true,
+            maxZoom: 23,
+            minZoom: 4,
+            attribution: '&copy; VOGIS CNV',
+        },
+    );
 
-  const schummerung_terrain = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_schummerung_2023_r_wms.map', {
-    layers: 'schummerung_2023_gelaende_25cm',
-    format: 'image/png',
-    transparent: true,
-    maxZoom: 23,
-    minZoom: 4,
-    attribution: '&copy; VOGIS CNV'
-  })
+    const schummerung_terrain = L.tileLayer.wms(
+        'https://vogis.cnv.at/mapserver/mapserv?map=i_schummerung_2023_r_wms.map',
+        {
+            layers: 'schummerung_2023_gelaende_25cm',
+            format: 'image/png',
+            transparent: true,
+            maxZoom: 23,
+            minZoom: 4,
+            attribution: '&copy; VOGIS CNV',
+        },
+    );
 
-  const aerial_2024 = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_luftbilder_r_wms.map', {
-    layers: 'wi2024-25_20cm',
-    format: 'image/png',
-    transparent: true,
-    maxZoom: 23,
-    minZoom: 4,
-    attribution: '&copy; VOGIS CNV'
-  })
+    const aerial_2024 = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_luftbilder_r_wms.map', {
+        layers: 'wi2024-25_20cm',
+        format: 'image/png',
+        transparent: true,
+        maxZoom: 23,
+        minZoom: 4,
+        attribution: '&copy; VOGIS CNV',
+    });
 
-  const aerial_2018 = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_luftbilder_r_wms.map', {
-    layers: 'ef2018_10cm',
-    format: 'image/png',
-    transparent: true,
-    maxZoom: 23,
-    minZoom: 4,
-    attribution: '&copy; VOGIS CNV'
-  })
+    const aerial_2018 = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_luftbilder_r_wms.map', {
+        layers: 'ef2018_10cm',
+        format: 'image/png',
+        transparent: true,
+        maxZoom: 23,
+        minZoom: 4,
+        attribution: '&copy; VOGIS CNV',
+    });
 
-  // Layer control: Change base layer and toggle hillshade
-  L.control.layers({
-    "Standard Karte": mainMap,
-    "Schummerung Oberfläche": schummerung_surface,
-    "Schummerung Gelände": schummerung_terrain,
-    "--- LUFTBILDER ---": L.layerGroup(),
-    "Luftbild 2024": aerial_2024,
-    "Luftbild 2018": aerial_2018,
-  }).addTo(leafletMap);
+    // Layer control: Change base layer and toggle hillshade
+    L.control
+        .layers({
+            'Standard Karte': mainMap,
+            'Schummerung Oberfläche': schummerung_surface,
+            'Schummerung Gelände': schummerung_terrain,
+            '--- LUFTBILDER ---': L.layerGroup(),
+            'Luftbild 2024': aerial_2024,
+            'Luftbild 2018': aerial_2018,
+        })
+        .addTo(leafletMap);
 
-  // https://api.maptiler.com/tiles/contours-v2/{z}/{x}/{y}.pbf?key=DGwAtMAEBbbrxqSn9k9p
+    // https://api.maptiler.com/tiles/contours-v2/{z}/{x}/{y}.pbf?key=DGwAtMAEBbbrxqSn9k9p
 
-  // Initial setup
-  if (props.points.length > 0) {
-      if (!selectedReference.value && props.measurements.length) {
-        selectedReference.value = props.measurements[0].id
-      }
-      if (!selectedMeasurement.value && props.measurements.length > 1) {
-        selectedMeasurement.value = props.measurements[props.measurements.length - 1].id
-      }
-      drawMap()
-      
-      const allCoords: [number, number][] = []
-      props.points.forEach(p => p.measurementValues.forEach(m => allCoords.push([m.lat, m.lon])))
-      if (allCoords.length) {
-        map.value.fitBounds(allCoords, { padding: [50, 50] })
-      }
-  }
-})
+    // Initial setup
+    if (props.points.length > 0) {
+        if (!selectedReference.value && props.measurements.length) {
+            selectedReference.value = props.measurements[0].id;
+        }
+        if (!selectedMeasurement.value && props.measurements.length > 1) {
+            selectedMeasurement.value = props.measurements[props.measurements.length - 1].id;
+        }
+        drawMap();
+
+        const allCoords: [number, number][] = [];
+        props.points.forEach((p) => p.measurementValues.forEach((m) => allCoords.push([m.lat, m.lon])));
+        if (allCoords.length) {
+            map.value.fitBounds(allCoords, { padding: [50, 50] });
+        }
+    }
+});
 </script>

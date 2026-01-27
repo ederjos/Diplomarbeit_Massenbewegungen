@@ -49,3 +49,17 @@ Let's add a column 'name' to the table `MEASUREMENT`
 
 * max zoom for maps (schummerung, ...)
 * which maps are needed
+
+
+## 
+
+* Überschrift mit Text: "Im Kapitel wird das ....-Modul beschrieben. In 17.1 gibt's 'nen Überblick, in 17.2 geht's um ..."
+* Anhand Inhaltsverzeichnis schon roten Faden, überlegen was wo drin ist.
+* Abb mit Erklärung: auch mehrere Zeilen (erklären)
+* JEDE Abb MUSS IM TEXT ERWÄHNT WERDEN! (Im Fließtext)
+* Unten steht, wer geschrieben hat
+* Keine Stiefmütterchen
+* Abb unten beschriften, Tabellen oben (letztere können sehr lang werden, Zsf zuerst macht mehr Sinn; Grafik sowieso -> darunter)
+* Relevante Ausschnitte aus dem Code (wie Authentifizierung lösen -> relevante Teile) KEINE Screenshots mit Darkmode (Lightmode & Text)
+* Querformat nach Möglichkeit vermeiden
+* Über Software-Patterns schreiben
