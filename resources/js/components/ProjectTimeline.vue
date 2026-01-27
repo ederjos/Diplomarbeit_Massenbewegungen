@@ -1,28 +1,40 @@
 <template>
-    <div class="p-4 bg-white rounded-lg shadow">
-        <div class="flex justify-between items-center mb-6">
+    <div class="rounded-lg bg-white p-4 shadow">
+        <div class="mb-6 flex items-center justify-between">
             <h2 class="text-xl font-bold">Verschiebungsverlauf</h2>
             <div class="flex gap-2">
-                <button v-for="mode in modes" :key="mode.value" @click="currentMode = mode.value"
-                    class="px-3 py-1 rounded text-sm font-medium transition-colors"
-                    :class="currentMode === mode.value ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'">
+                <button
+                    v-for="mode in modes"
+                    :key="mode.value"
+                    @click="currentMode = mode.value"
+                    class="rounded px-3 py-1 text-sm font-medium transition-colors"
+                    :class="
+                        currentMode === mode.value
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    "
+                >
                     {{ mode.label }}
                 </button>
-                <div class="w-px bg-gray-200 mx-1"></div>
-                <button @click="toggleAll(true)"
-                    class="px-3 py-1 rounded text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-                    title="Alle Punkte einblenden">
+                <div class="mx-1 w-px bg-gray-200"></div>
+                <button
+                    @click="toggleAll(true)"
+                    class="rounded bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+                    title="Alle Punkte einblenden"
+                >
                     Alle
                 </button>
-                <button @click="toggleAll(false)"
-                    class="px-3 py-1 rounded text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-                    title="Alle Punkte ausblenden">
+                <button
+                    @click="toggleAll(false)"
+                    class="rounded bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+                    title="Alle Punkte ausblenden"
+                >
                     Keine
                 </button>
             </div>
         </div>
 
-        <div v-if="!hasData" class="h-64 flex items-center justify-center text-gray-500">
+        <div v-if="!hasData" class="flex h-64 items-center justify-center text-gray-500">
             Keine Messdaten verfügbar.
         </div>
 
@@ -33,31 +45,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import {
-    Chart as ChartJS,
-    LinearScale,
-    TimeScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend
-} from 'chart.js';
-import { Line } from 'vue-chartjs';
+import { Measurement, Point } from '@/@types/measurement';
+import { Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, TimeScale, Title, Tooltip } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { de } from 'date-fns/locale';
-import { Point, Measurement } from '@/@types/measurement';
+import { computed, ref } from 'vue';
+import { Line } from 'vue-chartjs';
 
-ChartJS.register(
-    LinearScale,
-    TimeScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend
-);
+ChartJS.register(LinearScale, TimeScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 const chartRef = ref<any>(null);
 
@@ -85,67 +80,69 @@ const toggleAll = (show: boolean) => {
     }
 };
 
-const hasData = computed(() => props.points.some(p => p.measurementValues.length > 0));
+const hasData = computed(() => props.points.some((p) => p.measurementValues.length > 0));
 
 const pointStyles = ['rect', 'triangle', 'circle', 'rectRot', 'cross', 'star'];
 
 const chartData = computed(() => {
     // 2. Create datasets
-    const datasets = props.points.map((point, index) => {
-        if (point.measurementValues.length === 0) return null;
+    const datasets = props.points
+        .map((point, index) => {
+            if (point.measurementValues.length === 0) return null;
 
-        const initial = point.measurementValues[0];
-        const valueMap = new Map(point.measurementValues.map(v => [v.measurementId, v]));
+            const initial = point.measurementValues[0];
+            const valueMap = new Map(point.measurementValues.map((v) => [v.measurementId, v]));
 
-        const data = props.measurements.map(measurement => {
-            const timestamp = new Date(measurement.datetime).getTime();
-            const val = valueMap.get(measurement.id);
-            if (!val) return { x: timestamp, y: null };
+            const data = props.measurements.map((measurement) => {
+                const timestamp = new Date(measurement.datetime).getTime();
+                const val = valueMap.get(measurement.id);
+                if (!val) return { x: timestamp, y: null };
 
-            const dx = val.x - initial.x;
-            const dy = val.y - initial.y;
-            const dz = val.z - initial.z;
+                const dx = val.x - initial.x;
+                const dy = val.y - initial.y;
+                const dz = val.z - initial.z;
 
-            // Convert to cm
-            const dx_cm = dx * 100;
-            const dy_cm = dy * 100;
-            const dz_cm = dz * 100;
+                // Convert to cm
+                const dx_cm = dx * 100;
+                const dy_cm = dy * 100;
+                const dz_cm = dz * 100;
 
-            let yVal = 0;
+                let yVal = 0;
 
-            if (currentMode.value === 'horizontal') {
-                // Horizontal displacement magnitude, negated to show "shortening" or movement away from reference
-                // The legacy charts show negative values for horizontal movement.
-                yVal = -Math.sqrt(dx_cm * dx_cm + dy_cm * dy_cm);
-            } else if (currentMode.value === 'vertical') {
-                // Vertical displacement (Z), usually negative for settlement
-                yVal = dz_cm;
-            } else {
-                // Total 3D displacement, negated as per legacy charts
-                yVal = -Math.sqrt(dx_cm * dx_cm + dy_cm * dy_cm + dz_cm * dz_cm);
-            }
+                if (currentMode.value === 'horizontal') {
+                    // Horizontal displacement magnitude, negated to show "shortening" or movement away from reference
+                    // The legacy charts show negative values for horizontal movement.
+                    yVal = -Math.sqrt(dx_cm * dx_cm + dy_cm * dy_cm);
+                } else if (currentMode.value === 'vertical') {
+                    // Vertical displacement (Z), usually negative for settlement
+                    yVal = dz_cm;
+                } else {
+                    // Total 3D displacement, negated as per legacy charts
+                    yVal = -Math.sqrt(dx_cm * dx_cm + dy_cm * dy_cm + dz_cm * dz_cm);
+                }
 
-            return { x: timestamp, y: yVal };
-        });
+                return { x: timestamp, y: yVal };
+            });
 
-        const color = props.pointColors[point.id] || '#000000';
-        const pointStyle = pointStyles[index % pointStyles.length];
+            const color = props.pointColors[point.id] || '#000000';
+            const pointStyle = pointStyles[index % pointStyles.length];
 
-        return {
-            label: point.name,
-            data: data,
-            borderColor: color,
-            backgroundColor: color,
-            pointStyle: pointStyle,
-            pointRadius: 5,
-            pointHoverRadius: 7,
-            tension: 0.1,
-            spanGaps: true
-        };
-    }).filter(ds => ds !== null);
+            return {
+                label: point.name,
+                data: data,
+                borderColor: color,
+                backgroundColor: color,
+                pointStyle: pointStyle,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                tension: 0.1,
+                spanGaps: true,
+            };
+        })
+        .filter((ds) => ds !== null);
 
     return {
-        datasets
+        datasets,
     };
 });
 
@@ -174,7 +171,7 @@ const chartOptions = computed(() => {
         maintainAspectRatio: false,
         interaction: {
             mode: 'index' as const,
-            intersect: false
+            intersect: false,
         },
         plugins: {
             legend: {
@@ -197,16 +194,20 @@ const chartOptions = computed(() => {
                             label += ': ';
                         }
                         if (context.parsed.y !== null) {
-                            label += context.parsed.y.toLocaleString('de-DE', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) + ' cm';
+                            label +=
+                                context.parsed.y.toLocaleString('de-DE', {
+                                    minimumFractionDigits: 1,
+                                    maximumFractionDigits: 2,
+                                }) + ' cm';
                         }
                         return label;
-                    }
-                }
+                    },
+                },
             },
             title: {
                 display: true,
-                text: titleText
-            }
+                text: titleText,
+            },
         },
         scales: {
             x: {
@@ -217,29 +218,29 @@ const chartOptions = computed(() => {
                         day: 'dd.MM.yyyy',
                         week: 'dd.MM.yyyy',
                         month: 'MMM yyyy',
-                        year: 'yyyy'
+                        year: 'yyyy',
                     },
-                    tooltipFormat: 'dd.MM.yyyy'
+                    tooltipFormat: 'dd.MM.yyyy',
                 },
                 adapters: {
                     date: {
-                        locale: de
-                    }
+                        locale: de,
+                    },
                 },
                 ticks: {
                     maxTicksLimit: 12,
                     maxRotation: 45,
-                    minRotation: 45
+                    minRotation: 45,
                 },
                 title: {
                     display: true,
-                    text: 'Datum'
-                }
+                    text: 'Datum',
+                },
             },
             y: {
                 title: {
                     display: true,
-                    text: yAxisText
+                    text: yAxisText,
                 },
                 ticks: {
                     callback: function (value: string | number) {
@@ -247,10 +248,10 @@ const chartOptions = computed(() => {
                             return value.toLocaleString('de-DE');
                         }
                         return value;
-                    }
-                }
-            }
-        }
+                    },
+                },
+            },
+        },
     };
 });
 </script>

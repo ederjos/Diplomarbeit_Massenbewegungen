@@ -7,17 +7,20 @@ const user = computed(() => (page.props as any).auth?.user);
 </script>
 
 <template>
-    <div class="flex justify-center flex-col items-center gap-8 p-4">
-        <div class="w-full max-w-4xl flex justify-between items-center">
+    <div class="flex flex-col items-center justify-center gap-8 p-4">
+        <div class="flex w-full max-w-4xl items-center justify-between">
             <div>
                 <slot name="header-left" />
             </div>
-            
+
             <div class="flex items-center gap-4">
-                <span class="text-sm text-gray-700" v-if="user">
-                    Eingeloggt als {{ user.name }}
-                </span>
-                <Link href="/logout" method="post" as="button" class="text-sm text-red-600 hover:text-red-800 font-semibold">
+                <span class="text-sm text-gray-700" v-if="user"> Eingeloggt als {{ user.name }} </span>
+                <Link
+                    href="/logout"
+                    method="post"
+                    as="button"
+                    class="text-sm font-semibold text-red-600 hover:text-red-800"
+                >
                     Logout
                 </Link>
             </div>
