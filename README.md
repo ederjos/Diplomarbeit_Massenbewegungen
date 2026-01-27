@@ -14,6 +14,19 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 ## TBD/TODO
 
+* URL hashen? Oder Zugriff im Rendering unterbinden?
+
+* Rolle anzeigen (im eingeloggten Zustand)
+
+* SRID (nur EPSG) in Formular auswählen (default vbg 31254)
+
+* Rohdaten nur zum Speichern (x,y,z), nicht damit rechnen (geom in x,y,z konvertieren)
+
+* Berichte drucken? (Print-Funktion auf /projects/id)
+
+* Was automatisieren? -> Trendanalyse? Projekte mit großen Änderungen hervorheben!
+
+* 3D-Distanz berechnen? Pythi(x + y + z) -> Ungenau
 
 * change db password
 

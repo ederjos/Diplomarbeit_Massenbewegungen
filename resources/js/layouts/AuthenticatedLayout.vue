@@ -15,7 +15,7 @@ const user = computed(() => (page.props as any).auth?.user);
             
             <div class="flex items-center gap-4">
                 <span class="text-sm text-gray-700" v-if="user">
-                    Logged in as {{ user.name }}
+                    Eingeloggt als {{ user.name }}
                 </span>
                 <Link href="/logout" method="post" as="button" class="text-sm text-red-600 hover:text-red-800 font-semibold">
                     Logout

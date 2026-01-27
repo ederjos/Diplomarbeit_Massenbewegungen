@@ -12,7 +12,7 @@ use Inertia\Response;
 
 class ProjectController extends Controller
 {
-    public function index(): \Inertia\Response
+    public function index(): Response
     {
         /* Prompt (Gemini 3 Pro)
          * "What comes into ProjectController.php to get all projects with their last measurement date and next measurement date based on period?"

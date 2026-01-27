@@ -40,7 +40,7 @@ class MeasurementValue extends Model
         // Listens to saving event
         static::saving(function ($measurementValue) {
             // Automatically sync geom from x,y,z if geom is missing
-            if (!$measurementValue->geom && isset($measurementValue->x, $measurementValue->y, $measurementValue->z)) {
+            if (isset($measurementValue->x, $measurementValue->y, $measurementValue->z)) {
                 $measurementValue->geom = MagellanPoint::make($measurementValue->x, $measurementValue->y, $measurementValue->z, null, self::SRID_MGI_AUSTRIA_GK_WEST);
             }
         });

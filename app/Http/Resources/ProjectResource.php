@@ -18,7 +18,6 @@ class ProjectResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'isActive' => (bool) $this->is_active,
-            // Return null explicitly to match TypeScript interfaces
             'lastMeasurement' => $this->last_measurement,
             'nextMeasurement' => $this->is_active ? $this->next_measurement : null,
         ];
