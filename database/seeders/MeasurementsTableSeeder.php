@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Measurement;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class MeasurementsTableSeeder extends Seeder
 {
@@ -12,23 +13,28 @@ class MeasurementsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $csvFile = database_path('seeders/csv/Zeitpunkte.csv');
-        $file = fopen($csvFile, 'r');
+        $lines = file(database_path('seeders/csv/Zeitpunkte.csv'), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
+        $projectId = 1;
         $measurements = [];
-        $id = 1;
-        while (($line = fgetcsv($file, 0, ';')) !== FALSE) {
+
+        foreach ($lines as $line) {
+            $data = str_getcsv($line, ';');
+
+            // name, date
+            if (count($data) < 2) {
+                continue;
+            }
+
             $measurements[] = [
-                'id' => $id++,
-                'name' => $line[0],
-                'measurement_datetime' => \Carbon\Carbon::createFromFormat('d.m.Y', $line[1])->startOfDay(),
-                'project_id' => 1,
-                'created_at' => now(),
-                'updated_at' => now()
+                'name' => $data[0],
+                'measurement_datetime' => Carbon::createFromFormat('d.m.Y', $data[1])->startOfDay(),
+                'project_id' => $projectId,
             ];
         }
-        fclose($file);
 
-        DB::table('measurements')->insert($measurements);
+        if (count($measurements) > 0) {
+            Measurement::insert($measurements);
+        }
     }
 }

@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
+use App\Models\Measurement;
+use App\Models\MeasurementValue;
+use App\Models\Point;
 use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\File;
 
 class MeasurementValuesTableSeeder extends Seeder
 {
@@ -16,93 +18,79 @@ class MeasurementValuesTableSeeder extends Seeder
     {
         $files = File::files(database_path('seeders/csv'));
 
-        // put NM.csv first since it is the base measurement
-        // the other measurements (FM1.csv, ..., FMn.csv) are already ordered correctly
+        $files = array_filter($files, fn($file) => $file->getFilename() !== 'Zeitpunkte.csv');
+
+        // NM.csv is the base measurement and therefore should be processed first
         usort($files, function ($a, $b) {
-            if ($a->getFilename() === 'NM.csv') {
+            $aName = $a->getFilename();
+            $bName = $b->getFilename();
+
+            if ($aName === 'NM.csv') {
                 return -1;
             }
-            if ($b->getFilename() === 'NM.csv') {
+            if ($bName === 'NM.csv') {
                 return 1;
             }
-            return strnatcmp($a->getFilename(), $b->getFilename());
+
+            return strnatcasecmp($aName, $bName);
         });
 
-        // Cache existing points to avoid repeated DB queries
-        // We assume project_id = 1 for all points created here
-        $points = DB::table('points')->pluck('id', 'name')->toArray();
-        $projectId = 1;
+        $projectId = 1; // should already exist
+        $points = Point::where('project_id', $projectId)->pluck('id', 'name')->toArray();
+        $measurementValues = [];
 
         foreach ($files as $file) {
-            if ($file->getFilename() === 'Zeitpunkte.csv') {
-                continue;
-            }
-
             $measurementName = $file->getFilenameWithoutExtension();
-            $measurement = DB::table('measurements')->where('name', $measurementName)->first();
+            $measurement = Measurement::where('name', $measurementName)->first();
 
-            if (!$measurement) {
+            if (! $measurement) {
                 continue;
             }
 
-            $handle = fopen($file->getPathname(), 'r');
-            $values = [];
-            while (($line = fgetcsv($handle, 0, ',')) !== FALSE) {
-                // Skip empty lines or lines with insufficient data
-                if (count($line) < 4) {
+            $lines = file($file->getPathname(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+            foreach ($lines as $line) {
+                $data = str_getcsv($line, ',');
+
+                // name, x, y, z
+                if (count($data) < 4) {
                     continue;
                 }
 
-                $pointName = trim($line[0]);
-                
-                if ($pointName === '') {
+                $pointName = $data[0];
+                $x = $data[1];
+                $y = $data[2];
+                $z = $data[3];
+
+                if (! is_numeric($x) || ! is_numeric($y) || ! is_numeric($z)) {
                     continue;
                 }
 
-                // Create point if it doesn't exist
-                if (!isset($points[$pointName])) {
-                    $pointId = DB::table('points')->insertGetId([
+                if (isset($points[$pointName])) {
+                    $pointId = $points[$pointName];
+                } else {
+                    // create new Point if it doesn't exist
+                    // this means that a separate seeder for Points isn't necessary
+                    $pointId = Point::insertGetId([
                         'name' => $pointName,
                         'project_id' => $projectId,
-                        'created_at' => now(),
-                        'updated_at' => now()
                     ]);
                     $points[$pointName] = $pointId;
                 }
 
-                $pointId = $points[$pointName];
-
-                // Validate coordinates (indices 1, 2, 3)
-                // Ignore comments or extra columns
-                $x = $line[1];
-                $y = $line[2];
-                $z = $line[3];
-
-                if (!is_numeric($x) || !is_numeric($y) || !is_numeric($z)) {
-                    continue;
-                }
-
-                $values[] = [
+                $measurementValues[] = [
                     'point_id' => $pointId,
+                    'measurement_id' => $measurement->id,
                     'x' => $x,
                     'y' => $y,
                     'z' => $z,
-                    'geom' => MagellanPoint::make($x, $y, $z, srid:31254), // No SRID needed bc the DB layer will handle it (better save than sorry, maybe another srid in the future as well, who knows ...)
-                    'measurement_id' => $measurement->id,
-                    'created_at' => now(),
-                    'updated_at' => now()
+                    'geom' => MagellanPoint::make($x, $y, $z, srid: 31254),
                 ];
-
-                if (count($values) >= 1000) {
-                    DB::table('measurement_values')->insert($values);
-                    $values = [];
-                }
             }
-            fclose($handle);
+        }
 
-            if (!empty($values)) {
-                DB::table('measurement_values')->insert($values);
-            }
+        if (count($measurementValues) > 0) {
+            MeasurementValue::insert($measurementValues);
         }
     }
 }

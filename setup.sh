@@ -12,4 +12,5 @@ sleep 10
 ./vendor/bin/sail artisan migrate:fresh --seed
 
 ./vendor/bin/sail npm install
-./vendor/bin/sail npm run dev
+
+./vendor/bin/sail stop
