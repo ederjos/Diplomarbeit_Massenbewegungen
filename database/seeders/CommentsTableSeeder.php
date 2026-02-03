@@ -18,7 +18,7 @@ class CommentsTableSeeder extends Seeder
             'measurement_id' => 28,
             'user_id' => 1,
             'created_at' => '2025-09-17 15:15:00', // comment datetime
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         if (DB::getDriverName() === 'pgsql') {

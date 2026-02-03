@@ -107,19 +107,19 @@ const props = defineProps<{
     measurements: Measurement[];
 }>();
 
-/* Prompt (ChatGPT GPT-5)
+/* ChatGPT GPT-5, 2025-11-25
  * "I created this code using my api to retrieve the data. now make it work with typescript. [old code in js]"
  */
 
-/* Prompt (Gemini 3 Pro)
+/* Gemini 3 Pro, 2025-12-02
  * "Add a select box at the top where the user can select two reference measurements (based on name and dates). then, the markers are changed to the two measurement values of the measurements."
  */
 
-/* Prompt (Gemini 3 Pro)
+/* Gemini 3 Pro, 2025-12-02
  * "this component works greatly. now, we want to rearrange the design though and add a new table. in this table there should be a col for point name, one for delta pos (x and y) and one for delta height (z). keep in mind that the values in the Measurement interface of x,y,z are in the epsg 31254"
  */
 
-/* Prompt (Gemini 3 Pro)
+/* Gemini 3 Pro, 2025-12-16
  * "i have this file where i get coordinates data in lat, lon and a special epsg 31254. now, i want to scale up the distances so that a distance of 1 cm looks like 1 m. for that I created the vectorScale variable. Now, you should update the lat, lon (leaflet only knows those coords) based on the epsg x,y upscaled based on the initial difference (p1->p2) but the value of the vector is into the same direction the vectorScale times as high. i urge you to use proj4 to work with the exact coordinates!"
  */
 
@@ -172,7 +172,7 @@ const pointDeltas = computed(() => {
 
 function invalidateMap() {
     /**
-     * Prompt: Gemini 3 Pro
+     * Gemini 3 Pro, 2025-12-30
      * "If the table is hidden, the leaflet map doesn't render correctly. fix this by telling leaflet when the table is mounted or unmounted"
      */
 

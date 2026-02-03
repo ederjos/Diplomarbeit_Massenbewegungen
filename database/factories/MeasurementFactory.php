@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-
 use App\Models\Project;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Measurement>
@@ -21,7 +20,7 @@ class MeasurementFactory extends Factory
         return [
             'name' => fake()->word(),
             'measurement_datetime' => fake()->dateTime(),
-            'project_id' => Project::factory()
+            'project_id' => Project::factory(),
         ];
     }
 }

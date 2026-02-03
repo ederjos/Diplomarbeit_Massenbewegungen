@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
+use Illuminate\Database\Eloquent\Model;
 
 class Projection extends Model
 {
@@ -22,7 +22,7 @@ class Projection extends Model
     {
         // Like in MeasurementValue
         static::saving(function ($projection) {
-            if (!$projection->start_point && isset($projection->px, $projection->py)) {
+            if (! $projection->start_point && isset($projection->px, $projection->py)) {
                 $projection->start_point = MagellanPoint::make($projection->px, $projection->py, null, null, 31254);
             }
         });

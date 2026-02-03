@@ -2,12 +2,11 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-use App\Models\Client;
 use App\Models\Clerk;
-use App\Models\Type;
+use App\Models\Client;
 use App\Models\Municipality;
+use App\Models\Type;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Project>

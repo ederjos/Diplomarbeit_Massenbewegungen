@@ -1,9 +1,8 @@
 <?php
 
-use App\Models\Project;
 use App\Models\Measurement;
+use App\Models\Project;
 use App\Models\User;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -21,7 +20,7 @@ test('projects in home calculate next measurement correctly', function () {
     // Create a fake project
     $project = Project::factory()->create([
         'period' => '1 year', // PostgreSQL Interval
-        'is_active' => true
+        'is_active' => true,
     ]);
 
     // Create a measurement
@@ -37,7 +36,7 @@ test('projects in home calculate next measurement correctly', function () {
     // Check the next measurement is calculated correctly (1 year later)
     $response->assertStatus(200)
         ->assertInertia(
-            fn(Assert $page) => $page // Same syntax as in docs
+            fn (Assert $page) => $page // Same syntax as in docs
                 ->component('Home')
                 ->has('projects', 1)
                 ->where('projects.0.isActive', true)
@@ -47,10 +46,9 @@ test('projects in home calculate next measurement correctly', function () {
 
 test('inactive projects don\'t show next measurement', function () {
     /** @var \Tests\TestCase $this */
-
     $project = Project::factory()->create([
         'period' => '1 year',
-        'is_active' => false
+        'is_active' => false,
     ]);
 
     Measurement::factory()->create([
@@ -64,7 +62,7 @@ test('inactive projects don\'t show next measurement', function () {
 
     $response->assertStatus(200)
         ->assertInertia(
-            fn(Assert $page) => $page // Same syntax as in docs
+            fn (Assert $page) => $page // Same syntax as in docs
                 ->component('Home')
                 ->has('projects', 1)
                 ->where('projects.0.isActive', false)
@@ -74,9 +72,8 @@ test('inactive projects don\'t show next measurement', function () {
 
 test('projects without any measurements show no measurement dates at all', function () {
     /** @var \Tests\TestCase $this */
-
     Project::factory()->create([
-        'is_active' => false
+        'is_active' => false,
     ]);
 
     /** @var \App\Models\User $user */
@@ -85,7 +82,7 @@ test('projects without any measurements show no measurement dates at all', funct
 
     $response->assertStatus(200)
         ->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('Home')
                 ->where('projects.0.lastMeasurement', null)
                 ->where('projects.0.nextMeasurement', null)

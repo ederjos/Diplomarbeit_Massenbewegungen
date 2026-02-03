@@ -43,7 +43,7 @@ class DatabaseSeeder extends Seeder
             MeasurementsTableSeeder::class,
             AdditionsTableSeeder::class,
             MeasurementValuesTableSeeder::class,
-            CommentsTableSeeder::class
+            CommentsTableSeeder::class,
         ]);
     }
 }

@@ -16,7 +16,7 @@ class ClientsTableSeeder extends Seeder
             'id' => 1,
             'name' => 'Auftraggeber Kürzel',
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         if (DB::getDriverName() === 'pgsql') {

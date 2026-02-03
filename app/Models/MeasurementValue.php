@@ -2,18 +2,18 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-use Illuminate\Database\Eloquent\Builder;
 use Clickbar\Magellan\Database\PostgisFunctions\ST;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
 class MeasurementValue extends Model
 {
     use HasFactory;
 
     public const SRID_MGI_AUSTRIA_GK_WEST = 31254;
+
     public const SRID_WGS84 = 4326;
 
     protected $fillable = ['x', 'y', 'z', 'point_id', 'measurement_id', 'addition_id'];
@@ -32,7 +32,7 @@ class MeasurementValue extends Model
             ->addSelect(ST::x(ST::transform('measurement_values.geom', self::SRID_WGS84))->as('lon'));
     }
 
-    /* Prompt (Gemini 3 Pro)
+    /* Gemini 3 Pro, 2026-01-11
      * "When removing the triggers by magellan, what code will make the geom field?"
      */
     protected static function booted()

@@ -20,7 +20,7 @@ class UsersTableSeeder extends Seeder
             'password' => Hash::make('secret'),
             'role_id' => 1,
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         if (DB::getDriverName() === 'pgsql') {

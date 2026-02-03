@@ -2,9 +2,8 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-
 use App\Models\Project;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Point>
@@ -21,7 +20,7 @@ class PointFactory extends Factory
         return [
             'name' => fake()->word(),
             'project_id' => Project::factory(),
-            'projection_id' => null // For now (not implemented by ui yet)
+            'projection_id' => null, // For now (not implemented by ui yet)
         ];
     }
 }

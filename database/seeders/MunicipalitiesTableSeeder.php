@@ -17,7 +17,7 @@ class MunicipalitiesTableSeeder extends Seeder
             'id' => 1,
             'name' => 'St. Gallenkirch',
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         if (DB::getDriverName() === 'pgsql') {

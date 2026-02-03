@@ -16,7 +16,7 @@ class TypesTableSeeder extends Seeder
             'id' => 1,
             'name' => 'Hang',
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         if (DB::getDriverName() === 'pgsql') {

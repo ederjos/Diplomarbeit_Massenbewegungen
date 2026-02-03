@@ -24,7 +24,7 @@ class ProjectsTableSeeder extends Seeder
             'type_id' => 1,
             'municipality_id' => 1,
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         if (DB::getDriverName() === 'pgsql') {

@@ -1,9 +1,8 @@
 <?php
 
+use App\Http\Controllers\ProjectController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-use App\Http\Controllers\ProjectController;
 
 /* Prompt (Gemini 3 Pro)
  * "please review these vue files and grade them. if you find sensible simplifications or corrections, point them out to me!"

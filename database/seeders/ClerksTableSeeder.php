@@ -16,7 +16,7 @@ class ClerksTableSeeder extends Seeder
             'id' => 1,
             'name' => 'Sachbearbeiter Kürzel',
             'created_at' => now(),
-            'updated_at' => now()
+            'updated_at' => now(),
         ]);
 
         if (DB::getDriverName() === 'pgsql') {

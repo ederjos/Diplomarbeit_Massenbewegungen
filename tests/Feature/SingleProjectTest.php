@@ -1,14 +1,13 @@
 <?php
 
-use App\Models\Project;
 use App\Models\Measurement;
-use App\Models\Point;
 use App\Models\MeasurementValue;
+use App\Models\Point;
+use App\Models\Project;
 use App\Models\User;
-
+use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
-use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 
 pest()->use(RefreshDatabase::class);
 
@@ -31,14 +30,14 @@ test('measurements on project page are loaded chronologically', function () {
 
     // Assert that measurement values were created
     $this->assertDatabaseCount('measurement_values', 3);
-    
+
     /** @var \App\Models\User $user */
     $user = User::factory()->create();
     $response = $this->actingAs($user)->get(route('project', $project));
 
     $response->assertStatus(200)
         ->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('Project')
                 // Check measurements are ordered
                 ->where('measurements.0.id', $januaryMeasurement->id)
@@ -56,7 +55,7 @@ test('project details include valid coordinates converted to lat/lon', function 
     $project = Project::factory()->create();
 
     $point = Point::factory()->create(['project_id' => $project->id]);
-    
+
     $measurement = Measurement::factory()->create(['project_id' => $project->id]);
 
     // Converted with https://epsg.io/transform
@@ -73,20 +72,20 @@ test('project details include valid coordinates converted to lat/lon', function 
         'y' => $inputY,
         'z' => $inputZ,
         // Otherwise, the factory uses random numbers for geom
-        'geom' => MagellanPoint::make($inputX, $inputY, $inputZ, srid: 31254)
+        'geom' => MagellanPoint::make($inputX, $inputY, $inputZ, srid: 31254),
     ]);
-    
+
     /** @var \App\Models\User $user */
     $user = User::factory()->create();
     $response = $this->actingAs($user)->get(route('project', $project));
 
     $response->assertInertia(
-            fn(Assert $page) => $page
-                ->component('Project')
-                // Check if the coordinate transformation (PostGIS) is correct within a small delta
-                ->where('points.0.measurementValues.0.lat', fn($lat) => abs($lat - $expectedLat) < 0.00001)
-                ->where('points.0.measurementValues.0.lon', fn($lon) => abs($lon - $expectedLon) < 0.00001)
-        );
+        fn (Assert $page) => $page
+            ->component('Project')
+            // Check if the coordinate transformation (PostGIS) is correct within a small delta
+            ->where('points.0.measurementValues.0.lat', fn ($lat) => abs($lat - $expectedLat) < 0.00001)
+            ->where('points.0.measurementValues.0.lon', fn ($lon) => abs($lon - $expectedLon) < 0.00001)
+    );
 });
 
 test('returns error 404 if project doesn\'t exist', function () {

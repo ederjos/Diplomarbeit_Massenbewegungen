@@ -20,6 +20,18 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 * SRID (nur EPSG) in Formular auswählen (default vbg 31254)
 
+* SRID nicht hardcodieren (1x speichern für alle Anwendungen)
+
+* PHP-Comments on own line
+
+* Ambiguous numbers MUST be clarified
+
+* Single quotes MUST be used
+
+* Check for type-hinting
+
+* phpDocumentor
+
 * Rohdaten nur zum Speichern (x,y,z), nicht damit rechnen (geom in x,y,z konvertieren)
 
 * Berichte drucken? (Print-Funktion auf /projects/id)

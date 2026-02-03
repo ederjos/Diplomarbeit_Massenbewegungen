@@ -19,15 +19,15 @@ class RolesTableSeeder extends Seeder
                 'can_add' => true,
                 'can_edit' => true,
                 'created_at' => now(),
-                'updated_at' => now()
-            ],[
+                'updated_at' => now(),
+            ], [
                 'id' => 2,
                 'name' => 'guest',
                 'can_add' => false,
                 'can_edit' => false,
                 'created_at' => now(),
-                'updated_at' => now()
-            ]
+                'updated_at' => now(),
+            ],
         ]);
 
         if (DB::getDriverName() === 'pgsql') {
