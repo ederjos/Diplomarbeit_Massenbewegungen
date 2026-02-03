@@ -115,6 +115,7 @@ const chartData = computed<ChartData<'line'>>(() => {
             pointRadius: 4,
             pointHoverRadius: 6,
             spanGaps: true,
+            clip: false,
         };
     });
 
@@ -225,47 +226,45 @@ const chartOptions = computed<ChartOptions<'line'>>(() => {
     Gemini 3 Pro, 2025-11-25
     "Strukturiere das Template etwas sinnvoller und Style es mit Tailwind CSS."
 -->
+<!--
+    Gemini 3 Pro, 2026-02-03
+    "Please simplify the Tailwind Styling in ProjectTimeline.vue to reduce it's complexity. Also, make sure that ProjectTimeline.vue scales well and doesn't get too small or bigger than the browser window."
+-->
 <template>
-    <div class="rounded-lg bg-white p-4 shadow">
-        <div class="mb-6 flex items-center justify-between">
-            <h2 class="text-xl font-bold">Verschiebungsverlauf</h2>
-            <div class="flex gap-2">
+    <div class="flex h-[85vh] w-[75vw] flex-col rounded bg-white p-4 shadow">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
+            <h2 class="text-lg font-bold">Verschiebungsverlauf</h2>
+
+            <div class="flex gap-2 text-sm">
                 <button
                     v-for="(label, value) in modeLabels"
                     :key="value"
                     @click="currentMode = value"
-                    class="rounded px-3 py-1 text-sm font-medium transition-colors"
-                    :class="
-                        currentMode === value ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    "
+                    class="rounded px-3 py-1 transition-colors"
+                    :class="currentMode === value ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'"
                 >
                     {{ label }}
                 </button>
+
                 <div class="mx-1 w-px bg-gray-300"></div>
 
-                <button
-                    @click="setVisibility(true)"
-                    class="rounded bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-                    title="Alle Punkte einblenden"
-                >
+                <button @click="setVisibility(true)" class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200">
                     Alle
                 </button>
-                <button
-                    @click="setVisibility(false)"
-                    class="rounded bg-gray-100 px-3 py-1 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
-                    title="Alle Punkte ausblenden"
-                >
+                <button @click="setVisibility(false)" class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200">
                     Keine
                 </button>
             </div>
         </div>
 
-        <div v-if="!hasData" class="flex h-64 items-center justify-center text-gray-500">
-            Keine Messdaten verfügbar.
-        </div>
+        <div class="min-h-0 flex-1">
+            <div v-if="!hasData" class="flex h-full items-center justify-center text-gray-500">
+                Keine Messdaten verfügbar.
+            </div>
 
-        <div v-else class="h-[600px] w-full">
-            <Line ref="chartRef" :data="chartData" :options="chartOptions" />
+            <div v-else class="h-full w-full">
+                <Line ref="chartRef" :data="chartData" :options="chartOptions" />
+            </div>
         </div>
     </div>
 </template>
