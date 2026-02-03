@@ -170,7 +170,7 @@ const formatDate = (dateStr?: string | null) => {
     return new Date(dateStr).toLocaleDateString();
 };
 
-/* Prompt (Gemini 3 Pro)
+/* Gemini 3 Pro, 2026-01-01
  * "In this table I want you to add arrows in the thead part where the user can select by which column it is ordered and if its descending or ascending. Also, there should be a Checkbox with better design (like toggles in tailwind) that selects if only active projects will be displayed or if all the projects should be shown."
  */
 </script>

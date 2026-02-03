@@ -10,21 +10,9 @@ class DatabaseSeeder extends Seeder
      * Seed the application's database.
      */
 
-    // Reset the entire db:
-    // php artisan migrate:fresh --seed
-
-    // Only load the test data:
-    // php artisan db:seed
-
     public function run(): void
     {
-        // User::factory(10)->create();
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
-
-        /* Prompt (ChatGPT GPT-5 mini)
+        /* ChatGPT GPT-5 mini, 2025-11-18
          * "now that all data is written in the seeders, how do i import it into the database?"
          */
 
@@ -39,7 +27,8 @@ class DatabaseSeeder extends Seeder
             ProjectsTableSeeder::class,
             ProjectUserSeeder::class,
             ProjectionsTableSeeder::class,
-            // PointsTableSeeder::class, // Points are now created dynamically in MeasurementValuesTableSeeder
+            // PointsTableSeeder::class
+            // Points are now created dynamically in MeasurementValuesTableSeeder
             MeasurementsTableSeeder::class,
             AdditionsTableSeeder::class,
             MeasurementValuesTableSeeder::class,
