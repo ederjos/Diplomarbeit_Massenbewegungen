@@ -10,38 +10,54 @@ use Illuminate\Database\Eloquent\Model;
 
 class MeasurementValue extends Model
 {
+    // Adds the trait for model factories -> factory-related features
     use HasFactory;
 
     public const SRID_MGI_AUSTRIA_GK_WEST = 31254;
 
     public const SRID_WGS84 = 4326;
 
+    // What attributes are mass-aissgnable
     protected $fillable = ['x', 'y', 'z', 'point_id', 'measurement_id', 'addition_id'];
 
+    // How to convert attributes when reading/writing
     protected $casts = [
         'geom' => MagellanPoint::class,
     ];
 
+    // Usable as query scope
     public function scopeWithLatLonAndOrderedByDate(Builder $query): void
     {
         // Same as in Project: For the Controller, but reusable
+        // Select all columns from measurement_values
         $query->select('measurement_values.*')
             ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
             ->orderBy('measurements.measurement_datetime')
+            // Adds calculated columns to selected columns
             ->addSelect(ST::y(ST::transform('measurement_values.geom', self::SRID_WGS84))->as('lat'))
             ->addSelect(ST::x(ST::transform('measurement_values.geom', self::SRID_WGS84))->as('lon'));
     }
 
-    /* Gemini 3 Pro, 2026-01-11
+    /**
+     * Gemini 3 Pro, 2026-01-11
      * "When removing the triggers by magellan, what code will make the geom field?"
      */
+    // Runs when the model is booted
     protected static function booted()
     {
-        // Listens to saving event
-        static::saving(function ($measurementValue) {
-            // Automatically sync geom from x,y,z if geom is missing
-            if (isset($measurementValue->x, $measurementValue->y, $measurementValue->z)) {
-                $measurementValue->geom = MagellanPoint::make($measurementValue->x, $measurementValue->y, $measurementValue->z, null, self::SRID_MGI_AUSTRIA_GK_WEST);
+        // Listens to saving event (on class-level -> static)
+        static::saving(function (MeasurementValue $measurementValue) {
+            // Automatically sync geom from x,y,z if geom is missing or x,y,z changed (and x,y,z are set)
+            if (isset($measurementValue->x, $measurementValue->y, $measurementValue->z) &&
+                ($measurementValue->isDirty(['x', 'y', 'z']) || $measurementValue->geom === null)
+            ) {
+                $measurementValue->geom = MagellanPoint::make(
+                    $measurementValue->x,
+                    $measurementValue->y,
+                    $measurementValue->z,
+                    null,
+                    self::SRID_MGI_AUSTRIA_GK_WEST
+                );
             }
         });
     }

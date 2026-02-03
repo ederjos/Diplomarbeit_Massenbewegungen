@@ -33,7 +33,10 @@ class Project extends Model
         ]);
     }
 
-    // Prompt: What is the code for the models to use a pivot table
+    /**
+     * Gemini 3 Pro, 2025-12-30
+     * "What is the code for the models to use a pivot table"
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class) // n:m relationship with User
