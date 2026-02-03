@@ -86,12 +86,14 @@ const chartData = computed<ChartData<'line'>>(() => {
 
                 let value = 0;
 
-                // TODO: add explanation comments!
                 if (currentMode.value === 'vertical') {
+                    // Vertical displacement
                     value = dz;
                 } else if (currentMode.value === 'horizontal') {
+                    // Horizontal displacement (2D Euclidean distance)
                     value = -Math.sqrt(dx * dx + dy * dy);
                 } else {
+                    // 3D displacement (3D Euclidean distance)
                     value = -Math.sqrt(dx * dx + dy * dy + dz * dz);
                 }
 
@@ -155,7 +157,10 @@ const chartOptions = computed<ChartOptions<'line'>>(() => {
                 display: false,
                 text: titleText,
             },
-            // TODO: add Gemini 3 Pro as the source for the tooltip
+            /**
+             * Claude Sonnet 4.5, 2025-11-25
+             * "The tooltip sometimes hides the data point when hovering over it, please fix this behavior."
+             */
             tooltip: {
                 position: 'nearest',
                 caretPadding: 10,
@@ -216,7 +221,10 @@ const chartOptions = computed<ChartOptions<'line'>>(() => {
 });
 </script>
 
-<!-- TODO: Add Gemini 3 Source! -->
+<!--
+    Gemini 3 Pro, 2025-11-25
+    "Strukturiere das Template etwas sinnvoller und Style es mit Tailwind CSS."
+-->
 <template>
     <div class="rounded-lg bg-white p-4 shadow">
         <div class="mb-6 flex items-center justify-between">

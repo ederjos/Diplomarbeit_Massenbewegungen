@@ -3,9 +3,8 @@
 **KI-Code selber neu schreiben!**
 
 - ProjectTimeline.vue
-    - **TODOs!**
-    - Styling anpassen (auch in Project.vue)
-    - Zoomen!
+    - (maybe) Styling anpassen (auch in Project.vue)
+    - Zoomen
     - Größe und Auflösung verbessern
 - Admin-Bereich:
     - Registrierungen authorisieren

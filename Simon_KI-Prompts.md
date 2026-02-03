@@ -1,9 +1,19 @@
 ## Prompts
 
-**Schema im Code:**
+**Schema in JS & PHP:**
 
 ```js
-/* {MODELLNAME}, {DATUM}
+/**
+ * {MODELLNAME}, {YYYY-MM-DD}
  * "{PROMPT}"
  */
+```
+
+**Schema in HTML:**
+
+```html
+<!--
+    {MODELLNAME}, {YYYY-MM-DD}
+    "{PROMPT}"
+-->
 ```
