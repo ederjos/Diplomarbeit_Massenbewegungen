@@ -58,7 +58,7 @@ const timeRange = computed(() => {
 });
 
 const chartData = computed<ChartData<'line'>>(() => {
-    const datasets: ChartDataset<'line'>[] = props.points.map((point, index) => {
+    const datasets: ChartDataset<'line'>[] = props.points.map((point) => {
         const valueMap = new Map(point.measurementValues.map((v) => [v.measurementId, v]));
 
         let initialValue: MeasurementValue | null = null;

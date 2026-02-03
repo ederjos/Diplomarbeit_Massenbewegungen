@@ -28,3 +28,7 @@ Upgrades:
 - Laravel 13
 - PHP 8.5 & PostgreSQL 18 (with PostGIS)
 - Laravel Boost
+
+---
+
+**Auch CSS verstehen!**

@@ -18,7 +18,7 @@ class MeasurementValuesTableSeeder extends Seeder
     {
         $files = File::files(database_path('seeders/csv'));
 
-        $files = array_filter($files, fn($file) => $file->getFilename() !== 'Zeitpunkte.csv');
+        $files = array_filter($files, fn ($file) => $file->getFilename() !== 'Zeitpunkte.csv');
 
         // NM.csv is the base measurement and therefore should be processed first
         usort($files, function ($a, $b) {
