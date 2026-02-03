@@ -146,10 +146,10 @@ const pointDeltas = computed(() => {
             // If either is missing for this point, we can't calculate a delta
             if (!ref || !m) return null;
 
-            // Calculate differences in coordinates
-            const dx = m.x - ref.x;
-            const dy = m.y - ref.y;
-            const dz = m.z - ref.z;
+            // Calculate differences in coordinates and convert to cm
+            const dx = (m.x - ref.x) * 100;
+            const dy = (m.y - ref.y) * 100;
+            const dz = (m.z - ref.z) * 100;
 
             // Calculate 2D Euclidean distance (horizontal displacement)
             // d = sqrt(dx^2 + dy^2) - distance 2d
@@ -300,7 +300,7 @@ function drawMap() {
         // Draw small circle markers for the LAST measurement
         const lastCoord = latlngs[latlngs.length - 1];
         const marker = L.circleMarker(lastCoord, {
-            radius: 3,
+            radius: 4,
             fillColor: props.pointColors[point.id] || 'gray',
             color: 'gray',
             weight: 1,
@@ -314,7 +314,7 @@ function drawMap() {
         const textMarker = L.marker(latlngs[latlngs.length - 1], {
             icon: L.divIcon({
                 className: 'text-labels text-black text-xs font-bold', // Set class for CSS styling
-                html: `<span style="text-shadow: 1px 1px 0px white, -1px 1px 0px white, 1px -1px 0px white, -1px -1px 0px white;">${point.name}</span>`,
+                html: `<span style="text-shadow: 1px 1px 0px white, -1px 1px 0px white, 1px -1px 0px white, -1px -1px 0px white;font-size:110%;">${point.name}</span>`,
                 iconSize: [0, 0],
                 iconAnchor: [10, -10],
             }),
