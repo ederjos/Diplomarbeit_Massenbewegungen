@@ -18,6 +18,7 @@ class MeasurementValueResource extends JsonResource
             'x' => (float) $this->x,
             'y' => (float) $this->y,
             'z' => (float) $this->z,
+            'height' => (float) $this->height,
             'lat' => (float) $this->lat,
             'lon' => (float) $this->lon,
             'measurementId' => $this->measurement_id,

@@ -13,10 +13,6 @@ class MeasurementValue extends Model
     // Adds the trait for model factories -> factory-related features
     use HasFactory;
 
-    public const SRID_MGI_AUSTRIA_GK_WEST = 31254;
-
-    public const SRID_WGS84 = 4326;
-
     // What attributes are mass-aissgnable
     protected $fillable = ['x', 'y', 'z', 'point_id', 'measurement_id', 'addition_id'];
 
@@ -34,8 +30,10 @@ class MeasurementValue extends Model
             ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
             ->orderBy('measurements.measurement_datetime')
             // Adds calculated columns to selected columns
-            ->addSelect(ST::y(ST::transform('measurement_values.geom', self::SRID_WGS84))->as('lat'))
-            ->addSelect(ST::x(ST::transform('measurement_values.geom', self::SRID_WGS84))->as('lon'));
+            ->addSelect(ST::y(ST::transform('measurement_values.geom', config('spatial.srids.wgs84')))->as('lat'))
+            ->addSelect(ST::x(ST::transform('measurement_values.geom', config('spatial.srids.wgs84')))->as('lon'))
+            // always in meter, so no need to transform
+            ->addSelect(ST::z('measurement_values.geom')->as('height'));
     }
 
     /**
@@ -56,7 +54,7 @@ class MeasurementValue extends Model
                     $measurementValue->y,
                     $measurementValue->z,
                     null,
-                    self::SRID_MGI_AUSTRIA_GK_WEST
+                    config('spatial.srids.default')
                 );
             }
         });

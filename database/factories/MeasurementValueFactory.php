@@ -28,7 +28,7 @@ class MeasurementValueFactory extends Factory
             'x' => $x,
             'y' => $y,
             'z' => $z,
-            'geom' => MagellanPoint::make($x, $y, $z, srid: 31254),
+            'geom' => MagellanPoint::make($x, $y, $z, srid: config('spatial.srids.default')),
             'point_id' => Point::factory(),
             'measurement_id' => Measurement::factory(),
             'addition_id' => null, // Like projection: implement later

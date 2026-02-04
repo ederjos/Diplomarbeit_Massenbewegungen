@@ -84,7 +84,6 @@ class MeasurementValuesTableSeeder extends Seeder
                     'x' => $x,
                     'y' => $y,
                     'z' => $z,
-                    'geom' => MagellanPoint::make($x, $y, $z, srid: 31254),
                 ];
             }
         }

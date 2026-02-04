@@ -31,6 +31,7 @@ class ProjectController extends Controller
 
     public function show(Project $project): Response
     {
+        // One project
         // Eager load everything: makes sure relations are loaded and ensures faster access
         $project->load([
             'points.measurementValues' => fn ($q) => $q->withLatLonAndOrderedByDate(),

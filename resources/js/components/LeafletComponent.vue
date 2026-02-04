@@ -1,14 +1,21 @@
 <script setup lang="ts">
 import { Measurement, Point } from '@/@types/measurement';
 import L from 'leaflet';
-import proj4 from 'proj4'; // for epsg transformations
 import { computed, onMounted, ref, watch } from 'vue';
 
-// Define EPSG:31254 (MGI / Austria GK West): https://epsg.io/31254.mapfile
-proj4.defs(
-    'EPSG:31254',
-    '+proj=tmerc +lat_0=0 +lon_0=10.3333333333333 +k=1 +x_0=0 +y_0=-5000000 +ellps=bessel +towgs84=577.326,90.129,463.919,5.137,1.474,5.297,2.4232 +units=m +no_defs',
-);
+/**
+ * import { usePage } from '@inertiajs/vue3';
+ * const spatial = usePage().props.spatial as any;
+ * If we ever need the srid from the backend
+ * Requires "'spatial' => config('spatial')," in Middleware/HandleInertiaRequests.php
+ * Source: https://inertiajs.com/docs/v2/data-props/shared-data
+ */
+
+
+/**
+ * Gemini 3 Flash, 2026-02-04
+ * "think about whether it might make sense to return only the geom values to the vue file for calculating coordinate differences so that it doesn't have to worry about what srid is used in the background."
+ */
 
 const props = defineProps<{
     points: Point[];
@@ -60,20 +67,15 @@ const pointDeltas = computed(() => {
             if (!ref || !m) return null;
 
             // Calculate differences in coordinates and convert to cm
-            const dx = (m.x - ref.x) * 100;
-            const dy = (m.y - ref.y) * 100;
-            const dz = (m.z - ref.z) * 100;
-
-            // Calculate 2D Euclidean distance (horizontal displacement)
-            // d = sqrt(dx^2 + dy^2) - distance 2d
-            const distance2d = Math.sqrt(dx * dx + dy * dy);
+            const p1 = L.latLng(ref.lat, ref.lon);
+            const p2 = L.latLng(m.lat, m.lon);
+            const distance2d = p1.distanceTo(p2) * 100; // in cm
+            const deltaHeight = (m.height - ref.height) * 100;
 
             return {
                 id: p.id,
                 name: p.name,
-                dx,
-                dy,
-                dz,
+                deltaHeight: deltaHeight,
                 distance2d: distance2d,
                 lat: m.lat,
                 lon: m.lon,
@@ -95,7 +97,10 @@ function invalidateMap() {
      * - **invalidateSize**: A Leaflet method that checks if the map container's dimensions have changed and updates the map accordingly. This is necessary because Leaflet caches the container size for performance; if the container resizes (or becomes visible) without this call, the map may render incorrectly (e.g., missing tiles or wrong center).
      * - **Overall Logic**: The `setTimeout` is used as a workaround to ensure the DOM has fully rendered or that CSS transitions (like opening a modal or tab) have completed before the map attempts to measure its container.
      */
-    map.value?.invalidateSize();
+    // Browser rendering can be asynchronous, and sometimes the map container might not have the correct dimensions immediately after a change (like showing/hiding a sidebar). By using `setTimeout`, we allow the browser to finish any pending layout calculations before Leaflet checks the container size.
+    setTimeout(() => {
+        map.value?.invalidateSize();
+    }, 100);
 }
 
 function zoomToPoint(pointId: number) {
@@ -151,21 +156,18 @@ function drawMap() {
             const compM = point.measurementValues.find((m) => m.measurementId === selectedMeasurement.value);
 
             if (refM && compM) {
-                const dx = compM.x - refM.x;
-                const dy = compM.y - refM.y;
+                // vectors
+                const p1 = L.latLng(refM.lat, refM.lon);
+                const p2 = L.latLng(compM.lat, compM.lon);
+                const dLon = p2.lng - p1.lng; // Note: Leaflet's latLng uses (lat, lng) but dx is in x direction (longitude)
+                const dLat = p2.lat - p1.lat; // and dy is in y direction (latitude)
 
-                const dxScaled = dx * scale;
-                const dyScaled = dy * scale;
+                const dLonScaled = dLon * scale;
+                const dLatScaled = dLat * scale;
 
-                // Calculate new position in EPSG:31254
-                const newX = refM.x + dxScaled;
-                const newY = refM.y + dyScaled;
-
-                // Convert back to WGS84 (lat, lon) using proj4
-                const newCoords = proj4('EPSG:31254', 'EPSG:4326', [newX, newY]);
-                // proj4 returns [lon, lat], leaflet needs [lat, lon]
-                const newLat = newCoords[1];
-                const newLon = newCoords[0];
+                // Calculate new position
+                const newLon = refM.lon + dLonScaled;
+                const newLat = refM.lat + dLatScaled;
 
                 latlngs = [
                     [refM.lat, refM.lon],
@@ -173,29 +175,25 @@ function drawMap() {
                 ];
             }
         } else {
-            // Fallback: show all measurements connected chronologically (Gait Line)
-            // Apply vector scaling to the gait line as well
-            const measurements = [...point.measurementValues]; // don't mutate original
+            // Gait line (show all measurements connected chronologically)
+
+            // don't mutate original
+            const measurements = [...point.measurementValues];
 
             if (measurements.length > 0) {
                 const origin = measurements[0];
 
                 latlngs = measurements.map((m) => {
-                    // Calculate delta from origin
-                    const dx = m.x - origin.x;
-                    const dy = m.y - origin.y;
+                    const dLon = m.lon - origin.lon;
+                    const dLat = m.lat - origin.lat;
 
-                    // Scale the delta
-                    const dxScaled = dx * scale;
-                    const dyScaled = dy * scale;
+                    const dLonScaled = dLon * scale;
+                    const dLatScaled = dLat * scale;
 
-                    // Apply scaled delta to origin
-                    const newX = origin.x + dxScaled;
-                    const newY = origin.y + dyScaled;
+                    const newLon = origin.lon + dLonScaled;
+                    const newLat = origin.lat + dLatScaled;
 
-                    // Convert back to lat/lon
-                    const newCoords = proj4('EPSG:31254', 'EPSG:4326', [newX, newY]);
-                    return [newCoords[1], newCoords[0]];
+                    return [newLat, newLon];
                 });
             }
         }
@@ -400,7 +398,7 @@ onMounted(() => {
                             <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
                             <td class="px-3 py-2 text-right tabular-nums">{{ p.distance2d.toFixed(4) }}</td>
                             <td class="px-3 py-2 text-right tabular-nums">
-                                {{ p.dz > 0 ? '+' : '' }}{{ p.dz.toFixed(4) }}
+                                {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(4) }}
                             </td>
                         </tr>
                         <tr v-if="pointDeltas.length === 0">

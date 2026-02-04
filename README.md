@@ -16,11 +16,10 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 * URL hashen? Oder Zugriff im Rendering unterbinden?
 
-* Rolle anzeigen (im eingeloggten Zustand)
-
 * (SRID (nur EPSG) in Formular auswählen (default vbg 31254))
+    * Backend: Standard-SRID auf Lat/Lon setzen
 
-* SRID nicht hardcodieren (1x speichern für alle Anwendungen)
+* Frontend SRID-unabhängig machen (fehlt noch ProjectTimeline)
 
 * PHP-Comments on own line
 

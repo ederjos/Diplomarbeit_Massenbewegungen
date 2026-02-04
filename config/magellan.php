@@ -45,6 +45,7 @@ return [
      * will raise an error stating that the projection is not lng/lat and therefore shouldn't be accessed that way
      */
     'geodetic_srids' => [
+        31254,
         4326,
         4267,
         4269,

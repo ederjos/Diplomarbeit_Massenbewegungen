@@ -16,7 +16,7 @@ return new class extends Migration
             $table->double('x');
             $table->double('y');
             $table->double('z');
-            $table->geometry('geom', subtype: 'pointz', srid: 31254);
+            $table->geometry('geom', subtype: 'pointz', srid: config('spatial.srids.default'));
             $table->foreignId('point_id')->constrained()->onDelete('cascade');
             $table->foreignId('measurement_id')->constrained()->onDelete('cascade');
             $table->foreignId('addition_id')->nullable()->constrained()->onDelete('restrict');
