@@ -5,34 +5,30 @@ use App\Models\MeasurementValue;
 use App\Models\Point;
 use App\Models\Project;
 use App\Models\User;
-use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
-
-pest()->use(RefreshDatabase::class);
 
 test('measurements on project page are loaded chronologically', function () {
     /** @var \Tests\TestCase $this */
-    $project = Project::factory()->create();
+    $project = Project::factory()->createOne();
 
     // Create Measurements *out of order*
-    $februaryMeasurement = Measurement::factory()->create(['project_id' => $project->id, 'measurement_datetime' => '2000-02-01']);
-    $januaryMeasurement = Measurement::factory()->create(['project_id' => $project->id, 'measurement_datetime' => '2000-01-01']);
-    $marchMeasurement = Measurement::factory()->create(['project_id' => $project->id, 'measurement_datetime' => '2000-03-01']);
+    $februaryMeasurement = Measurement::factory()->createOne(['project_id' => $project->id, 'measurement_datetime' => '2000-02-01']);
+    $januaryMeasurement = Measurement::factory()->createOne(['project_id' => $project->id, 'measurement_datetime' => '2000-01-01']);
+    $marchMeasurement = Measurement::factory()->createOne(['project_id' => $project->id, 'measurement_datetime' => '2000-03-01']);
 
     // Create a Point
-    $point = Point::factory()->create(['project_id' => $project->id]);
+    $point = Point::factory()->createOne(['project_id' => $project->id]);
 
     // Create Values for this point
-    MeasurementValue::factory()->create(['point_id' => $point->id, 'measurement_id' => $februaryMeasurement->id]);
-    MeasurementValue::factory()->create(['point_id' => $point->id, 'measurement_id' => $januaryMeasurement->id]);
-    MeasurementValue::factory()->create(['point_id' => $point->id, 'measurement_id' => $marchMeasurement->id]);
+    MeasurementValue::factory()->createOne(['point_id' => $point->id, 'measurement_id' => $februaryMeasurement->id]);
+    MeasurementValue::factory()->createOne(['point_id' => $point->id, 'measurement_id' => $januaryMeasurement->id]);
+    MeasurementValue::factory()->createOne(['point_id' => $point->id, 'measurement_id' => $marchMeasurement->id]);
 
     // Assert that measurement values were created
     $this->assertDatabaseCount('measurement_values', 3);
 
     /** @var \App\Models\User $user */
-    $user = User::factory()->create();
+    $user = User::factory()->createOne();
     $response = $this->actingAs($user)->get(route('project', $project));
 
     $response->assertStatus(200)
@@ -52,11 +48,11 @@ test('measurements on project page are loaded chronologically', function () {
 
 test('project details include valid coordinates converted to lat/lon', function () {
     /** @var \Tests\TestCase $this */
-    $project = Project::factory()->create();
+    $project = Project::factory()->createOne();
 
-    $point = Point::factory()->create(['project_id' => $project->id]);
+    $point = Point::factory()->createOne(['project_id' => $project->id]);
 
-    $measurement = Measurement::factory()->create(['project_id' => $project->id]);
+    $measurement = Measurement::factory()->createOne(['project_id' => $project->id]);
 
     // Converted with https://epsg.io/transform
     $inputX = -28194.450;
@@ -65,18 +61,16 @@ test('project details include valid coordinates converted to lat/lon', function 
     $expectedLon = 9.962327;
     $expectedLat = 47.00052;
 
-    MeasurementValue::factory()->create([
+    MeasurementValue::factory()->createOne([
         'point_id' => $point->id,
         'measurement_id' => $measurement->id,
         'x' => $inputX,
         'y' => $inputY,
         'z' => $inputZ,
-        // Otherwise, the factory uses random numbers for geom
-        'geom' => MagellanPoint::make($inputX, $inputY, $inputZ, srid: 31254),
     ]);
 
     /** @var \App\Models\User $user */
-    $user = User::factory()->create();
+    $user = User::factory()->createOne();
     $response = $this->actingAs($user)->get(route('project', $project));
 
     $response->assertInertia(
@@ -92,7 +86,7 @@ test('returns error 404 if project doesn\'t exist', function () {
     /** @var \Tests\TestCase $this */
 
     /** @var \App\Models\User $user */
-    $user = User::factory()->create();
+    $user = User::factory()->createOne();
     $response = $this->actingAs($user)->get(route('project', ['project' => '12345']));
 
     $response->assertStatus(404);

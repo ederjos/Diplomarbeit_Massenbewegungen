@@ -42,14 +42,14 @@ class MeasurementValue extends Model
      * Gemini 3 Pro, 2026-01-11
      * "When removing the triggers by magellan, what code will make the geom field?"
      */
-    // Runs when the model is booted
+    // Runs when the Model is booted
     protected static function booted()
     {
         // Listens to saving event (on class-level -> static)
         static::saving(function (MeasurementValue $measurementValue) {
             // Automatically sync geom from x,y,z if geom is missing or x,y,z changed (and x,y,z are set)
             if (isset($measurementValue->x, $measurementValue->y, $measurementValue->z) &&
-                ($measurementValue->isDirty(['x', 'y', 'z']) || $measurementValue->geom === null)
+                (! $measurementValue->geom || $measurementValue->isDirty(['x', 'y', 'z']))
             ) {
                 $measurementValue->geom = MagellanPoint::make(
                     $measurementValue->x,

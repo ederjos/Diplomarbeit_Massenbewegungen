@@ -1,94 +1,3 @@
-<template>
-    <div class="flex h-screen w-screen flex-col overflow-hidden">
-        <div class="z-10 flex shrink-0 items-center gap-4 bg-white p-4 shadow">
-            <div>
-                <label class="mb-1 block text-sm font-bold">Referenzepoche</label>
-                <select
-                    v-model.number="selectedReference"
-                    class="rounded border p-1 disabled:text-gray-400"
-                    :disabled="isGaitLine"
-                >
-                    <option v-for="m in props.measurements" :key="m.id" :value="m.id">
-                        {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
-                    </option>
-                </select>
-            </div>
-            <div>
-                <label class="mb-1 block text-sm font-bold">Vergleichsepoche</label>
-                <select
-                    v-model.number="selectedMeasurement"
-                    class="rounded border p-1 disabled:text-gray-400"
-                    :disabled="isGaitLine"
-                >
-                    <option v-for="m in props.measurements" :key="m.id" :value="m.id">
-                        {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
-                    </option>
-                </select>
-            </div>
-            <div>
-                <label class="mb-1 block text-sm font-bold">Vektormaßstab M 1&nbsp;:&nbsp;</label>
-                <input
-                    v-model.number="vectorScale"
-                    type="number"
-                    class="w-28 rounded border p-1"
-                    min="1"
-                    max="100000"
-                />
-            </div>
-            <div class="me-4 flex items-center">
-                <input
-                    type="checkbox"
-                    v-model="isGaitLine"
-                    id="checkboxIsGaitLine"
-                    class="border-default-medium bg-neutral-secondary-medium h-4 w-4 rounded-xs border"
-                />
-                <label class="text-heading ml-2 block text-sm font-bold select-none" for="checkboxIsGaitLine"
-                    >Ganglinie</label
-                >
-            </div>
-        </div>
-
-        <div class="flex flex-1 overflow-hidden">
-            <div ref="mapContainer" class="relative z-0 h-full flex-1"></div>
-
-            <div
-                v-if="!isGaitLine"
-                class="z-10 w-96 shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
-                @vue:mounted="invalidateMap"
-                @vue:unmounted="invalidateMap"
-            >
-                <h2 class="mb-3 text-lg font-bold">Verschiebungen</h2>
-                <table class="relative w-full border-collapse text-left text-sm">
-                    <thead class="top-0 z-10 border-b bg-gray-100 text-xs uppercase shadow-sm">
-                        <tr>
-                            <th class="px-3 py-2 font-semibold text-gray-800">Punkt</th>
-                            <th class="px-3 py-2 text-right font-semibold text-gray-800">Δ Lage [cm]</th>
-                            <th class="px-3 py-2 text-right font-semibold text-gray-800">Δ Höhe [cm]</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="p in pointDeltas"
-                            :key="p.id"
-                            class="cursor-pointer border-b bg-white odd:bg-gray-50 hover:bg-gray-100"
-                            @click="zoomToPoint(p.id)"
-                            :data-point-id="p.id"
-                        >
-                            <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
-                            <td class="px-3 py-2 text-right tabular-nums">{{ p.distance2d.toFixed(4) }}</td>
-                            <td class="px-3 py-2 text-right tabular-nums">
-                                {{ p.dz > 0 ? '+' : '' }}{{ p.dz.toFixed(4) }}
-                            </td>
-                        </tr>
-                        <tr v-if="pointDeltas.length === 0">
-                            <td colspan="3" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</template>
 <script setup lang="ts">
 import { Measurement, Point } from '@/@types/measurement';
 import L from 'leaflet';
@@ -107,19 +16,23 @@ const props = defineProps<{
     measurements: Measurement[];
 }>();
 
-/* ChatGPT GPT-5, 2025-11-25
+/**
+ * ChatGPT GPT-5, 2025-11-25
  * "I created this code using my api to retrieve the data. now make it work with typescript. [old code in js]"
  */
 
-/* Gemini 3 Pro, 2025-12-02
+/**
+ * Gemini 3 Pro, 2025-12-02
  * "Add a select box at the top where the user can select two reference measurements (based on name and dates). then, the markers are changed to the two measurement values of the measurements."
  */
 
-/* Gemini 3 Pro, 2025-12-02
+/**
+ * Gemini 3 Pro, 2025-12-02
  * "this component works greatly. now, we want to rearrange the design though and add a new table. in this table there should be a col for point name, one for delta pos (x and y) and one for delta height (z). keep in mind that the values in the Measurement interface of x,y,z are in the epsg 31254"
  */
 
-/* Gemini 3 Pro, 2025-12-16
+/**
+ * Gemini 3 Pro, 2025-12-16
  * "i have this file where i get coordinates data in lat, lon and a special epsg 31254. now, i want to scale up the distances so that a distance of 1 cm looks like 1 m. for that I created the vectorScale variable. Now, you should update the lat, lon (leaflet only knows those coords) based on the epsg x,y upscaled based on the initial difference (p1->p2) but the value of the vector is into the same direction the vectorScale times as high. i urge you to use proj4 to work with the exact coordinates!"
  */
 
@@ -389,15 +302,25 @@ onMounted(() => {
         attribution: '&copy; VOGIS CNV',
     });
 
+     const aerial_2023 = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_luftbilder_r_wms.map', {
+        layers: 'ef2023_10cm_t',
+        format: 'image/png',
+        transparent: true,
+        maxZoom: 23,
+        minZoom: 4,
+        attribution: '&copy; VOGIS CNV',
+    });
+
+
     // Layer control: Change base layer and toggle hillshade
     L.control
         .layers({
             'Standard Karte': mainMap,
             'Schummerung Oberfläche': schummerung_surface,
             'Schummerung Gelände': schummerung_terrain,
-            '--- LUFTBILDER ---': L.layerGroup(),
-            'Luftbild 2024': aerial_2024,
-            'Luftbild 2018': aerial_2018,
+            'Luftbild: Echtfarben Winter Mosaik 2024-25': aerial_2024,
+            'Luftbild: 2018': aerial_2018,
+            'Echtfarbenbild_2023_10cm_technisch': aerial_2023,
         })
         .addTo(leafletMap);
 
@@ -421,3 +344,71 @@ onMounted(() => {
     }
 });
 </script>
+
+<template>
+    <div class="flex h-screen w-screen flex-col overflow-hidden">
+        <div class="z-10 flex shrink-0 items-center gap-4 bg-white p-4 shadow">
+            <div>
+                <label class="mb-1 block text-sm font-bold">Referenzepoche</label>
+                <select v-model.number="selectedReference" class="rounded border p-1 disabled:text-gray-400"
+                    :disabled="isGaitLine">
+                    <option v-for="m in props.measurements" :key="m.id" :value="m.id">
+                        {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
+                    </option>
+                </select>
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-bold">Vergleichsepoche</label>
+                <select v-model.number="selectedMeasurement" class="rounded border p-1 disabled:text-gray-400"
+                    :disabled="isGaitLine">
+                    <option v-for="m in props.measurements" :key="m.id" :value="m.id">
+                        {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
+                    </option>
+                </select>
+            </div>
+            <div>
+                <label class="mb-1 block text-sm font-bold">Vektormaßstab M 1&nbsp;:&nbsp;</label>
+                <input v-model.number="vectorScale" type="number" class="w-28 rounded border p-1" min="1"
+                    max="100000" />
+            </div>
+            <div class="me-4 flex items-center">
+                <input type="checkbox" v-model="isGaitLine" id="checkboxIsGaitLine"
+                    class="border-default-medium bg-neutral-secondary-medium h-4 w-4 rounded-xs border" />
+                <label class="text-heading ml-2 block text-sm font-bold select-none"
+                    for="checkboxIsGaitLine">Ganglinie</label>
+            </div>
+        </div>
+
+        <div class="flex flex-1 overflow-hidden">
+            <div ref="mapContainer" class="relative z-0 h-full flex-1"></div>
+
+            <div v-if="!isGaitLine" class="z-10 w-96 shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
+                @vue:mounted="invalidateMap" @vue:unmounted="invalidateMap">
+                <h2 class="mb-3 text-lg font-bold">Verschiebungen</h2>
+                <table class="relative w-full border-collapse text-left text-sm">
+                    <thead class="top-0 z-10 border-b bg-gray-100 text-xs uppercase shadow-sm">
+                        <tr>
+                            <th class="px-3 py-2 font-semibold text-gray-800">Punkt</th>
+                            <th class="px-3 py-2 text-right font-semibold text-gray-800">Δ Lage [cm]</th>
+                            <th class="px-3 py-2 text-right font-semibold text-gray-800">Δ Höhe [cm]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="p in pointDeltas" :key="p.id"
+                            class="cursor-pointer border-b bg-white odd:bg-gray-50 hover:bg-gray-100"
+                            @click="zoomToPoint(p.id)" :data-point-id="p.id">
+                            <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
+                            <td class="px-3 py-2 text-right tabular-nums">{{ p.distance2d.toFixed(4) }}</td>
+                            <td class="px-3 py-2 text-right tabular-nums">
+                                {{ p.dz > 0 ? '+' : '' }}{{ p.dz.toFixed(4) }}
+                            </td>
+                        </tr>
+                        <tr v-if="pointDeltas.length === 0">
+                            <td colspan="3" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</template>

@@ -9,10 +9,10 @@ class DatabaseSeeder extends Seeder
     /**
      * Seed the application's database.
      */
-
     public function run(): void
     {
-        /* ChatGPT GPT-5 mini, 2025-11-18
+        /**
+         * ChatGPT GPT-5 mini, 2025-11-18
          * "now that all data is written in the seeders, how do i import it into the database?"
          */
 

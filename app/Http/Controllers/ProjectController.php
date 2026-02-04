@@ -13,7 +13,8 @@ class ProjectController extends Controller
 {
     public function index(): Response
     {
-        /* Gemini 3 Pro, 2026-01-01
+        /**
+         * Gemini 3 Pro, 2026-01-01
          * "What comes into ProjectController.php to get all projects with their last measurement date and next measurement date based on period?"
          * "Update the controller of index to correctly and simply return the requested data. no errors should appear when working with timezones +2 or +1. just return the date in the same form as you get it from measurement_datetime without timezone: 2025-06-04 00:00:00"
          */

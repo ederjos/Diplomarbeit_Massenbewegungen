@@ -18,7 +18,7 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 * Rolle anzeigen (im eingeloggten Zustand)
 
-* SRID (nur EPSG) in Formular auswählen (default vbg 31254)
+* (SRID (nur EPSG) in Formular auswählen (default vbg 31254))
 
 * SRID nicht hardcodieren (1x speichern für alle Anwendungen)
 
@@ -63,7 +63,7 @@ Let's add a column 'name' to the table `MEASUREMENT`
 * which maps are needed
 
 
-## 
+## Für den schriftlichen Teil
 
 * Überschrift mit Text: "Im Kapitel wird das ....-Modul beschrieben. In 17.1 gibt's 'nen Überblick, in 17.2 geht's um ..."
 * Anhand Inhaltsverzeichnis schon roten Faden, überlegen was wo drin ist.
