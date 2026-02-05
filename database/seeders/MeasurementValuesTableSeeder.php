@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Measurement;
 use App\Models\MeasurementValue;
 use App\Models\Point;
-use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 

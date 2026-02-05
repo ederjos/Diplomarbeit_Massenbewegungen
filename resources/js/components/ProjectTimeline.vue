@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { de } from 'date-fns/locale';
+import { latLng } from 'leaflet';
 import { computed, ref } from 'vue';
 import { Line } from 'vue-chartjs';
 
@@ -75,26 +76,24 @@ const chartData = computed<ChartData<'line'>>(() => {
 
                 if (!val || !initialValue) return null;
 
-                const dx_m = val.x - initialValue.x;
-                const dy_m = val.y - initialValue.y;
-                const dz_m = val.z - initialValue.z;
+                const pInit = latLng(initialValue.lat, initialValue.lon);
+                const pVal = latLng(val.lat, val.lon);
+                const horizontalDist = pInit.distanceTo(pVal) * 100; // cm
 
-                // to cm
-                const dx = dx_m * 100;
-                const dy = dy_m * 100;
-                const dz = dz_m * 100;
+                const verticalDist = (val.height - initialValue.height) * 100; // cm
 
                 let value = 0;
 
-                if (currentMode.value === 'vertical') {
-                    // Vertical displacement
-                    value = dz;
-                } else if (currentMode.value === 'horizontal') {
-                    // Horizontal displacement (2D Euclidean distance)
-                    value = -Math.sqrt(dx * dx + dy * dy);
-                } else {
-                    // 3D displacement (3D Euclidean distance)
-                    value = -Math.sqrt(dx * dx + dy * dy + dz * dz);
+                switch (currentMode.value) {
+                    case 'horizontal':
+                        value = -horizontalDist;
+                        break;
+                    case 'vertical':
+                        value = verticalDist;
+                        break;
+                    case 'total':
+                    default:
+                        value = -Math.hypot(horizontalDist, verticalDist);
                 }
 
                 return {
