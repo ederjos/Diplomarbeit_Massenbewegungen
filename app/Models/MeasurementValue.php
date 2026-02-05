@@ -25,14 +25,14 @@ class MeasurementValue extends Model
     public function scopeWithLatLonAndOrderedByDate(Builder $query): void
     {
         // Same as in Project: For the Controller, but reusable
-        // Select all columns from measurement_values
-        $query->select('measurement_values.*')
+        // Select only foreign keys (measurement and point) instead of everything
+        $query->select('measurement_values.measurement_id', 'measurement_values.point_id')
             ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
             ->orderBy('measurements.measurement_datetime')
             // Adds calculated columns to selected columns
             ->addSelect(ST::y(ST::transform('measurement_values.geom', config('spatial.srids.wgs84')))->as('lat'))
             ->addSelect(ST::x(ST::transform('measurement_values.geom', config('spatial.srids.wgs84')))->as('lon'))
-            // always in meter, so no need to transform
+            // basically always in meters, so no need to transform
             ->addSelect(ST::z('measurement_values.geom')->as('height'));
     }
 
