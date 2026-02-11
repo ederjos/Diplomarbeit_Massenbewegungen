@@ -26,12 +26,12 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             ProjectsTableSeeder::class,
             ProjectUserSeeder::class,
-            ProjectionsTableSeeder::class,
             // PointsTableSeeder::class
             // Points are now created dynamically in MeasurementValuesTableSeeder
             MeasurementsTableSeeder::class,
             AdditionsTableSeeder::class,
             MeasurementValuesTableSeeder::class,
+            ProjectionsTableSeeder::class,
             CommentsTableSeeder::class,
         ]);
     }

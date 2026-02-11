@@ -9,6 +9,10 @@ class Measurement extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'measurement_datetime' => 'datetime',
+    ];
+
     public function project()
     {
         return $this->belongsTo(Project::class);
@@ -17,5 +21,10 @@ class Measurement extends Model
     public function measurementValues()
     {
         return $this->hasMany(MeasurementValue::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

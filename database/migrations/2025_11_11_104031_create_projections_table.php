@@ -13,9 +13,6 @@ return new class extends Migration
     {
         Schema::create('projections', function (Blueprint $table) {
             $table->id();
-            $table->double('px');
-            $table->double('py');
-            $table->geometry('start_point', subtype: 'point', srid: config('spatial.srids.default'));
             $table->double('ax');
             $table->double('ay');
             $table->timestamps();

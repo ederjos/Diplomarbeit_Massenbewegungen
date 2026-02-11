@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('points', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->boolean('is_visible')->default(true);
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->foreignId('projection_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();

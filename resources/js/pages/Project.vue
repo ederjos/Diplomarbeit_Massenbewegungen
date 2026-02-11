@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Measurement, Point } from '@/@types/measurement';
+import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
 import { Project } from '@/@types/project';
 import { Head } from '@inertiajs/vue3';
 import { computed } from 'vue';
@@ -11,6 +11,9 @@ const props = defineProps<{
     project: Project;
     points: Point[];
     measurements: Measurement[];
+    referenceId: number | null;
+    comparisonId: number | null;
+    displacements: Record<number, PointDisplacement>;
 }>();
 
 /**
@@ -42,7 +45,14 @@ const pointColors = computed(() => {
 <template>
     <Head :title="`${project.name}`" />
     <AuthenticatedLayout>
-        <LeafletComponent :points="points" :point-colors="pointColors" :measurements="measurements" />
+        <LeafletComponent
+            :points="points"
+            :point-colors="pointColors"
+            :measurements="measurements"
+            :reference-id="referenceId"
+            :comparison-id="comparisonId"
+            :displacements="displacements"
+        />
         <ProjectTimeline :points="points" :point-colors="pointColors" :measurements="measurements" />
     </AuthenticatedLayout>
 </template>

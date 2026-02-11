@@ -66,6 +66,12 @@ class Project extends Model
 
     public function clerk(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Clerk::class);
+    }
+
+    public function referenceMeasurement(): BelongsTo
+    {
+        // Set by admin
+        return $this->belongsTo(Measurement::class, 'reference_measurement_id');
     }
 }

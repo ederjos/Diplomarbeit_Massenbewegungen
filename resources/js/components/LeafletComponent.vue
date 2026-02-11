@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { Measurement, Point } from '@/@types/measurement';
+import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
+import { router } from '@inertiajs/vue3';
 import L from 'leaflet';
 import { computed, onMounted, ref, watch } from 'vue';
 
-/**
+/** -- Use PHP Configs in Vue --
  * import { usePage } from '@inertiajs/vue3';
  * const spatial = usePage().props.spatial as any;
  * If we ever need the srid from the backend
@@ -21,6 +22,12 @@ const props = defineProps<{
     points: Point[];
     pointColors: Record<number, string>; // like hash map
     measurements: Measurement[];
+    /** Fixed reference measurement ID (Bezugsepoche, set per project by Admin/Editor) */
+    referenceId: number | null;
+    /** Selected comparison measurement ID */
+    comparisonId: number | null;
+    /** Backend-computed displacement values. Key: point id */
+    displacements: Record<number, PointDisplacement>;
 }>();
 
 /**
@@ -45,40 +52,85 @@ const props = defineProps<{
 
 const mapContainer = ref<HTMLDivElement | null>(null);
 const map = ref<L.Map | null>(null);
-// const points = ref<Point[]>([]) // Removed
-const selectedReference = ref<number | null>(null);
-const selectedMeasurement = ref<number | null>(null);
+const selectedComparison = ref<number | null>(props.comparisonId); // former selectedMeasurement
 const vectorScale = ref<number>(100);
 const isGaitLine = ref<boolean>(false);
 const markersLayer = new L.LayerGroup();
-// https://leafletjs.com/examples/layers-control/
 
-// Point deltas for the table (sidebar)
+// Less complicated than enum
+type DisplacementMode = 'twoD' | 'projection' | 'threeD';
+const displacementMode = ref<DisplacementMode>('twoD');
+
+
+/**
+ * Claude Opus 4.6, 2026-02-11
+ * "[...] Then, apply the projection changes to the LeafletComponent file, so that the user can select the display mode for the displacements (2D, projection, 3D) and the map updates accordingly."
+ */
+
+/**
+ * Displacement display mode (for table):
+ *   'twoD'       — Option A: √(dX² + dY²) Pythagoras 2D
+ *   'projection' — Option B: Dot product on normalized axis
+ *   'threeD'     — Option C: √(dX² + dY² + dZ²) Pythagoras 3D
+ */
+
+const displacementModeLabels: Record<DisplacementMode, string> = {
+    twoD: 'Lage (2D)',
+    projection: 'Projektion',
+    threeD: '3D-Vektor',
+};
+
+/** Display name for the fixed reference epoch */
+const referenceLabel = computed(() => {
+    if (!props.referenceId) return 'Nicht gesetzt';
+    const m = props.measurements.find((m) => m.id === props.referenceId);
+    return m ? `${m.name} (${new Date(m.datetime).toLocaleDateString('de-AT')})` : 'Unbekannt';
+});
+
+// Trigger Inertia visit when comparison epoch changes
+// Use inertia to ensure SPA experience and preserve scroll/state, but still update the URL for shareability and back button support
+watch(selectedComparison, (newComp) => {
+    if (newComp) {
+        router.get(
+            window.location.pathname,
+            { comparison: newComp },
+            { preserveScroll: true, preserveState: true }
+        );
+    }
+});
+
+/**
+ * Displacement table data — uses pre-computed backend values.
+ * No raw coordinates needed in the frontend.
+ */
 const pointDeltas = computed(() => {
-    if (!selectedReference.value || !selectedMeasurement.value) return [];
+    if (!props.referenceId || !props.comparisonId) return [];
 
     return props.points
         .map((p) => {
-            // Find the measurement values for the selected reference and comparison epochs
-            const ref = p.measurementValues.find((m) => m.measurementId === selectedReference.value);
-            const m = p.measurementValues.find((m) => m.measurementId === selectedMeasurement.value);
+            const displacement = props.displacements[p.id];
+            if (!displacement) return null;
 
-            // If either is missing for this point, we can't calculate a delta
-            if (!ref || !m) return null;
-
-            // Calculate differences in coordinates and convert to cm
-            const p1 = L.latLng(ref.lat, ref.lon);
-            const p2 = L.latLng(m.lat, m.lon);
-            const distance2d = p1.distanceTo(p2) * 100; // in cm
-            const deltaHeight = (m.height - ref.height) * 100;
+            let displayDistance: number;
+            switch (displacementMode.value) {
+                case 'projection':
+                    // If no projection set, fallback to 2d (with warning icon)
+                    displayDistance = displacement.projectedDistance ?? displacement.distance2d;
+                    break;
+                case 'threeD':
+                    displayDistance = displacement.distance3d;
+                    break;
+                case 'twoD':
+                default:
+                    displayDistance = displacement.distance2d;
+            }
 
             return {
                 id: p.id,
                 name: p.name,
-                deltaHeight: deltaHeight,
-                distance2d: distance2d,
-                lat: m.lat,
-                lon: m.lon,
+                deltaHeight: displacement.deltaHeight,
+                distance: displayDistance,
+                hasProjection: displacement.projectedDistance !== null,
             };
             // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
         })
@@ -104,11 +156,11 @@ function invalidateMap() {
 }
 
 function zoomToPoint(pointId: number) {
-    // zoom to arrowhead of selected point
+    // zoom to selected point
     const point = props.points.find((p) => p.id === pointId);
     if (point && map.value) {
         const m =
-            point.measurementValues.find((m) => m.measurementId === selectedReference.value) ||
+            point.measurementValues.find((m) => m.measurementId === props.referenceId) ||
             point.measurementValues[0];
         if (m) {
             map.value.setView([m.lat, m.lon], 17);
@@ -151,9 +203,9 @@ function drawMap() {
         const scale = vectorScale.value;
 
         // If both reference and comparison are selected, calculate scaled vector
-        if (selectedReference.value && selectedMeasurement.value && !isGaitLine.value) {
-            const refM = point.measurementValues.find((m) => m.measurementId === selectedReference.value);
-            const compM = point.measurementValues.find((m) => m.measurementId === selectedMeasurement.value);
+        if (props.referenceId && selectedComparison.value && !isGaitLine.value) {
+            const refM = point.measurementValues.find((m) => m.measurementId === props.referenceId);
+            const compM = point.measurementValues.find((m) => m.measurementId === selectedComparison.value);
 
             if (refM && compM) {
                 // vectors
@@ -175,9 +227,7 @@ function drawMap() {
                 ];
             }
         } else {
-            // Gait line (show all measurements connected chronologically)
-
-            // don't mutate original
+            // Gait line mode (Ganglinie): all measurements connected chronologically
             const measurements = [...point.measurementValues];
 
             if (measurements.length > 0) {
@@ -200,7 +250,7 @@ function drawMap() {
 
         if (!latlngs.length) return;
 
-        // Draw polyline connecting measurements
+        // Polyline with white outline for contrast
         const framePolyline = L.polyline(latlngs, { color: 'white', weight: 4 });
         const currPolyline = L.polyline(latlngs, { color: 'black', weight: 2 });
         currPolyline.on('click', () => zoomToPoint(point.id));
@@ -222,6 +272,7 @@ function drawMap() {
         marker.on('click', () => zoomToPoint(point.id));
         markersLayer.addLayer(marker);
 
+        // Text label next to the "arrowhead"
         const textMarker = L.marker(latlngs[latlngs.length - 1], {
             icon: L.divIcon({
                 className: 'text-labels text-black text-xs font-bold', // Set class for CSS styling
@@ -235,8 +286,7 @@ function drawMap() {
     });
 }
 
-watch([selectedReference, selectedMeasurement, vectorScale, isGaitLine], () => {
-    // As soon as selection changes, redraw the map
+watch([selectedComparison, vectorScale, isGaitLine, displacementMode], () => {
     drawMap();
 });
 
@@ -247,17 +297,13 @@ onMounted(() => {
     map.value = leafletMap;
     markersLayer.addTo(leafletMap);
 
-    leafletMap.on('zoom', () => {
-        console.log('Zoom level changed to:', leafletMap.getZoom());
-    });
-
     const mainMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 23,
         minZoom: 4, // default tile size (256)
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(leafletMap); // show only this initially
 
-    // WMS Layers by vogis
+    // WMS Layers by VOGIS
     const schummerung_surface = L.tileLayer.wms(
         'https://vogis.cnv.at/mapserver/mapserv?map=i_schummerung_2023_r_wms.map',
         {
@@ -300,7 +346,7 @@ onMounted(() => {
         attribution: '&copy; VOGIS CNV',
     });
 
-     const aerial_2023 = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_luftbilder_r_wms.map', {
+    const aerial_2023 = L.tileLayer.wms('https://vogis.cnv.at/mapserver/mapserv?map=i_luftbilder_r_wms.map', {
         layers: 'ef2023_10cm_t',
         format: 'image/png',
         transparent: true,
@@ -326,11 +372,8 @@ onMounted(() => {
 
     // Initial setup
     if (props.points.length > 0) {
-        if (!selectedReference.value && props.measurements.length) {
-            selectedReference.value = props.measurements[0].id;
-        }
-        if (!selectedMeasurement.value && props.measurements.length > 1) {
-            selectedMeasurement.value = props.measurements[props.measurements.length - 1].id;
+        if (!selectedComparison.value && props.measurements.length > 1) {
+            selectedComparison.value = props.measurements[props.measurements.length - 1].id;
         }
         drawMap();
 
@@ -348,16 +391,13 @@ onMounted(() => {
         <div class="z-10 flex shrink-0 items-center gap-4 bg-white p-4 shadow">
             <div>
                 <label class="mb-1 block text-sm font-bold">Referenzepoche</label>
-                <select v-model.number="selectedReference" class="rounded border p-1 disabled:text-gray-400"
-                    :disabled="isGaitLine">
-                    <option v-for="m in props.measurements" :key="m.id" :value="m.id">
-                        {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
-                    </option>
-                </select>
+                <span class="inline-block rounded border bg-gray-100 px-2 py-1 text-sm text-gray-700">
+                    {{ referenceLabel }}
+                </span>
             </div>
             <div>
                 <label class="mb-1 block text-sm font-bold">Vergleichsepoche</label>
-                <select v-model.number="selectedMeasurement" class="rounded border p-1 disabled:text-gray-400"
+                <select v-model.number="selectedComparison" class="rounded border p-1 disabled:text-gray-400"
                     :disabled="isGaitLine">
                     <option v-for="m in props.measurements" :key="m.id" :value="m.id">
                         {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
@@ -383,11 +423,25 @@ onMounted(() => {
             <div v-if="!isGaitLine" class="z-10 w-96 shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
                 @vue:mounted="invalidateMap" @vue:unmounted="invalidateMap">
                 <h2 class="mb-3 text-lg font-bold">Verschiebungen</h2>
+                <div class="mb-3">
+                    <label class="mb-1 block text-sm font-bold">Darstellungsart</label>
+                    <div class="flex gap-1">
+                        <button v-for="(label, mode) in displacementModeLabels" :key="mode"
+                            @click="displacementMode = mode"
+                            class="rounded px-2 py-1 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+                            :class="displacementMode === mode ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'"
+                        >
+                            {{ label }}
+                        </button>
+                    </div>
+                </div>
                 <table class="relative w-full border-collapse text-left text-sm">
                     <thead class="top-0 z-10 border-b bg-gray-100 text-xs uppercase shadow-sm">
                         <tr>
                             <th class="px-3 py-2 font-semibold text-gray-800">Punkt</th>
-                            <th class="px-3 py-2 text-right font-semibold text-gray-800">Δ Lage [cm]</th>
+                            <th class="px-3 py-2 text-right font-semibold text-gray-800">
+                                Δ {{ displacementModeLabels[displacementMode] }} [cm]
+                            </th>
                             <th class="px-3 py-2 text-right font-semibold text-gray-800">Δ Höhe [cm]</th>
                         </tr>
                     </thead>
@@ -395,8 +449,12 @@ onMounted(() => {
                         <tr v-for="p in pointDeltas" :key="p.id"
                             class="cursor-pointer border-b bg-white odd:bg-gray-50 hover:bg-gray-100"
                             @click="zoomToPoint(p.id)" :data-point-id="p.id">
-                            <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
-                            <td class="px-3 py-2 text-right tabular-nums">{{ p.distance2d.toFixed(4) }}</td>
+                            <td class="px-3 py-2 font-medium text-gray-900">
+                                {{ p.name }}
+                                <span v-if="displacementMode === 'projection' && !p.hasProjection"
+                                    class="text-xs text-amber-500" title="Keine Projektionsachse">⚠</span>
+                            </td>
+                            <td class="px-3 py-2 text-right tabular-nums">{{ p.distance.toFixed(4) }}</td>
                             <td class="px-3 py-2 text-right tabular-nums">
                                 {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(4) }}
                             </td>

@@ -20,7 +20,8 @@ class PointFactory extends Factory
         return [
             'name' => fake()->word(),
             'project_id' => Project::factory(),
-            'projection_id' => null, // For now (not implemented by ui yet)
+            'projection_id' => null,
+            'is_visible' => true,
         ];
     }
 }

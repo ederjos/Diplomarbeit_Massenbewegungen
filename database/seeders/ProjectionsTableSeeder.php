@@ -12,7 +12,15 @@ class ProjectionsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        // For now, no projections exist
+        // Hardcoded projection for point 5
+        DB::table('projections')->insert([
+            'id' => 1,
+            'ax' => -0.678058168395027,
+            'ay' => 0.735008245037279,
+        ]);
+
+        // Update point 5 to use the new projection
+        DB::table('points')->where('id', 5)->update(['projection_id' => 1]);
 
         if (DB::getDriverName() === 'pgsql') {
             DB::statement("SELECT setval('projections_id_seq', (SELECT MAX(id) FROM projections));");

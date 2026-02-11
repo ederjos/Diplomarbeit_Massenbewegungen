@@ -8,8 +8,14 @@ export interface MeasurementValue {
 export interface Point {
     id: number;
     name: string;
-    projectionId: number | null;
     measurementValues: MeasurementValue[];
+}
+
+export interface PointDisplacement {
+    distance2d: number;        // cm
+    distance3d: number;        // cm
+    projectedDistance: number | null;  // cm, null if no projection
+    deltaHeight: number;       // cm
 }
 
 export interface Measurement {

@@ -9,6 +9,11 @@ class Point extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        // Sometimes boolean fields can be stored as integers (0/1) in the database
+        'is_visible' => 'boolean',
+    ];
+
     public function measurementValues()
     {
         return $this->hasMany(MeasurementValue::class);

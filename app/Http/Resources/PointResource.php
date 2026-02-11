@@ -17,7 +17,6 @@ class PointResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'projectionId' => $this->projection_id,
             'measurementValues' => MeasurementValueResource::collection($this->measurementValues)->resolve(),
         ];
     }

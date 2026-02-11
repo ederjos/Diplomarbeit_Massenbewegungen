@@ -2,35 +2,19 @@
 
 namespace App\Models;
 
-use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * A Projection defines a normalized axis (ax, ay) for projecting
+ * displacement vectors onto a specific direction (e.g., slope direction).
+ *
+ * Only the axis components are needed for the scalar product calculation.
+ * The start_point (px, py) would only be relevant for visualizing the
+ * axis line itself on a map, not for displacement calculations.
+ */
 class Projection extends Model
 {
-    protected $fillable = ['px', 'py', 'ax', 'ay'];
-
-    protected $casts = [
-        'start_point' => MagellanPoint::class,
-    ];
-
-    protected static function booted()
-    {
-        // Like in MeasurementValue
-        static::saving(function (Projection $projection) {
-            if (
-                isset($projection->px, $projection->py) &&
-                (! $projection->start_point || $projection->isDirty(['px', 'py']))
-            ) {
-                $projection->start_point = MagellanPoint::make(
-                    $projection->px,
-                    $projection->py,
-                    null,
-                    null,
-                    config('spatial.srids.default')
-                );
-            }
-        });
-    }
+    protected $fillable = ['ax', 'ay'];
 
     public function point()
     {
