@@ -58,11 +58,9 @@ const formatDate = (dateStr?: string | null) => {
     if (!dateStr) return '-';
     return new Date(dateStr).toLocaleDateString();
 };
-
 </script>
 
 <template>
-
     <Head title="Home" />
     <AuthenticatedLayout>
         <h1 class="text-2xl font-bold">Projekte</h1>
@@ -73,8 +71,8 @@ const formatDate = (dateStr?: string | null) => {
                     <input type="checkbox" v-model="showOnlyActive" class="peer sr-only" />
                     <!-- Toggle background and circle (using after: pseudo-element) -->
                     <div
-                        class="relative h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-indigo-600 peer-focus:ring-4 peer-focus:ring-indigo-300 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white">
-                    </div>
+                        class="relative h-6 w-11 rounded-full bg-gray-200 peer-checked:bg-indigo-600 peer-focus:ring-4 peer-focus:ring-indigo-300 after:absolute after:top-[2px] after:left-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-gray-300 after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full peer-checked:after:border-white"
+                    ></div>
                     <span class="ml-3 text-sm font-medium text-gray-900">Nur aktive Projekte anzeigen</span>
                 </label>
             </div>
@@ -82,57 +80,86 @@ const formatDate = (dateStr?: string | null) => {
                 <thead class="bg-gray-50">
                     <tr>
                         <!-- "group" allows children (like the arrow icon) to react when this header is hovered -->
-                        <th @click="toggleSort('name')"
-                            class="group cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase select-none hover:bg-gray-100">
+                        <th
+                            @click="toggleSort('name')"
+                            class="group cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase select-none hover:bg-gray-100"
+                        >
                             <div class="flex items-center gap-1">
                                 Name
-                                <component :is="sortColumn === 'name'
-                                        ? sortDirection === 'asc'
-                                            ? ArrowUp
-                                            : ArrowDown
-                                        : ArrowUpDown
-                                    " class="h-4 w-4" :class="sortColumn === 'name'
+                                <component
+                                    :is="
+                                        sortColumn === 'name'
+                                            ? sortDirection === 'asc'
+                                                ? ArrowUp
+                                                : ArrowDown
+                                            : ArrowUpDown
+                                    "
+                                    class="h-4 w-4"
+                                    :class="
+                                        sortColumn === 'name'
                                             ? 'text-indigo-600'
                                             : 'text-gray-400 opacity-0 group-hover:opacity-100'
-                                        " />
+                                    "
+                                />
                             </div>
                         </th>
-                        <th @click="toggleSort('lastMeasurement')"
-                            class="group cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase select-none hover:bg-gray-100">
+                        <th
+                            @click="toggleSort('lastMeasurement')"
+                            class="group cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase select-none hover:bg-gray-100"
+                        >
                             <div class="flex items-center gap-1">
                                 Letzte Messung
-                                <component :is="sortColumn === 'lastMeasurement'
-                                        ? sortDirection === 'asc'
-                                            ? ArrowUp
-                                            : ArrowDown
-                                        : ArrowUpDown
-                                    " class="h-4 w-4" :class="sortColumn === 'lastMeasurement'
+                                <component
+                                    :is="
+                                        sortColumn === 'lastMeasurement'
+                                            ? sortDirection === 'asc'
+                                                ? ArrowUp
+                                                : ArrowDown
+                                            : ArrowUpDown
+                                    "
+                                    class="h-4 w-4"
+                                    :class="
+                                        sortColumn === 'lastMeasurement'
                                             ? 'text-indigo-600'
                                             : 'text-gray-400 opacity-0 group-hover:opacity-100'
-                                        " />
+                                    "
+                                />
                             </div>
                         </th>
-                        <th @click="toggleSort('nextMeasurement')"
-                            class="group cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase select-none hover:bg-gray-100">
+                        <th
+                            @click="toggleSort('nextMeasurement')"
+                            class="group cursor-pointer px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase select-none hover:bg-gray-100"
+                        >
                             <div class="flex items-center gap-1">
                                 N&auml;chste Messung
-                                <component :is="sortColumn === 'nextMeasurement'
-                                        ? sortDirection === 'asc'
-                                            ? ArrowUp
-                                            : ArrowDown
-                                        : ArrowUpDown
-                                    " class="h-4 w-4" :class="sortColumn === 'nextMeasurement'
+                                <component
+                                    :is="
+                                        sortColumn === 'nextMeasurement'
+                                            ? sortDirection === 'asc'
+                                                ? ArrowUp
+                                                : ArrowDown
+                                            : ArrowUpDown
+                                    "
+                                    class="h-4 w-4"
+                                    :class="
+                                        sortColumn === 'nextMeasurement'
                                             ? 'text-indigo-600'
                                             : 'text-gray-400 opacity-0 group-hover:opacity-100'
-                                        " />
+                                    "
+                                />
                             </div>
                         </th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200">
-                    <Link as="tr" v-for="project in sortedAndFilteredProjects" :key="project.id"
-                        :href="`/projects/${project.id}`" class="cursor-pointer hover:bg-gray-50"
-                        :title="project.isActive ? 'Aktives Projekt' : 'Inaktives Projekt'">
+                    <Link
+                        as="tr"
+                        v-for="project in sortedAndFilteredProjects"
+                        :key="project.id"
+                        :href="`/projects/${project.id}`"
+                        class="cursor-pointer hover:bg-gray-50"
+                        :title="project.isActive ? 'Aktives Projekt' : 'Inaktives Projekt'"
+                    >
                         <td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
                             {{ project.name }}
                         </td>

@@ -12,7 +12,6 @@ import { computed, onMounted, ref, watch } from 'vue';
  * Source: https://inertiajs.com/docs/v2/data-props/shared-data
  */
 
-
 /**
  * Gemini 3 Flash, 2026-02-04
  * "think about whether it might make sense to return only the geom values to the vue file for calculating coordinate differences so that it doesn't have to worry about what srid is used in the background."
@@ -61,7 +60,6 @@ const markersLayer = new L.LayerGroup();
 type DisplacementMode = 'twoD' | 'projection' | 'threeD';
 const displacementMode = ref<DisplacementMode>('twoD');
 
-
 /**
  * Claude Opus 4.6, 2026-02-11
  * "[...] Then, apply the projection changes to the LeafletComponent file, so that the user can select the display mode for the displacements (2D, projection, 3D) and the map updates accordingly."
@@ -91,11 +89,7 @@ const referenceLabel = computed(() => {
 // Use inertia to ensure SPA experience and preserve scroll/state, but still update the URL for shareability and back button support
 watch(selectedComparison, (newComp) => {
     if (newComp) {
-        router.get(
-            window.location.pathname,
-            { comparison: newComp },
-            { preserveScroll: true, preserveState: true }
-        );
+        router.get(window.location.pathname, { comparison: newComp }, { preserveScroll: true, preserveState: true });
     }
 });
 
@@ -160,8 +154,7 @@ function zoomToPoint(pointId: number) {
     const point = props.points.find((p) => p.id === pointId);
     if (point && map.value) {
         const m =
-            point.measurementValues.find((m) => m.measurementId === props.referenceId) ||
-            point.measurementValues[0];
+            point.measurementValues.find((m) => m.measurementId === props.referenceId) || point.measurementValues[0];
         if (m) {
             map.value.setView([m.lat, m.lon], 17);
         }
@@ -355,7 +348,6 @@ onMounted(() => {
         attribution: '&copy; VOGIS CNV',
     });
 
-
     // Layer control: Change base layer and toggle hillshade
     L.control
         .layers({
@@ -364,7 +356,7 @@ onMounted(() => {
             'Schummerung Gelände': schummerung_terrain,
             'Luftbild: Echtfarben Winter Mosaik 2024-25': aerial_2024,
             'Luftbild: 2018': aerial_2018,
-            'Echtfarbenbild_2023_10cm_technisch': aerial_2023,
+            Echtfarbenbild_2023_10cm_technisch: aerial_2023,
         })
         .addTo(leafletMap);
 
@@ -397,8 +389,11 @@ onMounted(() => {
             </div>
             <div>
                 <label class="mb-1 block text-sm font-bold">Vergleichsepoche</label>
-                <select v-model.number="selectedComparison" class="rounded border p-1 disabled:text-gray-400"
-                    :disabled="isGaitLine">
+                <select
+                    v-model.number="selectedComparison"
+                    class="rounded border p-1 disabled:text-gray-400"
+                    :disabled="isGaitLine"
+                >
                     <option v-for="m in props.measurements" :key="m.id" :value="m.id">
                         {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
                     </option>
@@ -406,30 +401,48 @@ onMounted(() => {
             </div>
             <div>
                 <label class="mb-1 block text-sm font-bold">Vektormaßstab M 1&nbsp;:&nbsp;</label>
-                <input v-model.number="vectorScale" type="number" class="w-28 rounded border p-1" min="1"
-                    max="100000" />
+                <input
+                    v-model.number="vectorScale"
+                    type="number"
+                    class="w-28 rounded border p-1"
+                    min="1"
+                    max="100000"
+                />
             </div>
             <div class="me-4 flex items-center">
-                <input type="checkbox" v-model="isGaitLine" id="checkboxIsGaitLine"
-                    class="border-default-medium bg-neutral-secondary-medium h-4 w-4 rounded-xs border" />
-                <label class="text-heading ml-2 block text-sm font-bold select-none"
-                    for="checkboxIsGaitLine">Ganglinie</label>
+                <input
+                    type="checkbox"
+                    v-model="isGaitLine"
+                    id="checkboxIsGaitLine"
+                    class="border-default-medium bg-neutral-secondary-medium h-4 w-4 rounded-xs border"
+                />
+                <label class="text-heading ml-2 block text-sm font-bold select-none" for="checkboxIsGaitLine"
+                    >Ganglinie</label
+                >
             </div>
         </div>
 
         <div class="flex flex-1 overflow-hidden">
             <div ref="mapContainer" class="relative z-0 h-full flex-1"></div>
 
-            <div v-if="!isGaitLine" class="z-10 w-96 shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
-                @vue:mounted="invalidateMap" @vue:unmounted="invalidateMap">
+            <div
+                v-if="!isGaitLine"
+                class="z-10 w-96 shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
+                @vue:mounted="invalidateMap"
+                @vue:unmounted="invalidateMap"
+            >
                 <h2 class="mb-3 text-lg font-bold">Verschiebungen</h2>
                 <div class="mb-3">
                     <label class="mb-1 block text-sm font-bold">Darstellungsart</label>
                     <div class="flex gap-1">
-                        <button v-for="(label, mode) in displacementModeLabels" :key="mode"
+                        <button
+                            v-for="(label, mode) in displacementModeLabels"
+                            :key="mode"
                             @click="displacementMode = mode"
                             class="rounded px-2 py-1 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40"
-                            :class="displacementMode === mode ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'"
+                            :class="
+                                displacementMode === mode ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'
+                            "
                         >
                             {{ label }}
                         </button>
@@ -446,13 +459,21 @@ onMounted(() => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="p in pointDeltas" :key="p.id"
+                        <tr
+                            v-for="p in pointDeltas"
+                            :key="p.id"
                             class="cursor-pointer border-b bg-white odd:bg-gray-50 hover:bg-gray-100"
-                            @click="zoomToPoint(p.id)" :data-point-id="p.id">
+                            @click="zoomToPoint(p.id)"
+                            :data-point-id="p.id"
+                        >
                             <td class="px-3 py-2 font-medium text-gray-900">
                                 {{ p.name }}
-                                <span v-if="displacementMode === 'projection' && !p.hasProjection"
-                                    class="text-xs text-amber-500" title="Keine Projektionsachse">⚠</span>
+                                <span
+                                    v-if="displacementMode === 'projection' && !p.hasProjection"
+                                    class="text-xs text-amber-500"
+                                    title="Keine Projektionsachse"
+                                    >⚠</span
+                                >
                             </td>
                             <td class="px-3 py-2 text-right tabular-nums">{{ p.distance.toFixed(4) }}</td>
                             <td class="px-3 py-2 text-right tabular-nums">

@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Resources\MeasurementResource;
 use App\Http\Resources\PointResource;
 use App\Http\Resources\ProjectResource;
-use App\Models\Project;
 use App\Models\MeasurementValue;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -20,7 +20,6 @@ class ProjectController extends Controller
          * "What comes into ProjectController.php to get all projects with their last measurement date and next measurement date based on period?"
          * "Update the controller of index to correctly and simply return the requested data. no errors should appear when working with timezones +2 or +1. just return the date in the same form as you get it from measurement_datetime without timezone: 2025-06-04 00:00:00"
          */
-
         $projects = Project::query()
             ->withLastAndNextMeasurementDate()
             ->get();
@@ -45,7 +44,7 @@ class ProjectController extends Controller
 
         // Reference measurement returns first measurement if not yet configured
         $referenceId = $project->reference_measurement_id;
-        if (!$referenceId && $project->measurements->count() > 0) {
+        if (! $referenceId && $project->measurements->count() > 0) {
             $referenceId = $project->measurements->first()->id;
         }
 
@@ -56,7 +55,7 @@ class ProjectController extends Controller
          */
         // Comparison epoch from query param, defaults to last measurement
         $comparisonId = $request->query('comparison');
-        
+
         if ($comparisonId && is_numeric($comparisonId)) {
             $comparisonId = (int) $comparisonId;
         } else {
@@ -89,7 +88,7 @@ class ProjectController extends Controller
                 $refVal = $refValues->get($point->id);
                 $compVal = $compValues->get($point->id);
 
-                if (!$refVal || !$compVal) {
+                if (! $refVal || ! $compVal) {
                     // Will not be displayed anyway, we have to skip it
                     continue;
                 }
