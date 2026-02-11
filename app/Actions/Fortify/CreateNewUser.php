@@ -22,20 +22,12 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                'string',
-                'email',
-                'max:255',
-                Rule::unique(User::class),
-            ],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)],
             'password' => $this->passwordRules(),
         ])->validate();
 
-        $role = Role::where('name', 'guest')->first();
-
-        // If 'guest' role is missing, fallback to ID 2 (based on seeder) or handle error
-        $roleId = $role ? $role->id : 2;
+        $guestRole = Role::where('name', 'guest')->first();
+        $roleId = $guestRole ? $guestRole->id : 2;
 
         return User::create([
             'name' => $input['name'],

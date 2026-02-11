@@ -1,11 +1,7 @@
 **Kommentare!**
 
-**KI-Code selber neu schreiben!**
-
 - ProjectTimeline.vue
-    - (maybe) Styling anpassen (auch in Project.vue)
     - Zoomen
-    - Größe und Auflösung verbessern
 - Admin-Bereich:
     - Registrierungen authorisieren
         - Bei Signup wird nur eine Anfrage zum Signup gestellt, zusätzlich zu den aktuellen Infos soll auch ein Textfeld hinzugefügt werden, in dem der User weitere Infos für den Admin angeben kann (z.B. gewünschte Rolle/Schreibrechte)
@@ -21,6 +17,10 @@
     - Nur Mitglieder eines Projektes können auf dieses zugreifen.
     - Nur Benutzer, welche eine Rolle mit den entsprechenden Rechten haben, können gewisse Aktionen durchführen (z.B. Add/Edit)
     - Formular für Add/Edit/Delete von Projekten & Messungen.
+
+**App Config (Name, Beschreibung, Sprache, etc.)!**
+
+**Tailwind-Klassen zusammenfassen anstatt sie überall zu wiederholen**
 
 Upgrades:
 
