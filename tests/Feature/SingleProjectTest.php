@@ -91,3 +91,73 @@ test('returns error 404 if project doesn\'t exist', function () {
 
     $response->assertStatus(404);
 });
+
+test('fallback to earliest and latest measurements for reference and comparison measurements', function () {
+    /** @var \Tests\TestCase $this */
+
+    $project = Project::factory()->createOne();
+
+    // Latest measurement
+    $thirdMeasurement = Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => '2026-03-01 00:00:00',
+    ]);
+
+    // Some reandom measurement in between
+    Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => '2026-02-01 00:00:00',
+    ]);
+
+    // First, oldest and therefore reference measurement
+    $firstMeasurement = Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => '2026-01-01 00:00:00',
+    ]);
+
+    /** @var \App\Models\User $user */
+    $user = User::factory()->createOne();
+    $response = $this->actingAs($user)->get(route('project', $project));
+
+    $response->assertStatus(200)
+        ->assertInertia(
+            fn (Assert $page) => $page
+                ->component('Project')
+                ->where('referenceId', $firstMeasurement->id)
+                ->where('comparisonId', $thirdMeasurement->id)
+        );
+});
+
+test('comparison parameter defaults to latest measurement when invalid', function () {
+    /** @var \Tests\TestCase $this */
+    $project = Project::factory()->createOne();
+
+    // Latest measurement, automatically comparsion if invalid or not provided
+    $thirdMeasurement = Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => '2026-03-01 00:00:00',
+    ]);
+
+    // Some reandom measurement in between
+    Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => '2026-02-01 00:00:00',
+    ]);
+
+    // First, oldest and therefore reference measurement
+    Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => '2026-01-01 00:00:00',
+    ]);
+
+    /** @var \App\Models\User $user */
+    $user = User::factory()->createOne();
+    $response = $this->actingAs($user)->get(route('project', $project) . '?comparison=not-a-number');
+
+    $response->assertStatus(200)
+        ->assertInertia(
+            fn (Assert $page) => $page
+                ->component('Project')
+                ->where('comparisonId', $thirdMeasurement->id)
+        );
+});

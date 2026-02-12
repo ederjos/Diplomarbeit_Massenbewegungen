@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Measurement;
 use App\Models\MeasurementValue;
 use App\Models\Point;
+use App\Models\Project;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 
@@ -90,6 +91,17 @@ class MeasurementValuesTableSeeder extends Seeder
 
         if (count($measurementValues) > 0) {
             MeasurementValue::fillAndInsert($measurementValues);
+        }
+
+        // Set the first measurement (NM) as the reference epoch for the project
+        $firstMeasurement = Measurement::where('project_id', $projectId)
+            ->orderBy('measurement_datetime')
+            ->first();
+
+        if ($firstMeasurement) {
+            Project::where('id', $projectId)->update([
+                'reference_measurement_id' => $firstMeasurement->id,
+            ]);
         }
     }
 }

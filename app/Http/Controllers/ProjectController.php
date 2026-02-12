@@ -56,13 +56,15 @@ class ProjectController extends Controller
         // Comparison epoch from query param, defaults to last measurement
         $comparisonId = $request->query('comparison');
 
-        if ($comparisonId && is_numeric($comparisonId)) {
-            $comparisonId = (int) $comparisonId;
-        } else {
+        if(! $comparisonId || ! is_numeric($comparisonId) || ! $project->measurements->pluck('id')->contains($comparisonId))
+        {
             // if id invalid -> take last measurement as default
             $comparisonId = $project->measurements->count() > 1
                 ? $project->measurements->last()->id
                 : null;
+        }else {
+            // id is valid, just convert it to int
+            $comparisonId = (int) $comparisonId;
         }
 
         // Only include visible points
