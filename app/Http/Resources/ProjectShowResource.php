@@ -21,10 +21,11 @@ class ProjectShowResource extends JsonResource
             'last_file_number' => $this->last_file_number,
             'is_active' => $this->is_active,
             'period' => $this->period,
-            'client' => $this->whenLoaded('client', fn () => $this->client->name),
-            'clerk' => $this->whenLoaded('clerk', fn () => $this->clerk->name),
-            'municipality' => $this->whenLoaded('municipality', fn () => $this->municipality->name),
-            'type' => $this->whenLoaded('type', fn () => $this->type->name),
+            // whenLoaded not needed because of eager loading in controller
+            'client' => $this->client->name,
+            'clerk' => $this->clerk->name,
+            'municipality' => $this->municipality->name,
+            'type' => $this->type->name,
         ];
     }
 }

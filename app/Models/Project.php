@@ -11,10 +11,24 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
-    use HasFactory; // Enough bc Factories keep to naming conventions
+    // Enough bc Factories keep to naming conventions
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'description',
+        'period',
+        'is_active',
+        'municipality_id',
+        'client_id',
+        'type_id',
+        'clerk_id',
+        'reference_measurement_id',
+    ];
 
     protected $casts = [
-        'is_active' => 'boolean', // always boolean (not 0/1)
+        // always boolean (not 0/1)
+        'is_active' => 'boolean',
     ];
 
     public function scopeWithLastAndNextMeasurementDate(Builder $query): void
@@ -39,8 +53,10 @@ class Project extends Model
      */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class) // n:m relationship with User
-            ->withPivot('is_contact_person') // all values stored in pivot table
+        // n:m relationship with User
+        return $this->belongsToMany(User::class)
+            // all values stored in pivot table
+            ->withPivot('is_contact_person')
             ->withTimestamps();
     }
 

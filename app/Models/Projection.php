@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 class Projection extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = ['ax', 'ay'];
 
     public function point()

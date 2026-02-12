@@ -16,8 +16,7 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 ### From Lastenheft (not yet implemented)
 * **Bezugsepoche GUI**: Admin/Editor soll Bezugsepoche pro Projekt setzen können (Settings-Seite)
-* **Epochenauswahl Zeitbereich**: Von/Bis-Datumsfilter für die Darstellung der Messungen
-* **Punktesichtbarkeit**: Einzelne Messpunkte ein-/ausblenden (Checkbox pro Punkt)
+* **Punktesichtbarkeit**: Einzelne Messpunkte ein-/ausblenden (für Admin)
 * **Average yearly movement**: Add average yearly movement to Basics tab on project page
 * **Contact person**: Kontaktpersonen bei einem Projekt anzeigen (Pivot-Tabelle)
 * **Kommentare editierbar**: Admin/Editor sollen Kommentare zu Messepochen ändern können (CRUD-UI)
@@ -25,7 +24,6 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 * **Transformationen pro Punkt**: GUI zum Festlegen ob Addition, Projektion oder beides pro Punkt
 * **CSV-Import im Web-Interface**: Import von Messdaten
 * **Rollenbasierte Berechtigungen**: Viewer hat nur Leserechte, Editor kann hinzufügen/bearbeiten, Adin kann alles (Authorization Policies fehlen)
-* **Projektion-Achse pro Punkt**: GUI zum Einstellen der normierten Achse (ax, ay) pro Punkt
 
 ### Technical Debt
 
@@ -34,6 +32,7 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 * (SRID (nur EPSG) in Formular auswählen (default vbg 31254))
     * Backend: Standard-SRID auf Lat/Lon setzen
 
+* Default für Mess-Intervall auf sinnvollen Wert (aktuell 2 mons 14 days)
 * PHP-Comments on own line
 
 * Ambiguous numbers MUST be clarified

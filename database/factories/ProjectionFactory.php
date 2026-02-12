@@ -26,6 +26,7 @@ class ProjectionFactory extends Factory
 
         $ax /= $length;
         $ay /= $length;
+
         return [
             'ax' => $ax,
             'ay' => $ay,

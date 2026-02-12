@@ -20,9 +20,9 @@ test('measurements on project page are loaded chronologically', function () {
     $point = Point::factory()->createOne(['project_id' => $project->id]);
 
     // Create Values for this point
-    MeasurementValue::factory()->createOne(['point_id' => $point->id, 'measurement_id' => $februaryMeasurement->id]);
-    MeasurementValue::factory()->createOne(['point_id' => $point->id, 'measurement_id' => $januaryMeasurement->id]);
-    MeasurementValue::factory()->createOne(['point_id' => $point->id, 'measurement_id' => $marchMeasurement->id]);
+    MeasurementValue::factory()->createOne(['point_id' => $point->id, 'measurement_id' => $februaryMeasurement->id, 'addition_id' => null]);
+    MeasurementValue::factory()->createOne(['point_id' => $point->id, 'measurement_id' => $januaryMeasurement->id, 'addition_id' => null]);
+    MeasurementValue::factory()->createOne(['point_id' => $point->id, 'measurement_id' => $marchMeasurement->id, 'addition_id' => null]);
 
     // Assert that measurement values were created
     $this->assertDatabaseCount('measurement_values', 3);
@@ -67,6 +67,7 @@ test('project details include valid coordinates converted to lat/lon', function 
         'x' => $inputX,
         'y' => $inputY,
         'z' => $inputZ,
+        'addition_id' => null, // no addition
     ]);
 
     /** @var \App\Models\User $user */
@@ -94,7 +95,6 @@ test('returns error 404 if project doesn\'t exist', function () {
 
 test('fallback to earliest and latest measurements for reference and comparison measurements', function () {
     /** @var \Tests\TestCase $this */
-
     $project = Project::factory()->createOne();
 
     // Latest measurement
@@ -152,7 +152,7 @@ test('comparison parameter defaults to latest measurement when invalid', functio
 
     /** @var \App\Models\User $user */
     $user = User::factory()->createOne();
-    $response = $this->actingAs($user)->get(route('project', $project) . '?comparison=not-a-number');
+    $response = $this->actingAs($user)->get(route('project', $project).'?comparison=not-a-number');
 
     $response->assertStatus(200)
         ->assertInertia(

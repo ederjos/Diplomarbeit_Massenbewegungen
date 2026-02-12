@@ -381,7 +381,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="flex flex-col h-full w-full overflow-hidden">
+    <div class="flex h-full w-full flex-col overflow-hidden">
         <div class="z-10 flex shrink-0 items-center gap-4 bg-white p-4 shadow">
             <div>
                 <label class="mb-1 block text-sm font-bold">Referenzepoche</label>

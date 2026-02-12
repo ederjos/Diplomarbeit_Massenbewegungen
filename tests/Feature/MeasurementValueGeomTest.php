@@ -9,6 +9,7 @@ test('geom is automatically generated when creating measurement value with x y z
         'x' => 100.1,
         'y' => 200.2,
         'z' => 300.3,
+        'addition_id' => null,
     ]);
 
     expect($mv->geom)->not->toBeNull()
@@ -23,6 +24,7 @@ test('geom is automatically updated when updating x y z', function () {
         'x' => 10.1,
         'y' => 20.2,
         'z' => 30.3,
+        'addition_id' => null,
     ]);
 
     // Initial check
@@ -39,7 +41,7 @@ test('geom is automatically updated when updating x y z', function () {
 });
 
 test('geom is refreshed when a linked addition changes its offsets', function () {
-    
+
     /** @var Addition $addition */
     $addition = Addition::factory()->createOne([
         'dx' => 0.0,

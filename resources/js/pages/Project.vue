@@ -53,29 +53,38 @@ const pointColors = computed(() => {
          -->
         <div class="w-full">
             <div class="relative right-0">
-                <ul class="relative flex flex-wrap px-1.5 py-1.5 list-none rounded-md bg-slate-100" data-tabs="tabs"
-                    role="list">
+                <ul
+                    class="relative flex list-none flex-wrap rounded-md bg-slate-100 px-1.5 py-1.5"
+                    data-tabs="tabs"
+                    role="list"
+                >
                     <!-- Moving white background indicator -->
                     <span
-                        class="absolute z-10 h-9 transition-transform duration-300 ease-in-out bg-white rounded-md"
+                        class="absolute z-10 h-9 rounded-md bg-white transition-transform duration-300 ease-in-out"
                         :style="{
                             width: '50%',
-                            transform: activeTab === 'results' ? 'translateX(0)' : 'translateX(100%)'
+                            transform: activeTab === 'results' ? 'translateX(0)' : 'translateX(100%)',
                         }"
                     ></span>
                     <li class="z-30 flex-auto text-center">
-                        <a class="relative z-20 flex items-center justify-center w-full px-0 py-2 text-sm mb-0 border-0 rounded-md cursor-pointer"
-                            :class="activeTab === 'results' ? 'text-slate-700 font-semibold' : 'text-slate-600'"
+                        <a
+                            class="relative z-20 mb-0 flex w-full cursor-pointer items-center justify-center rounded-md border-0 px-0 py-2 text-sm"
+                            :class="activeTab === 'results' ? 'font-semibold text-slate-700' : 'text-slate-600'"
                             data-tab-target=""
-                            role="tab" @click="activeTab = 'results'">
+                            role="tab"
+                            @click="activeTab = 'results'"
+                        >
                             Ergebnisse
                         </a>
                     </li>
                     <li class="z-30 flex-auto text-center">
-                        <a class="relative z-20 flex items-center justify-center w-full px-0 py-2 mb-0 text-sm border-0 rounded-lg cursor-pointer"
-                            :class="activeTab === 'basics' ? 'text-slate-700 font-semibold' : 'text-slate-600'"
-                            data-tab-target="" role="tab"
-                            @click="activeTab = 'basics'">
+                        <a
+                            class="relative z-20 mb-0 flex w-full cursor-pointer items-center justify-center rounded-lg border-0 px-0 py-2 text-sm"
+                            :class="activeTab === 'basics' ? 'font-semibold text-slate-700' : 'text-slate-600'"
+                            data-tab-target=""
+                            role="tab"
+                            @click="activeTab = 'basics'"
+                        >
                             Grundlagen
                         </a>
                     </li>
@@ -92,20 +101,16 @@ const pointColors = computed(() => {
                         :displacements="displacements"
                     />
                     <div class="flex justify-center">
-                        <ProjectTimeline
-                            :points="points"
-                            :point-colors="pointColors"
-                            :measurements="measurements"
-                        />
+                        <ProjectTimeline :points="points" :point-colors="pointColors" :measurements="measurements" />
                     </div>
                 </div>
                 <div id="basics" v-show="activeTab === 'basics'" class="p-4">
-                    <div class="bg-white rounded-lg shadow-md p-6">
-                        <h2 class="text-2xl font-bold mb-4 text-slate-700">Projektdetails</h2>
+                    <div class="rounded-lg bg-white p-6 shadow-md">
+                        <h2 class="mb-4 text-2xl font-bold text-slate-700">Projektdetails</h2>
                         <table class="w-full max-w-2xl">
                             <tbody>
                                 <tr class="border-b border-slate-200">
-                                    <td class="py-3 pr-4 font-semibold text-slate-600 w-48">Auftraggeber</td>
+                                    <td class="w-48 py-3 pr-4 font-semibold text-slate-600">Auftraggeber</td>
                                     <td class="py-3 text-slate-800">{{ project.client || '—' }}</td>
                                 </tr>
                                 <tr class="border-b border-slate-200">
@@ -129,7 +134,7 @@ const pointColors = computed(() => {
                                     <td class="py-3 text-slate-800">{{ project.last_file_number || '—' }}</td>
                                 </tr>
                                 <tr>
-                                    <td class="py-3 pr-4 font-semibold text-slate-600 align-top">Anmerkung</td>
+                                    <td class="py-3 pr-4 align-top font-semibold text-slate-600">Anmerkung</td>
                                     <td class="py-3 text-slate-800">{{ project.comment || '—' }}</td>
                                 </tr>
                             </tbody>

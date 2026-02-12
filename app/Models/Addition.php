@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 class Addition extends Model
 {
     use HasFactory;
-    
+
     protected $fillable = ['dx', 'dy', 'dz'];
 
     protected static function booted()

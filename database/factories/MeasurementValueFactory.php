@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Addition;
 use App\Models\Measurement;
 use App\Models\Point;
 use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
@@ -31,7 +32,7 @@ class MeasurementValueFactory extends Factory
             'geom' => MagellanPoint::make($x, $y, $z, srid: config('spatial.srids.default')),
             'point_id' => Point::factory(),
             'measurement_id' => Measurement::factory(),
-            'addition_id' => null, // Like projection: implement later
+            'addition_id' => Addition::factory(),
         ];
     }
 }
