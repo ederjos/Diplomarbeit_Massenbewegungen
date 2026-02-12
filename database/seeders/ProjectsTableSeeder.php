@@ -16,7 +16,7 @@ class ProjectsTableSeeder extends Seeder
             'id' => 1,
             'name' => 'Mäßtobel',
             'is_active' => true,
-            'comment' => '',
+            'comment' => 'Dies ist das Testprojekt für die Entwicklung.',
             'last_file_number' => 7273,
             'period' => '2 months 14 days',
             'client_id' => 1,

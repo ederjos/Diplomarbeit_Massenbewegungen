@@ -59,6 +59,11 @@ class Project extends Model
         return $this->belongsTo(Municipality::class);
     }
 
+    public function client(): BelongsTo
+    {
+        return $this->belongsTo(Client::class);
+    }
+
     public function type(): BelongsTo
     {
         return $this->belongsTo(Type::class);

@@ -360,6 +360,8 @@ onMounted(() => {
         })
         .addTo(leafletMap);
 
+    L.control.scale().addTo(leafletMap);
+
     // https://api.maptiler.com/tiles/contours-v2/{z}/{x}/{y}.pbf?key=DGwAtMAEBbbrxqSn9k9p
 
     // Initial setup
@@ -379,7 +381,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="flex h-screen w-screen flex-col overflow-hidden">
+    <div class="flex flex-col h-full w-full overflow-hidden">
         <div class="z-10 flex shrink-0 items-center gap-4 bg-white p-4 shadow">
             <div>
                 <label class="mb-1 block text-sm font-bold">Referenzepoche</label>

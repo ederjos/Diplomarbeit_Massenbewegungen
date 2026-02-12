@@ -18,6 +18,8 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 * **Bezugsepoche GUI**: Admin/Editor soll Bezugsepoche pro Projekt setzen können (Settings-Seite)
 * **Epochenauswahl Zeitbereich**: Von/Bis-Datumsfilter für die Darstellung der Messungen
 * **Punktesichtbarkeit**: Einzelne Messpunkte ein-/ausblenden (Checkbox pro Punkt)
+* **Average yearly movement**: Add average yearly movement to Basics tab on project page
+* **Contact person**: Kontaktpersonen bei einem Projekt anzeigen (Pivot-Tabelle)
 * **Kommentare editierbar**: Admin/Editor sollen Kommentare zu Messepochen ändern können (CRUD-UI)
 * **Übersichtsbild pro Messepoche**: Upload/Link eines Orthophotos oder Fotos pro Messepoche
 * **Transformationen pro Punkt**: GUI zum Festlegen ob Addition, Projektion oder beides pro Punkt

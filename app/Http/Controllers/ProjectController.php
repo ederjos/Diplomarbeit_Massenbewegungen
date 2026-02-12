@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\MeasurementResource;
 use App\Http\Resources\PointResource;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\ProjectShowResource;
 use App\Models\MeasurementValue;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -40,6 +41,10 @@ class ProjectController extends Controller
             'points.projection',
             'points.measurementValues' => fn ($q) => $q->withLatLonAndOrderedByDate(),
             'measurements' => fn ($q) => $q->orderBy('measurement_datetime'),
+            'clerk',
+            'client',
+            'municipality',
+            'type',
         ]);
 
         // Reference measurement returns first measurement if not yet configured
@@ -125,7 +130,7 @@ class ProjectController extends Controller
         }
 
         return Inertia::render('Project', [
-            'project' => (new ProjectResource($project))->resolve(),
+            'project' => (new ProjectShowResource($project))->resolve(),
             'points' => PointResource::collection($visiblePoints)->resolve(),
             'measurements' => MeasurementResource::collection($project->measurements)->resolve(),
             'referenceId' => $referenceId,

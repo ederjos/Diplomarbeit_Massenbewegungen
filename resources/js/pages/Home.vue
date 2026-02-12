@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Project } from '@/@types/project';
+import { ProjectOverview } from '@/@types/project';
 import { Head, Link } from '@inertiajs/vue3';
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-vue-next';
 import { computed, ref } from 'vue';
@@ -7,10 +7,10 @@ import AuthenticatedLayout from '../layouts/AuthenticatedLayout.vue';
 
 // Get data directly from inertia without an additional API call
 const props = defineProps<{
-    projects: Project[];
+    projects: ProjectOverview[];
 }>();
 
-const sortColumn = ref<keyof Project | null>(null); // only properties of Project allowed: 'name', 'lastMeasurement', 'nextMeasurement'
+const sortColumn = ref<keyof ProjectOverview | null>(null); // only properties of Project allowed: 'name', 'lastMeasurement', 'nextMeasurement'
 const sortDirection = ref<'asc' | 'desc'>('asc');
 const showOnlyActive = ref(false);
 
@@ -45,7 +45,7 @@ const sortedAndFilteredProjects = computed(() => {
     });
 });
 
-const toggleSort = (column: keyof Project) => {
+const toggleSort = (column: keyof ProjectOverview) => {
     if (sortColumn.value === column) {
         sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
     } else {
