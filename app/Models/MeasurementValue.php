@@ -46,33 +46,27 @@ class MeasurementValue extends Model
         // Listens to saving event (on class-level -> static)
         static::saving(function (MeasurementValue $measurementValue) {
             // Automatically sync geom from x,y,z if geom is missing or x,y,z or addition changed
-            if (isset($measurementValue->x, $measurementValue->y, $measurementValue->z) &&
-                (! $measurementValue->geom || $measurementValue->isDirty(['x', 'y', 'z', 'addition_id']))
-            ) {
-                $geomX = $measurementValue->x;
-                $geomY = $measurementValue->y;
-                $geomZ = $measurementValue->z;
-
-                // Apply addition offset
-                if ($measurementValue->addition_id) {
-                    $addition = $measurementValue->addition;
-
-                    if ($addition) {
-                        $geomX += $addition->dx;
-                        $geomY += $addition->dy;
-                        $geomZ += $addition->dz;
-                    }
-                }
-
-                $measurementValue->geom = MagellanPoint::make(
-                    $geomX,
-                    $geomY,
-                    $geomZ,
-                    null,
-                    config('spatial.srids.default')
-                );
+            if (isset($measurementValue->x, $measurementValue->y, $measurementValue->z) && (! $measurementValue->geom || $measurementValue->isDirty(['x', 'y', 'z', 'addition_id']))) {
+                $addition = $measurementValue->addition_id ? $measurementValue->addition : null;
+                $measurementValue->geom = $measurementValue->computeGeom($measurementValue->x, $measurementValue->y, $measurementValue->z, $addition);
             }
         });
+    }
+
+    public static function computeGeom(?float $x = null, ?float $y = null, ?float $z = null, ?Addition $addition = null): MagellanPoint
+    {
+        $geomX = $x;
+        $geomY = $y;
+        $geomZ = $z;
+
+        // Apply addition offset
+        if ($addition) {
+            $geomX += $addition->dx;
+            $geomY += $addition->dy;
+            $geomZ += $addition->dz;
+        }
+
+        return MagellanPoint::make($geomX, $geomY, $geomZ, srid: config('spatial.srids.default'));
     }
 
     public function point()

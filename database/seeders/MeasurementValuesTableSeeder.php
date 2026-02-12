@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Measurement;
 use App\Models\MeasurementValue;
 use App\Models\Point;
-use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\File;
 
@@ -84,15 +83,13 @@ class MeasurementValuesTableSeeder extends Seeder
                     'x' => $x,
                     'y' => $y,
                     'z' => $z,
-                    // MeasurementValue should automatically do this, but that doesn't work when using insert().
-                    // create() would work, but it doesn't support bulk inserts and would therefore be much slower.
-                    'geom' => MagellanPoint::make($x, $y, $z, srid: config('spatial.srids.default')),
+                    'geom' => MeasurementValue::computeGeom($x, $y, $z),
                 ];
             }
         }
 
         if (count($measurementValues) > 0) {
-            MeasurementValue::insert($measurementValues);
+            MeasurementValue::fillAndInsert($measurementValues);
         }
     }
 }
