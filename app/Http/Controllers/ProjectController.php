@@ -78,8 +78,11 @@ class ProjectController extends Controller
         $displacements = [];
         if ($referenceId && $comparisonId) {
             // Bulk-load geom values for both epochs to avoid N+1 queries
+            // Returns a Collection
             $refValues = MeasurementValue::where('measurement_id', $referenceId)
+                // only values whose point id is in the visible points
                 ->whereIn('point_id', $visiblePoints->pluck('id'))
+                // keyBy ->
                 ->get()->keyBy('point_id');
 
             $compValues = MeasurementValue::where('measurement_id', $comparisonId)
@@ -96,21 +99,24 @@ class ProjectController extends Controller
                 }
 
                 // differences in EPSG:31254 (meters)
+                // Step 1 - "head minus tail"
                 $dX = $compVal->geom->getX() - $refVal->geom->getX();
                 $dY = $compVal->geom->getY() - $refVal->geom->getY();
                 $dZ = $compVal->geom->getZ() - $refVal->geom->getZ();
 
+                // Steps 2a and 2c
                 $distance2d = sqrt($dX ** 2 + $dY ** 2);
                 $distance3d = sqrt($dX ** 2 + $dY ** 2 + $dZ ** 2);
 
-                // Projektion auf normierte Achse (Skalarprodukt)
+                // Step 2b 1
+                // Projection to user-defined axis (dot product)
                 $projectedDistance = null;
                 if ($point->projection) {
                     $projectedDistance = $dX * $point->projection->ax + $dY * $point->projection->ay;
                 }
 
                 $displacements[$point->id] = [
-                    'distance2d' => $distance2d * 100, // m → cm
+                    'distance2d' => $distance2d * 100, // m -> cm
                     'distance3d' => $distance3d * 100,
                     'projectedDistance' => $projectedDistance !== null ? $projectedDistance * 100 : null,
                     'deltaHeight' => $dZ * 100,

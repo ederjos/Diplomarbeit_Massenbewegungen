@@ -14,7 +14,7 @@ class CommentsTableSeeder extends Seeder
     {
         DB::table('comments')->insert([
             'id' => 1,
-            'content' => '',
+            'content' => 'Diese Messung ist die aktuellste Messung.',
             'measurement_id' => 28,
             'user_id' => 1,
             'created_at' => '2025-09-17 15:15:00', // comment datetime
