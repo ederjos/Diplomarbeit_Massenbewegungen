@@ -17,7 +17,7 @@ class AdminController extends Controller
         return Inertia::render('Admin', [
             'registrationRequests' => RegistrationRequest::query()
                 ->orderBy('created_at')
-                ->get(['id', 'name', 'email', 'note', 'created_at']),
+                ->get(['id', 'name', 'email', 'note', 'created_at as createdAt']),
             'roles' => Role::query()
                 ->orderBy('name')
                 ->get(['id', 'name']),

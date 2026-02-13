@@ -9,7 +9,7 @@ const props = defineProps<{
     roles: Role[];
 }>();
 
-const formattedCreatedAt = computed(() => new Date(props.request.created_at).toLocaleString());
+const formattedCreatedAt = computed(() => new Date(props.request.createdAt).toLocaleString());
 
 const selectedRoleId = ref<number | null>(null);
 

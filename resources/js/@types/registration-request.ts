@@ -3,5 +3,5 @@ export interface RegistrationRequest {
     name: string;
     email: string;
     note: string | null;
-    created_at: string;
+    createdAt: string;
 }

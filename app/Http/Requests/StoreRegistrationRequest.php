@@ -2,14 +2,16 @@
 
 namespace App\Http\Requests;
 
+use App\Actions\Fortify\PasswordValidationRules;
 use App\Models\RegistrationRequest;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Password;
 
 class StoreRegistrationRequest extends FormRequest
 {
+    use PasswordValidationRules;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -35,7 +37,7 @@ class StoreRegistrationRequest extends FormRequest
                 Rule::unique(User::class, 'email'),
                 Rule::unique(RegistrationRequest::class, 'email'),
             ],
-            'password' => ['required', 'string', Password::default(), 'confirmed'],
+            'password' => $this->passwordRules(),
             'note' => ['nullable', 'string', 'max:1000'],
         ];
     }
