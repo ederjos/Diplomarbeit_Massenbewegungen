@@ -1,3 +1,5 @@
+import { User } from '@/@types/user';
+
 export interface MeasurementValue {
     measurementId: number;
     height: number;
@@ -18,12 +20,6 @@ export interface PointDisplacement {
     // null if no projection
     projectedDistance: number | null;
     deltaHeight: number;
-}
-
-export interface User {
-    id: number;
-    name: string;
-    role: string;
 }
 
 interface Comment {

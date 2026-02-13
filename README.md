@@ -15,15 +15,14 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 ## TBD/TODO
 
 ### From Lastenheft (not yet implemented)
+
 * **Bezugsepoche GUI**: Admin/Editor soll Bezugsepoche pro Projekt setzen können (Settings-Seite)
 * **Punktesichtbarkeit**: Einzelne Messpunkte ein-/ausblenden (für Admin)
-* **Average yearly movement**: Add average yearly movement to Basics tab on project page
-* **Contact person**: Kontaktpersonen bei einem Projekt anzeigen (Pivot-Tabelle)
 * **Kommentare editierbar**: Admin/Editor sollen Kommentare zu Messepochen ändern können (CRUD-UI)
 * **Übersichtsbild pro Messepoche**: Upload/Link eines Orthophotos oder Fotos pro Messepoche
 * **Transformationen pro Punkt**: GUI zum Festlegen ob Addition, Projektion oder beides pro Punkt
 * **CSV-Import im Web-Interface**: Import von Messdaten
-* **Rollenbasierte Berechtigungen**: Viewer hat nur Leserechte, Editor kann hinzufügen/bearbeiten, Adin kann alles (Authorization Policies fehlen)
+* **Rollenbasierte Berechtigungen**: Viewer hat nur Leserechte, Editor kann hinzufügen/bearbeiten, Admin kann alles (Authorization Policies fehlen)
 
 ### Technical Debt
 
@@ -33,6 +32,13 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
     * Backend: Standard-SRID auf Lat/Lon setzen
 
 * Default für Mess-Intervall auf sinnvollen Wert (aktuell 2 mons 14 days)
+
+* Berichte drucken? (Print-Funktion auf /projects/id)
+
+* Was automatisieren? -> Trendanalyse? Projekte mit großen Änderungen hervorheben!
+
+###  Refactor
+
 * PHP-Comments on own line
 
 * Ambiguous numbers MUST be clarified
@@ -42,10 +48,6 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 * Check for type-hinting
 
 * phpDocumentor
-
-* Berichte drucken? (Print-Funktion auf /projects/id)
-
-* Was automatisieren? -> Trendanalyse? Projekte mit großen Änderungen hervorheben!
 
 * change db password
 
