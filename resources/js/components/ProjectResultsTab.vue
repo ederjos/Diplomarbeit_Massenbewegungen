@@ -4,7 +4,7 @@ import LeafletComponent from './LeafletComponent.vue';
 import ProjectTimeline from './ProjectTimeline.vue';
 import MeasurementComments from './MeasurementCommentsList.vue';
 
-const props = defineProps<{
+defineProps<{
     points: Point[];
     pointColors: Record<number, string>;
     measurements: Measurement[];
