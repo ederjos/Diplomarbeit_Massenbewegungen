@@ -6,8 +6,6 @@ use App\Models\Point;
 use App\Models\Project;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
-use Illuminate\Support\Facades\DB;
-
 
 test('measurements on project page are loaded chronologically', function () {
     /** @var \Tests\TestCase $this */
@@ -166,7 +164,7 @@ test('comparison parameter defaults to latest measurement when invalid', functio
         );
 });
 
-test('project calculates average yearly movement correctly', function(){
+test('project calculates average yearly movement correctly', function () {
     $project = Project::factory()->createOne();
 
     $inputSrid = config('spatial.srids.default');
@@ -180,15 +178,15 @@ test('project calculates average yearly movement correctly', function(){
     // Measurements
     $measurement1 = Measurement::factory()->createOne([
         'project_id' => $project->id,
-        'measurement_datetime' => "2020-01-01 00:00:00",
+        'measurement_datetime' => '2020-01-01 00:00:00',
     ]);
     $measurement2 = Measurement::factory()->createOne([
         'project_id' => $project->id,
-        'measurement_datetime' => "2021-01-01 00:00:00",
+        'measurement_datetime' => '2021-01-01 00:00:00',
     ]);
     $measurement3 = Measurement::factory()->createOne([
         'project_id' => $project->id,
-        'measurement_datetime' => "2025-01-01 00:00:00",
+        'measurement_datetime' => '2025-01-01 00:00:00',
     ]);
 
     // Point 1 moves 1 meter in year 1. (Average is 1)

@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
-import { User } from '@/@types/user';
 import { ProjectDetails } from '@/@types/project';
+import { User } from '@/@types/user';
 import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import ProjectBasicsTab from '../components/ProjectDetailsTab.vue';
+import ProjectDetailsTab from '../components/ProjectDetailsTab.vue';
 import ProjectResultsTab from '../components/ProjectResultsTab.vue';
+import TabSwitcher from '../components/TabSwitcher.vue';
 import AuthenticatedLayout from '../layouts/AuthenticatedLayout.vue';
-import TabsHeader from '../components/TabHeader.vue';
 
 const props = defineProps<{
     project: ProjectDetails;
@@ -56,7 +56,7 @@ const pointColors = computed(() => {
          -->
         <div class="w-full">
             <!-- v-model used for 2-way data-binding -->
-            <TabsHeader v-model:activeTab="activeTab" />
+            <TabSwitcher v-model:activeTab="activeTab" />
             <div>
                 <ProjectResultsTab
                     id="results"
@@ -68,7 +68,7 @@ const pointColors = computed(() => {
                     :comparison-id="comparisonId"
                     :displacements="displacements"
                 />
-                <ProjectBasicsTab
+                <ProjectDetailsTab
                     id="basics"
                     v-show="activeTab == 'basics'"
                     :project="project"

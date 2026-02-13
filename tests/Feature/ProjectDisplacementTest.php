@@ -165,17 +165,13 @@ test('displacement calculations skip points without comparison values', function
     $user = User::factory()->createOne();
     $project->users()->attach($user, ['is_contact_person' => true]);
 
-    /**
-     * Gemini 2.5 Pro, 2026-02-12
-     * "Perform this test now to confirm the missing data."
-     */
-    $this->actingAs($user)
-        ->get(route('project', $project).'?comparison='.$comparisonMeasurement->id)
-        ->assertInertia(fn (Assert $page) => $page
+    $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id);
+
+    $response->assertInertia(fn (Assert $page) => $page
             // only the point with complete data should be included
-            ->has('displacements', 1)
-            ->where("displacements.{$pointWithData->id}.distance2d", fn ($value) => is_numeric($value))
-            ->missing("displacements.{$pointWithoutComparison->id}")
-            ->missing("displacements.{$pointWithoutReference->id}")
-        );
+        ->has('displacements', 1)
+        ->where("displacements.{$pointWithData->id}.distance2d", fn ($value) => is_numeric($value))
+        ->missing("displacements.{$pointWithoutComparison->id}")
+        ->missing("displacements.{$pointWithoutReference->id}")
+    );
 });

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Clickbar\Magellan\Database\PostgisFunctions\ST;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class Point extends Model
@@ -32,7 +32,8 @@ class Point extends Model
         return $this->belongsTo(Projection::class);
     }
 
-    public function yearlyMovementInCm() {
+    public function yearlyMovementInCm()
+    {
         $firstMv = $this->measurementValues()
             ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
             ->orderBy('measurements.measurement_datetime')
@@ -44,13 +45,13 @@ class Point extends Model
             ->orderByDesc('measurements.measurement_datetime')
             ->select('measurement_values.*', 'measurements.measurement_datetime')
             ->first();
-        
-        if (! $firstMv || ! $lastMv || ! $firstMv->geom || ! $lastMv->geom){
+
+        if (! $firstMv || ! $lastMv || ! $firstMv->geom || ! $lastMv->geom) {
             // Must all be set
             return null;
         }
 
-        if ($firstMv->id == $lastMv->id){
+        if ($firstMv->id == $lastMv->id) {
             // Only one measurement value, so we don't consider it
             return null;
         }
@@ -63,7 +64,6 @@ class Point extends Model
          * Gemini 2.5 Pro, 2026-02-13
          * "So, I'd rather have geodetic correctness. Transform the coordinates to lat, lon upon selecting them from the db. [...]"
          */
-
         $distanceResult = DB::query()
             ->select(
                 // Returned as meters in EPSG:31254; in WGS84, it would be in degrees!
