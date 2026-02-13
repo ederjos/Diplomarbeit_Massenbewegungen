@@ -6,6 +6,7 @@ use App\Http\Resources\MeasurementResource;
 use App\Http\Resources\PointResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectShowResource;
+use App\Http\Resources\UserResource;
 use App\Models\MeasurementValue;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -41,6 +42,9 @@ class ProjectController extends Controller
             'points.projection',
             'points.measurementValues' => fn ($q) => $q->withLatLonAndOrderedByDate(),
             'measurements' => fn ($q) => $q->orderBy('measurement_datetime'),
+            'measurements.comments' => fn ($q) => $q->orderBy('created_at'),
+            'measurements.comments.user',
+            'measurements.comments.user.role',
             'clerk',
             'client',
             'municipality',
@@ -129,6 +133,13 @@ class ProjectController extends Controller
             }
         }
 
+        $contactPersons = $project->users()
+            // not all users workking on this project, only contact persons
+            ->wherePivot('is_contact_person', true)
+            ->with('role')
+            ->orderBy('name')
+            ->get();
+
         return Inertia::render('Project', [
             'project' => (new ProjectShowResource($project))->resolve(),
             'points' => PointResource::collection($visiblePoints)->resolve(),
@@ -136,6 +147,7 @@ class ProjectController extends Controller
             'referenceId' => $referenceId,
             'comparisonId' => $comparisonId,
             'displacements' => $displacements,
+            'contactPersons' => UserResource::collection($contactPersons)->resolve(),
         ]);
     }
 }

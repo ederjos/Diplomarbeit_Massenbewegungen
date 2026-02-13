@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
+import { Measurement, Point, PointDisplacement, User } from '@/@types/measurement';
 import { ProjectDetails } from '@/@types/project';
 import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
@@ -14,6 +14,7 @@ const props = defineProps<{
     referenceId: number | null;
     comparisonId: number | null;
     displacements: Record<number, PointDisplacement>;
+    contactPersons: User[];
 }>();
 
 const activeTab = ref('results');
@@ -41,6 +42,11 @@ const pointColors = computed(() => {
         colorMap[p.id] = colors[index % colors.length];
     });
     return colorMap;
+});
+
+const selectedComparisonMeasurement = computed(() => {
+    if (!props.comparisonId) return null;
+    return props.measurements.find((measurement) => measurement.id === props.comparisonId) ?? null;
 });
 </script>
 
@@ -107,6 +113,51 @@ const pointColors = computed(() => {
                     <section class="flex justify-center">
                         <ProjectTimeline :points="points" :point-colors="pointColors" :measurements="measurements" />
                     </section>
+                    <section class="rounded-lg bg-white p-6 shadow-md">
+                        <!--
+                        GPT-5.3-Codex, 2026-02-13
+                        "Taking a look at measurement.ts and then Project.vue, please insert a list of all comments regarding the currently selected comparison measurement showing all data that is loaded, i.e. content, created, updated, author name, author role."
+                        -->
+                        <h2 class="mb-4 text-xl font-bold text-slate-700">Kommentare zur Messepoche {{
+                            selectedComparisonMeasurement?.name }}</h2>
+                        <p v-if="selectedComparisonMeasurement" class="mb-4 text-sm text-slate-600">
+                            {{ selectedComparisonMeasurement.name }}
+                            ({{ new Date(selectedComparisonMeasurement.datetime).toLocaleDateString('de-AT') }})
+                        </p>
+
+                        <p v-if="!selectedComparisonMeasurement" class="text-slate-500">
+                            Keine Vergleichsepoche ausgewählt.
+                        </p>
+
+                        <p v-else-if="selectedComparisonMeasurement.comments.length === 0" class="text-slate-500">
+                            Keine Kommentare für diese Messepoche vorhanden.
+                        </p>
+
+                        <div v-else class="space-y-4">
+                            <article v-for="comment in selectedComparisonMeasurement.comments" :key="comment.id"
+                                class="rounded-md border border-slate-200 bg-slate-50 p-4">
+                                <p class="mb-3 whitespace-pre-wrap text-slate-800">{{ comment.content }}</p>
+                                <div class="grid gap-1 text-sm text-slate-600 md:grid-cols-2">
+                                    <p>
+                                        <span class="font-semibold text-slate-700">Erstellt:</span>
+                                        {{ new Date(comment.created_datetime).toLocaleString('de-AT') }}
+                                    </p>
+                                    <p>
+                                        <span class="font-semibold text-slate-700">Aktualisiert:</span>
+                                        {{ new Date(comment.updated_datetime).toLocaleString('de-AT') }}
+                                    </p>
+                                    <p>
+                                        <span class="font-semibold text-slate-700">Autor:</span>
+                                        {{ comment.user.name }}
+                                    </p>
+                                    <p>
+                                        <span class="font-semibold text-slate-700">Rolle:</span>
+                                        {{ comment.user.role }}
+                                    </p>
+                                </div>
+                            </article>
+                        </div>
+                    </section>
                 </section>
 
                 <section id="basics" v-show="activeTab === 'basics'" class="p-4">
@@ -147,6 +198,17 @@ const pointColors = computed(() => {
                                 <tr>
                                     <td class="py-3 pr-4 align-top font-semibold text-slate-600">Anmerkung</td>
                                     <td class="py-3 text-slate-800">{{ project.comment || '—' }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 pr-4 align-top font-semibold text-slate-600">Kontaktpersonen</td>
+                                    <td class="py-3 text-slate-800">
+                                        <ul v-if="contactPersons.length > 0" class="list-inside list-disc space-y-1">
+                                            <li v-for="user in contactPersons" :key="user.id">
+                                                {{ user.name }} ({{ user.role }})
+                                            </li>
+                                        </ul>
+                                        <span v-else>—</span>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

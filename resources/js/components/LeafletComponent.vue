@@ -433,12 +433,12 @@ onMounted(() => {
             </div>
         </div>
 
-        <div class="flex flex-1 overflow-hidden">
+        <div class="flex h-[80vh] overflow-hidden">
             <div ref="mapContainer" class="relative z-0 h-full flex-1"></div>
 
             <div
                 v-if="!isGaitLine"
-                class="z-10 w-96 shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
+                class="z-10 h-full w-96 shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
                 @vue:mounted="invalidateMap"
                 @vue:unmounted="invalidateMap"
             >

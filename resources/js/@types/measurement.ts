@@ -20,8 +20,23 @@ export interface PointDisplacement {
     deltaHeight: number;
 }
 
+export interface User {
+    id: number;
+    name: string;
+    role: string;
+}
+
+interface Comment {
+    id: number;
+    content: string;
+    created_datetime: string;
+    updated_datetime: string;
+    user: User;
+}
+
 export interface Measurement {
     id: number;
     name: string;
     datetime: string;
+    comments: Comment[];
 }

@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MeasurementResource extends JsonResource
+class CommentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,9 +16,11 @@ class MeasurementResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'datetime' => $this->measurement_datetime,
-            'comments' => CommentResource::collection($this->comments)->resolve(),
+            'content' => $this->content,
+            'created_datetime' => $this->created_at,
+            'updated_datetime' => $this->updated_at,
+            // resolve needed to get rid of the "data" wrapper
+            'user' => (new UserResource($this->user))->resolve(),
         ];
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class MeasurementResource extends JsonResource
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,8 +17,7 @@ class MeasurementResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'datetime' => $this->measurement_datetime,
-            'comments' => CommentResource::collection($this->comments)->resolve(),
+            'role' => $this->role->name,
         ];
     }
 }
