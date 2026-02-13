@@ -95,4 +95,19 @@ class Project extends Model
         // Set by admin
         return $this->belongsTo(Measurement::class, 'reference_measurement_id');
     }
+
+    public function averageYearlyMovement() {
+        $points = $this->points()->with('measurementValues.measurement')->get();
+
+        $valuesSum = 0;
+        $valuesCount = 0;
+        foreach ($points as $point) {
+            $yearlyMovement = $point->yearlyMovementInCm();
+            if ($yearlyMovement !== null) {
+                $valuesSum += $yearlyMovement;
+                $valuesCount++;
+            }
+        }
+        return $valuesCount > 0 ? $valuesSum / $valuesCount : null;
+    }
 }

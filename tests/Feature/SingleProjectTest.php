@@ -6,6 +6,8 @@ use App\Models\Point;
 use App\Models\Project;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
+use Illuminate\Support\Facades\DB;
+
 
 test('measurements on project page are loaded chronologically', function () {
     /** @var \Tests\TestCase $this */
@@ -57,7 +59,8 @@ test('project details include valid coordinates converted to lat/lon', function 
     // Converted with https://epsg.io/transform
     $inputX = -28194.450;
     $inputY = 206903.603;
-    $inputZ = 1774.640; // Height
+    // Height
+    $inputZ = 1774.640;
     $expectedLon = 9.962327;
     $expectedLat = 47.00052;
 
@@ -67,7 +70,8 @@ test('project details include valid coordinates converted to lat/lon', function 
         'x' => $inputX,
         'y' => $inputY,
         'z' => $inputZ,
-        'addition_id' => null, // no addition
+        // no addition
+        'addition_id' => null,
     ]);
 
     /** @var \App\Models\User $user */
@@ -160,4 +164,133 @@ test('comparison parameter defaults to latest measurement when invalid', functio
                 ->component('Project')
                 ->where('comparisonId', $thirdMeasurement->id)
         );
+});
+
+test('project calculates average yearly movement correctly', function(){
+    $project = Project::factory()->createOne();
+
+    $inputSrid = config('spatial.srids.default');
+
+    $point1 = Point::factory()->createOne(['project_id' => $project->id]);
+    $point2 = Point::factory()->createOne(['project_id' => $project->id]);
+    $point3 = Point::factory()->createOne(['project_id' => $project->id]);
+    $point4 = Point::factory()->createOne(['project_id' => $project->id]);
+    $point5 = Point::factory()->createOne(['project_id' => $project->id]);
+
+    // Measurements
+    $measurement1 = Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => "2020-01-01 00:00:00",
+    ]);
+    $measurement2 = Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => "2021-01-01 00:00:00",
+    ]);
+    $measurement3 = Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => "2025-01-01 00:00:00",
+    ]);
+
+    // Point 1 moves 1 meter in year 1. (Average is 1)
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point1->id,
+        'measurement_id' => $measurement1->id,
+        'x' => 100,
+        'y' => 100,
+        'z' => 100,
+        'addition_id' => null,
+    ]);
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point1->id,
+        'measurement_id' => $measurement2->id,
+        'x' => 100,
+        'y' => 100,
+        'z' => 101,
+        'addition_id' => null,
+    ]);
+
+    // Point 2 moves 2 meters in year 1, then back by year 5. (Average is 0)
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point2->id,
+        'measurement_id' => $measurement1->id,
+        'x' => 200,
+        'y' => 200,
+        'z' => 100,
+        'addition_id' => null,
+    ]);
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point2->id,
+        'measurement_id' => $measurement2->id,
+        'x' => 202,
+        'y' => 200,
+        'z' => 100,
+        'addition_id' => null,
+    ]);
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point2->id,
+        'measurement_id' => $measurement3->id,
+        'x' => 200,
+        'y' => 200,
+        'z' => 100,
+        'addition_id' => null,
+    ]);
+    // Point 3 moves 10 meters in year 1, then another 5 meters by year 5. (Average is 3)
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point3->id,
+        'measurement_id' => $measurement1->id,
+        'x' => 300,
+        'y' => 1000,
+        'z' => 1000,
+        'addition_id' => null,
+    ]);
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point3->id,
+        'measurement_id' => $measurement2->id,
+        'x' => 300,
+        'y' => 1010,
+        'z' => 1000,
+        'addition_id' => null,
+    ]);
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point3->id,
+        'measurement_id' => $measurement3->id,
+        'x' => 300,
+        'y' => 1015,
+        'z' => 1000,
+        'addition_id' => null,
+    ]);
+    // Point 4 doesn't move at all. (Average is 0)
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point4->id,
+        'measurement_id' => $measurement1->id,
+        'x' => 300,
+        'y' => 15,
+        'z' => 1000,
+        'addition_id' => null,
+    ]);
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point4->id,
+        'measurement_id' => $measurement3->id,
+        'x' => 300,
+        'y' => 15,
+        'z' => 1000,
+        'addition_id' => null,
+    ]);
+    // Point 5 only is measured after year 1. (ignore, Average is 0)
+    MeasurementValue::factory()->createOne([
+        'point_id' => $point5->id,
+        'measurement_id' => $measurement2->id,
+        'x' => 111,
+        'y' => 111,
+        'z' => 111,
+        'addition_id' => null,
+    ]);
+
+    // Calculate average movement
+    $averageMovementInCm = $project->averageYearlyMovement();
+
+    // The overall average is 1m per year.
+    // The method returns cm/year, so we expect 100.
+    $this->assertNotNull($averageMovementInCm);
+    $this->assertEqualsWithDelta(100.0, $averageMovementInCm, 0.1);
 });

@@ -133,6 +133,10 @@ const pointColors = computed(() => {
                                     <td class="py-3 pr-4 font-semibold text-slate-600">Letzte Geschäftszahl</td>
                                     <td class="py-3 text-slate-800">{{ project.last_file_number || '—' }}</td>
                                 </tr>
+                                <tr class="border-b border-slate-200">
+                                    <td class="py-3 pr-4 font-semibold text-slate-600">Durchschnittl. Bewegung</td>
+                                    <td class="py-3 text-slate-800">{{ project.averageYearlyMovement.toFixed(4) || '—' }} cm/Jahr</td>
+                                </tr>
                                 <tr>
                                     <td class="py-3 pr-4 align-top font-semibold text-slate-600">Anmerkung</td>
                                     <td class="py-3 text-slate-800">{{ project.comment || '—' }}</td>

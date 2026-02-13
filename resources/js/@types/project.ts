@@ -20,4 +20,5 @@ export interface ProjectDetails extends ProjectBase {
     clerk: string;
     municipality: string;
     type: string;
+    averageYearlyMovement: number;
 }
