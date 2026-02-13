@@ -35,7 +35,8 @@ class MeasurementValuesTableSeeder extends Seeder
             return strnatcasecmp($aName, $bName);
         });
 
-        $projectId = 1; // should already exist
+        // should already exist
+        $projectId = 1;
         $points = Point::where('project_id', $projectId)->pluck('id', 'name')->toArray();
         $measurementValues = [];
 

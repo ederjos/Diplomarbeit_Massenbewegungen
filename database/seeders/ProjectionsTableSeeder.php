@@ -23,7 +23,7 @@ class ProjectionsTableSeeder extends Seeder
         DB::table('points')->where('id', 5)->update(['projection_id' => 1]);
 
         if (DB::getDriverName() === 'pgsql') {
-            DB::statement("SELECT setval('projections_id_seq', (SELECT MAX(id) FROM projections));");
+            DB::statement('SELECT setval(\'projections_id_seq\', (SELECT MAX(id) FROM projections));');
         }
     }
 }

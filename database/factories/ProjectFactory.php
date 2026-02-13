@@ -25,7 +25,7 @@ class ProjectFactory extends Factory
             'is_active' => fake()->boolean(),
             'comment' => fake()->sentence(),
             'last_file_number' => fake()->randomNumber(4),
-            // 'period' => '2 months', // -> postgre intervals are not supported by faker
+            // -> postgre intervals are not supported by faker, just use default
             'client_id' => Client::factory(),
             'clerk_id' => Clerk::factory(),
             'type_id' => Type::factory(),

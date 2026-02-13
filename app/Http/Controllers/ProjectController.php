@@ -120,7 +120,8 @@ class ProjectController extends Controller
                 }
 
                 $displacements[$point->id] = [
-                    'distance2d' => $distance2d * 100, // m -> cm
+                    // m -> cm
+                    'distance2d' => $distance2d * 100,
                     'distance3d' => $distance3d * 100,
                     'projectedDistance' => $projectedDistance !== null ? $projectedDistance * 100 : null,
                     'deltaHeight' => $dZ * 100,

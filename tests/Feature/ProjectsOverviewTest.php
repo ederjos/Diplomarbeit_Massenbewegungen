@@ -20,7 +20,8 @@ test('projects in home calculate next measurement correctly', function () {
 
     // Create a fake project
     $project = Project::factory()->createOne([
-        'period' => '1 year', // PostgreSQL Interval
+        // PostgreSQL Interval
+        'period' => '1 year',
         'is_active' => true,
     ]);
 
@@ -32,16 +33,18 @@ test('projects in home calculate next measurement correctly', function () {
 
     /** @var \App\Models\User $user */
     $user = User::factory()->createOne();
-    $response = $this->actingAs($user)->get(route('home')); // the names from web.php
+    // the names from web.php
+    $response = $this->actingAs($user)->get(route('home'));
 
     // Check the next measurement is calculated correctly (1 year later)
     $response->assertStatus(200)
         ->assertInertia(
-            fn (Assert $page) => $page // Same syntax as in docs
+            fn (Assert $page) => $page
                 ->component('Home')
                 ->has('projects', 1)
                 ->where('projects.0.isActive', true)
-                ->where('projects.0.nextMeasurement', '2001-01-01 10:00:00') // 2000 + 1 year
+                // 2000 + 1 year
+                ->where('projects.0.nextMeasurement', '2001-01-01 10:00:00')
         );
 });
 
@@ -63,7 +66,8 @@ test('inactive projects don\'t show next measurement', function () {
 
     $response->assertStatus(200)
         ->assertInertia(
-            fn (Assert $page) => $page // Same syntax as in docs
+            // Same syntax as in docs
+            fn (Assert $page) => $page
                 ->component('Home')
                 ->has('projects', 1)
                 ->where('projects.0.isActive', false)

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('municipalities', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->timestamps(); // For created_at, updated_at
+            // For created_at, updated_at
+            $table->timestamps();
         });
     }
 

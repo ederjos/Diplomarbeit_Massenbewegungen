@@ -24,7 +24,7 @@ class UsersTableSeeder extends Seeder
         ]);
 
         if (DB::getDriverName() === 'pgsql') {
-            DB::statement("SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));");
+            DB::statement('SELECT setval(\'users_id_seq\', (SELECT MAX(id) FROM users));');
         }
     }
 }

@@ -28,7 +28,7 @@ class ProjectsTableSeeder extends Seeder
         ]);
 
         if (DB::getDriverName() === 'pgsql') {
-            DB::statement("SELECT setval('projects_id_seq', (SELECT MAX(id) FROM projects));");
+            DB::statement('SELECT setval(\'projects_id_seq\', (SELECT MAX(id) FROM projects));');
         }
     }
 }

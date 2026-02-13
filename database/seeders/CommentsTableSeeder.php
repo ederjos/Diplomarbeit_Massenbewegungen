@@ -17,12 +17,13 @@ class CommentsTableSeeder extends Seeder
             'content' => 'Diese Messung ist die aktuellste Messung.',
             'measurement_id' => 28,
             'user_id' => 1,
-            'created_at' => '2025-09-17 15:15:00', // comment datetime
+            // comment datetime
+            'created_at' => '2025-09-17 15:15:00',
             'updated_at' => now(),
         ]);
 
         if (DB::getDriverName() === 'pgsql') {
-            DB::statement("SELECT setval('comments_id_seq', (SELECT MAX(id) FROM comments));");
+            DB::statement('SELECT setval(\'comments_id_seq\', (SELECT MAX(id) FROM comments));');
         }
     }
 }

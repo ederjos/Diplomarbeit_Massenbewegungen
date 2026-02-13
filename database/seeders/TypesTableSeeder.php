@@ -20,7 +20,7 @@ class TypesTableSeeder extends Seeder
         ]);
 
         if (DB::getDriverName() === 'pgsql') {
-            DB::statement("SELECT setval('types_id_seq', (SELECT MAX(id) FROM types));");
+            DB::statement('SELECT setval(\'types_id_seq\', (SELECT MAX(id) FROM types));');
         }
     }
 }

@@ -12,10 +12,12 @@ export interface Point {
 }
 
 export interface PointDisplacement {
-    distance2d: number; // cm
-    distance3d: number; // cm
-    projectedDistance: number | null; // cm, null if no projection
-    deltaHeight: number; // cm
+    // all values in cm
+    distance2d: number;
+    distance3d: number;
+    // null if no projection
+    projectedDistance: number | null;
+    deltaHeight: number;
 }
 
 export interface Measurement {

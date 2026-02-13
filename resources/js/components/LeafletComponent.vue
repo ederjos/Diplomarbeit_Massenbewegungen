@@ -19,7 +19,8 @@ import { computed, onMounted, ref, watch } from 'vue';
 
 const props = defineProps<{
     points: Point[];
-    pointColors: Record<number, string>; // like hash map
+    // like hash map
+    pointColors: Record<number, string>;
     measurements: Measurement[];
     /** Fixed reference measurement ID (Bezugsepoche, set per project by Admin/Editor) */
     referenceId: number | null;
@@ -51,7 +52,8 @@ const props = defineProps<{
 
 const mapContainer = ref<HTMLDivElement | null>(null);
 const map = ref<L.Map | null>(null);
-const selectedComparison = ref<number | null>(props.comparisonId); // former selectedMeasurement
+// former selectedMeasurement
+const selectedComparison = ref<number | null>(props.comparisonId);
 const vectorScale = ref<number>(100);
 const isGaitLine = ref<boolean>(false);
 const markersLayer = new L.LayerGroup();
@@ -165,8 +167,10 @@ function zoomToPoint(pointId: number) {
 
             // Apply temporary styles for the highlight effect
             row.style.transition = 'transform 0.2s, background-color 1s';
-            row.style.transform = 'scale(1.02)'; // zoom out a bit
-            row.style.backgroundColor = '#fef08a'; // yellow-200
+            // zoom out a bit
+            row.style.transform = 'scale(1.02)';
+            // yellow-200
+            row.style.backgroundColor = '#fef08a';
 
             // Remove styles 1s after animation
             setTimeout(() => {
@@ -204,8 +208,10 @@ function drawMap() {
                 // vectors
                 const p1 = L.latLng(refM.lat, refM.lon);
                 const p2 = L.latLng(compM.lat, compM.lon);
-                const dLon = p2.lng - p1.lng; // Note: Leaflet's latLng uses (lat, lng) but dx is in x direction (longitude)
-                const dLat = p2.lat - p1.lat; // and dy is in y direction (latitude)
+                // Note: Leaflet's latLng uses (lat, lng) but dx is in x direction (longitude)
+                const dLon = p2.lng - p1.lng;
+                // and dy is in y direction (latitude)
+                const dLat = p2.lat - p1.lat;
 
                 const dLonScaled = dLon * scale;
                 const dLatScaled = dLat * scale;
@@ -268,7 +274,8 @@ function drawMap() {
         // Text label next to the "arrowhead"
         const textMarker = L.marker(latlngs[latlngs.length - 1], {
             icon: L.divIcon({
-                className: 'text-labels text-black text-xs font-bold', // Set class for CSS styling
+                // Set class for CSS styling
+                className: 'text-labels text-black text-xs font-bold',
                 html: `<span style="text-shadow: 1px 1px 0px white, -1px 1px 0px white, 1px -1px 0px white, -1px -1px 0px white;font-size:110%;">${point.name}</span>`,
                 iconSize: [0, 0],
                 iconAnchor: [10, -10],
@@ -292,9 +299,11 @@ onMounted(() => {
 
     const mainMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 23,
-        minZoom: 4, // default tile size (256)
+        // default tile size (256)
+        minZoom: 4,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(leafletMap); // show only this initially
+        // show only this initially
+    }).addTo(leafletMap);
 
     // WMS Layers by VOGIS
     const schummerung_surface = L.tileLayer.wms(

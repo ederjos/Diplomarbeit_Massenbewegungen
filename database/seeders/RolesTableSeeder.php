@@ -31,7 +31,7 @@ class RolesTableSeeder extends Seeder
         ]);
 
         if (DB::getDriverName() === 'pgsql') {
-            DB::statement("SELECT setval('roles_id_seq', (SELECT MAX(id) FROM roles));");
+            DB::statement('SELECT setval(\'roles_id_seq\', (SELECT MAX(id) FROM roles));');
         }
     }
 }

@@ -21,7 +21,7 @@ class MunicipalitiesTableSeeder extends Seeder
         ]);
 
         if (DB::getDriverName() === 'pgsql') {
-            DB::statement("SELECT setval('municipalities_id_seq', (SELECT MAX(id) FROM municipalities));");
+            DB::statement('SELECT setval(\'municipalities_id_seq\', (SELECT MAX(id) FROM municipalities));');
         }
     }
 }

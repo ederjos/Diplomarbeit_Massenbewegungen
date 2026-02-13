@@ -16,7 +16,8 @@ return new class extends Migration
             $table->id();
             $table->text('content');
             $table->foreignId('measurement_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // when user gets deleted, comment gets deleted as well
+            // when user gets deleted, comment gets deleted as well
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

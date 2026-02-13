@@ -10,7 +10,9 @@ return [
     |
     */
     'srids' => [
-        'default' => 31254, // MGI / Austria GK West
-        'wgs84' => 4326,    // WGS 84
+        // MGI / Austria GK West
+        'default' => 31254,
+        // WGS 84
+        'wgs84' => 4326,
     ],
 ];

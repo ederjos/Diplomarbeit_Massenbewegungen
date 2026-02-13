@@ -10,7 +10,8 @@ const props = defineProps<{
     projects: ProjectOverview[];
 }>();
 
-const sortColumn = ref<keyof ProjectOverview | null>(null); // only properties of Project allowed: 'name', 'lastMeasurement', 'nextMeasurement'
+// only properties of Project allowed
+const sortColumn = ref<keyof ProjectOverview | null>(null);
 const sortDirection = ref<'asc' | 'desc'>('asc');
 const showOnlyActive = ref(false);
 

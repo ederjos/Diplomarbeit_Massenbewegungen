@@ -41,7 +41,8 @@ test('project page exposes displacement values for the selected comparison epoch
     ]);
 
     $referenceCoords = [100.0, 200.0, 300.0];
-    $comparisonCoords = [103.0, 204.0, 312.0]; // dX=3, dY=4, dZ=12
+    // dX=3, dY=4, dZ=12
+    $comparisonCoords = [103.0, 204.0, 312.0];
     $lastCoords = [110.0, 200.0, 290.0];
 
     // First measurement
@@ -84,9 +85,11 @@ test('project page exposes displacement values for the selected comparison epoch
     $expectedDy = $comparisonCoords[1] - $referenceCoords[1];
     $expectedDz = $comparisonCoords[2] - $referenceCoords[2];
 
-    $expected2d = sqrt($expectedDx ** 2 + $expectedDy ** 2) * 100; // meters -> centimeters
+    // meters -> centimeters
+    $expected2d = sqrt($expectedDx ** 2 + $expectedDy ** 2) * 100;
     $expected3d = sqrt($expectedDx ** 2 + $expectedDy ** 2 + $expectedDz ** 2) * 100;
-    $expectedProjection = $expectedDx * 100; // axis is (1,0)
+    // axis is (1,0)
+    $expectedProjection = $expectedDx * 100;
     $expectedDeltaHeight = $expectedDz * 100;
 
     /** @var User $user */
@@ -169,6 +172,7 @@ test('displacement calculations skip points without comparison values', function
     $this->actingAs($user)
         ->get(route('project', $project).'?comparison='.$comparisonMeasurement->id)
         ->assertInertia(fn (Assert $page) => $page
+            // only the point with complete data should be included
             ->has('displacements', 1)
             ->where("displacements.{$pointWithData->id}.distance2d", fn ($value) => is_numeric($value))
             ->missing("displacements.{$pointWithoutComparison->id}")

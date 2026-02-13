@@ -20,7 +20,7 @@ class ClientsTableSeeder extends Seeder
         ]);
 
         if (DB::getDriverName() === 'pgsql') {
-            DB::statement("SELECT setval('clients_id_seq', (SELECT MAX(id) FROM clients));");
+            DB::statement('SELECT setval(\'clients_id_seq\', (SELECT MAX(id) FROM clients));');
         }
     }
 }

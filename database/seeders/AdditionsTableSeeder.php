@@ -15,7 +15,7 @@ class AdditionsTableSeeder extends Seeder
         // For now, no additions
 
         if (DB::getDriverName() === 'pgsql') {
-            DB::statement("SELECT setval('additions_id_seq', (SELECT MAX(id) FROM additions));");
+            DB::statement('SELECT setval(\'additions_id_seq\', (SELECT MAX(id) FROM additions));');
         }
     }
 }

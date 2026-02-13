@@ -17,8 +17,10 @@ class DatabaseSeeder extends Seeder
          */
 
         // Tells laravel to execute another seeder class
-        $this->call([ // Order matters!
-            MunicipalitiesTableSeeder::class, // Returns class name as string (including its location)
+        $this->call([
+            // Order matters!
+            // Returns class name as string (including its location)
+            MunicipalitiesTableSeeder::class,
             ClientsTableSeeder::class,
             TypesTableSeeder::class,
             ClerksTableSeeder::class,
