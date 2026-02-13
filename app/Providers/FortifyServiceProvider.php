@@ -2,14 +2,12 @@
 
 namespace App\Providers;
 
-use App\Actions\Fortify\CreateNewUser;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 
 class FortifyServiceProvider extends ServiceProvider
@@ -27,7 +25,8 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Fortify::createUsersUsing(CreateNewUser::class);
+        // Fortify's built-in registration is no longer used
+        // Fortify::createUsersUsing(CreateNewUser::class);
 
         $this->configureViews();
         $this->configureRateLimiting();
@@ -39,11 +38,11 @@ class FortifyServiceProvider extends ServiceProvider
     private function configureViews(): void
     {
         Fortify::loginView(fn (Request $request) => Inertia::render('auth/Login', [
-            'canResetPassword' => Features::enabled(Features::resetPasswords()),
             'status' => $request->session()->get('status'),
         ]));
 
-        Fortify::registerView(fn () => Inertia::render('auth/Register'));
+        // Fortify's built-in registration is no longer used
+        // Fortify::registerView(fn () => Inertia::render('auth/Register'));
     }
 
     /**
@@ -54,7 +53,7 @@ class FortifyServiceProvider extends ServiceProvider
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 
-            return Limit::perMinute(5)->by($throttleKey);
+            return Limit::perMinute(6)->by($throttleKey);
         });
     }
 }

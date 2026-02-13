@@ -143,7 +143,8 @@ return [
     */
 
     'features' => [
-        Features::registration(),
+        // Fortify's built-in registration is no longer used
+        // Features::registration(),
     ],
 
 ];

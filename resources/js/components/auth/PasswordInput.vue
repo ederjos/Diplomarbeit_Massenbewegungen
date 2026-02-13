@@ -19,7 +19,7 @@ const onInput = (e: Event) => {
     <div class="relative">
         <input v-bind="$attrs" :type="hidden ? 'password' : 'text'" @input="onInput" />
 
-        <button type="button" :class="buttonClass" @click="hidden = !hidden">
+        <button type="button" :class="buttonClass" @click="hidden = !hidden" tabindex="-1">
             <!-- Modified from "https://preline.co/docs/toggle-password.html" -->
             <svg
                 xmlns="http://www.w3.org/2000/svg"

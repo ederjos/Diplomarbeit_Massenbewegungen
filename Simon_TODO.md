@@ -3,9 +3,6 @@
 - ProjectTimeline.vue
     - Zoomen
 - Admin-Bereich:
-    - Registrierungen authorisieren
-        - Bei Signup wird nur eine Anfrage zum Signup gestellt, zusätzlich zu den aktuellen Infos soll auch ein Textfeld hinzugefügt werden, in dem der User weitere Infos für den Admin angeben kann (z.B. gewünschte Rolle/Schreibrechte)
-        - Admin muss die Registrierung überprüfen & eine Rolle zuweisen (Erstellen einer neuen Rolle soll hier nicht möglich sein, das muss auf der dafür gedachten Seite erledigt werden)
     - **Nachdem das Rechte-System überarbeitet wurde:**\
       Benutzer & Rollen verwalten
         - Tabellen für Benutzer & Rollen

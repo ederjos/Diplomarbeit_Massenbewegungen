@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import type { User } from '@/@types/user';
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 
 const page = usePage();
-// TODO: @types/user.ts
-const user = computed(() => (page.props.auth as { user: any }).user);
+const user = computed(() => (page.props.auth as { user: User | null }).user);
 
 const isHome = computed(() => page.url === '/');
 const isAdmin = computed(() => user.value?.role?.name === 'admin');
@@ -29,7 +29,7 @@ const isAdmin = computed(() => user.value?.role?.name === 'admin');
                     Admin
                 </Link>
                 <Link href="/logout" method="post" class="cursor-pointer font-medium text-red-600 hover:text-red-900">
-                    Logout
+                    Ausloggen
                 </Link>
             </div>
         </div>

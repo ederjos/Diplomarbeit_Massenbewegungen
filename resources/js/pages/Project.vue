@@ -90,21 +90,26 @@ const pointColors = computed(() => {
                     </li>
                 </ul>
             </div>
+
             <div>
-                <div id="results" v-show="activeTab === 'results'" class="grid grid-cols-1 gap-4 p-4">
-                    <LeafletComponent
-                        :points="points"
-                        :point-colors="pointColors"
-                        :measurements="measurements"
-                        :reference-id="referenceId"
-                        :comparison-id="comparisonId"
-                        :displacements="displacements"
-                    />
-                    <div class="flex justify-center">
+                <section id="results" v-show="activeTab === 'results'" class="grid grid-cols-1 gap-4 p-4">
+                    <section>
+                        <LeafletComponent
+                            :points="points"
+                            :point-colors="pointColors"
+                            :measurements="measurements"
+                            :reference-id="referenceId"
+                            :comparison-id="comparisonId"
+                            :displacements="displacements"
+                        />
+                    </section>
+
+                    <section class="flex justify-center">
                         <ProjectTimeline :points="points" :point-colors="pointColors" :measurements="measurements" />
-                    </div>
-                </div>
-                <div id="basics" v-show="activeTab === 'basics'" class="p-4">
+                    </section>
+                </section>
+
+                <section id="basics" v-show="activeTab === 'basics'" class="p-4">
                     <div class="rounded-lg bg-white p-6 shadow-md">
                         <h2 class="mb-4 text-2xl font-bold text-slate-700">Projektdetails</h2>
                         <table class="w-full max-w-2xl">
@@ -135,7 +140,9 @@ const pointColors = computed(() => {
                                 </tr>
                                 <tr class="border-b border-slate-200">
                                     <td class="py-3 pr-4 font-semibold text-slate-600">Durchschnittl. Bewegung</td>
-                                    <td class="py-3 text-slate-800">{{ project.averageYearlyMovement.toFixed(4) || '—' }} cm/Jahr</td>
+                                    <td class="py-3 text-slate-800">
+                                        {{ project.averageYearlyMovement.toFixed(4) || '—' }} cm/Jahr
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="py-3 pr-4 align-top font-semibold text-slate-600">Anmerkung</td>
@@ -144,7 +151,7 @@ const pointColors = computed(() => {
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </section>
             </div>
         </div>
     </AuthenticatedLayout>
