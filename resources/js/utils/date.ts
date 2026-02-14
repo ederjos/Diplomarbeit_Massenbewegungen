@@ -1,4 +1,8 @@
-export function formatDate(value?: string | number | Date | null, locale: string = 'de-AT'): string {
+export function formatDate(
+    value?: string | number | Date | null,
+    dateOnly: boolean = true,
+    locale: string = 'de-AT',
+): string {
     if (value === null || value === undefined || value === '') {
         return '-';
     }
@@ -10,5 +14,5 @@ export function formatDate(value?: string | number | Date | null, locale: string
         return '-';
     }
 
-    return date.toLocaleDateString(locale);
+    return dateOnly ? date.toLocaleDateString(locale) : date.toLocaleString(locale);
 }

@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import type { RegistrationRequest } from '@/@types/registration-request';
 import type { Role } from '@/@types/user';
+import { formatDate } from '@/utils/date';
 import { useForm } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 
 const props = defineProps<{
     request: RegistrationRequest;
     roles: Role[];
 }>();
-
-const formattedCreatedAt = computed(() => new Date(props.request.createdAt).toLocaleString());
 
 const selectedRoleId = ref<number | null>(null);
 
@@ -45,7 +44,7 @@ const reject = () => {
             <div class="space-y-1">
                 <p class="text-lg font-semibold text-gray-900">{{ request.name }}</p>
                 <p class="text-sm text-gray-600">{{ request.email }}</p>
-                <p class="text-xs text-gray-400">Angefragt am {{ formattedCreatedAt }}</p>
+                <p class="text-xs text-gray-400">Angefragt am {{ formatDate(props.request.createdAt, false) }}</p>
                 <div v-if="request.note" class="mt-2 rounded bg-gray-50 p-3 text-sm text-gray-700">
                     <span class="font-medium">Anmerkung:</span> {{ request.note }}
                 </div>
