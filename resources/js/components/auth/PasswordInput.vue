@@ -3,21 +3,19 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+// workaround to allow the v-model to be "forwarded" to the input element
+const model = defineModel<string>();
+
 defineProps<{
     buttonClass: string;
 }>();
 
-const emit = defineEmits(['update:modelValue']);
 const hidden = ref(true);
-
-const onInput = (e: Event) => {
-    emit('update:modelValue', (e.target as HTMLInputElement).value);
-};
 </script>
 
 <template>
     <div class="relative">
-        <input v-bind="$attrs" :type="hidden ? 'password' : 'text'" @input="onInput" />
+        <input v-model="model" v-bind="$attrs" :type="hidden ? 'password' : 'text'" />
 
         <button type="button" :class="buttonClass" @click="hidden = !hidden" tabindex="-1">
             <!-- Modified from "https://preline.co/docs/toggle-password.html" -->
