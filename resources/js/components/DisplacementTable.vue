@@ -138,7 +138,8 @@ const pointDeltas = computed(() => {
         transform: none;
         background-color: transparent; /* yellow-200 */
     }
-    50%, 60% {
+    50%,
+    60% {
         transform: scale(1.02);
         background-color: rgba(254, 240, 138, 1);
     }

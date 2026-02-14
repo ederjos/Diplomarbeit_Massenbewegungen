@@ -39,6 +39,23 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 ###  Refactor
 
+* Consider wrapping the LeafletComponent or ProjectTimeline (Chart.js) in an error boundary component using onErrorCaptured() — external libs can throw at runtime.
+
+* Several templates use == (e.g., displacementMode == 'projection', sortColumn == 'id'). Prefer === for type safety.
+
+* Components with optional props (e.g., highlightedPointId, initialData) don't declare defaults. Not critical but recommended by the guide.
+
+* Add index.ts files for cleaner imports (e.g., import { useLeafletMap } from '@/composables').
+
+* Nicht alle markers immer neu rendern / zeichnen
+  For small datasets, this is fine. If the dataset grows, consider using a L.FeatureGroup or even a Canvas-based renderer for the markers.
+
+* Hardcoded Constants: VOGIS URLs; Move these to a config file. This makes the composable reusable for other map projects.
+
+* Extract Color Logic from Project.vue to Composable
+
+* Use shallowRef for large data
+
 * PHP-Comments on own line
 
 * Ambiguous numbers MUST be clarified

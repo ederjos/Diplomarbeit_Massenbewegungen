@@ -18,6 +18,21 @@ const referenceLabel = computed(() => {
     const m = props.measurements.find((m) => m.id === props.referenceId);
     return m ? `${m.name} (${formatDate(m.datetime)})` : 'Unbekannt';
 });
+
+// Prevent the user from entering invalid vector scales:
+const safeVectorScale = computed({
+    get() {
+        return vectorScale.value ?? 1;
+    },
+    set(value: number | null) {
+        if (value === null || !Number.isFinite(value) || value < 1) {
+            vectorScale.value = 1;
+            return;
+        }
+
+        vectorScale.value = Math.min(Math.max(Math.floor(value), 1), 100000);
+    },
+});
 </script>
 
 <template>
@@ -29,11 +44,14 @@ const referenceLabel = computed(() => {
             </span>
         </div>
         <div>
-            <label class="mb-1 block text-sm font-bold">Vergleichsepoche</label>
+            <label for="comparison-select" class="mb-1 block text-sm font-bold">Vergleichsepoche</label>
+            <!-- aria-disabled -> accessibility announcement -> tells screen readers it's disabled -->
             <select
                 v-model.number="selectedComparison"
                 class="rounded border p-1 disabled:text-gray-400"
                 :disabled="isGaitLine"
+                :aria-disabled="isGaitLine"
+                id="comparison-select"
             >
                 <option v-for="m in props.measurements" :key="m.id" :value="m.id">
                     {{ m.name }} ({{ formatDate(m.datetime) }})
@@ -41,17 +59,24 @@ const referenceLabel = computed(() => {
             </select>
         </div>
         <div>
-            <label class="mb-1 block text-sm font-bold" for="inputVectorScale">Vektormaßstab M 1&nbsp;:&nbsp;</label>
-            <input v-model.number="vectorScale" type="number" class="w-28 rounded border p-1" min="1" max="100000" id="inputVectorScale" />
+            <label class="mb-1 block text-sm font-bold" for="input-vector-scale">Vektormaßstab M 1&nbsp;:&nbsp;</label>
+            <input
+                v-model.number="safeVectorScale"
+                type="number"
+                class="w-28 rounded border p-1"
+                min="1"
+                max="100000"
+                id="input-vector-scale"
+            />
         </div>
         <div class="me-4 flex items-center">
             <input
                 type="checkbox"
                 v-model="isGaitLine"
-                id="checkboxIsGaitLine"
+                id="checkbox-is-gait-line"
                 class="border-default-medium bg-neutral-secondary-medium h-4 w-4 rounded-xs border"
             />
-            <label class="text-heading ml-2 block text-sm font-bold select-none" for="checkboxIsGaitLine"
+            <label class="text-heading ml-2 block text-sm font-bold select-none" for="checkbox-is-gait-line"
                 >Ganglinie</label
             >
         </div>

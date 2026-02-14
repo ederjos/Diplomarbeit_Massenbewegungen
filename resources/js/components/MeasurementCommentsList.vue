@@ -43,11 +43,11 @@ const selectedComparisonMeasurement = computed(() => {
             <div class="grid gap-1 text-sm text-slate-600 md:grid-cols-2">
                 <p>
                     <span class="font-semibold text-slate-700">Erstellt:</span>
-                    {{ new Date(comment.created_datetime).toLocaleString('de-AT') }}
+                    {{ formatDate(comment.created_datetime) }}
                 </p>
                 <p>
                     <span class="font-semibold text-slate-700">Aktualisiert:</span>
-                    {{ new Date(comment.updated_datetime).toLocaleString('de-AT') }}
+                    {{ formatDate(comment.updated_datetime) }}
                 </p>
                 <p>
                     <span class="font-semibold text-slate-700">Autor:</span>

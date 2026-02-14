@@ -24,7 +24,9 @@ defineProps<{
                     <DetailRow label="Typ" :value="project.type ?? '—'" />
                     <DetailRow
                         label="Durchschnittl. Bewegung"
-                        :value="project.averageYearlyMovement ? project.averageYearlyMovement.toFixed(4) : '—'"
+                        :value="
+                            project.averageYearlyMovement ? project.averageYearlyMovement.toFixed(4) + ' cm/Jahr' : '—'
+                        "
                     />
                     <DetailRow label="Gemeinde" :value="project.municipality ?? '—'" />
                     <DetailRow label="Anmerkung" :value="project.comment ?? '—'" />
