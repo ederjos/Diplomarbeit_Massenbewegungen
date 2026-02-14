@@ -2,7 +2,9 @@
 import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
 import { router } from '@inertiajs/vue3';
 import L from 'leaflet';
-import { computed, onMounted, ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
+import DisplacementTable from './DisplacementTable.vue';
+import MapToolbar from './MapToolbar.vue';
 
 /** -- Use PHP Configs in Vue --
  * import { usePage } from '@inertiajs/vue3';
@@ -10,11 +12,6 @@ import { computed, onMounted, ref, watch } from 'vue';
  * If we ever need the srid from the backend
  * Requires "'spatial' => config('spatial')," in Middleware/HandleInertiaRequests.php
  * Source: https://inertiajs.com/docs/v2/data-props/shared-data
- */
-
-/**
- * Gemini 3 Flash, 2026-02-04
- * "think about whether it might make sense to return only the geom values to the vue file for calculating coordinate differences so that it doesn't have to worry about what srid is used in the background."
  */
 
 const props = defineProps<{
@@ -31,23 +28,8 @@ const props = defineProps<{
 }>();
 
 /**
- * ChatGPT GPT-5, 2025-11-25
- * "I created this code using my api to retrieve the data. now make it work with typescript. [old code in js]"
- */
-
-/**
- * Gemini 3 Pro, 2025-12-02
- * "Add a select box at the top where the user can select two reference measurements (based on name and dates). then, the markers are changed to the two measurement values of the measurements."
- */
-
-/**
  * Gemini 3 Pro, 2025-12-02
  * "this component works greatly. now, we want to rearrange the design though and add a new table. in this table there should be a col for point name, one for delta pos (x and y) and one for delta height (z). keep in mind that the values in the Measurement interface of x,y,z are in the epsg 31254"
- */
-
-/**
- * Gemini 3 Pro, 2025-12-16
- * "i have this file where i get coordinates data in lat, lon and a special epsg 31254. now, i want to scale up the distances so that a distance of 1 cm looks like 1 m. for that I created the vectorScale variable. Now, you should update the lat, lon (leaflet only knows those coords) based on the epsg x,y upscaled based on the initial difference (p1->p2) but the value of the vector is into the same direction the vectorScale times as high. i urge you to use proj4 to work with the exact coordinates!"
  */
 
 const mapContainer = ref<HTMLDivElement | null>(null);
@@ -57,35 +39,15 @@ const selectedComparison = ref<number | null>(props.comparisonId);
 const vectorScale = ref<number>(100);
 const isGaitLine = ref<boolean>(false);
 const markersLayer = new L.LayerGroup();
+const selectedPointId = ref<number | null>(null);
 
-// Less complicated than enum
-type DisplacementMode = 'twoD' | 'projection' | 'threeD';
-const displacementMode = ref<DisplacementMode>('twoD');
+// If two points are clicked quickly after one another, the highlight animation should restart
+let highlightTimeout: number | null = null;
 
 /**
  * Claude Opus 4.6, 2026-02-11
  * "[...] Then, apply the projection changes to the LeafletComponent file, so that the user can select the display mode for the displacements (2D, projection, 3D) and the map updates accordingly."
  */
-
-/**
- * Displacement display mode (for table):
- *   'twoD'       — Option A: √(dX² + dY²) Pythagoras 2D
- *   'projection' — Option B: Dot product on normalized axis
- *   'threeD'     — Option C: √(dX² + dY² + dZ²) Pythagoras 3D
- */
-
-const displacementModeLabels: Record<DisplacementMode, string> = {
-    twoD: 'Lage (2D)',
-    projection: 'Projektion',
-    threeD: '3D-Vektor',
-};
-
-/** Display name for the fixed reference epoch */
-const referenceLabel = computed(() => {
-    if (!props.referenceId) return 'Nicht gesetzt';
-    const m = props.measurements.find((m) => m.id === props.referenceId);
-    return m ? `${m.name} (${new Date(m.datetime).toLocaleDateString('de-AT')})` : 'Unbekannt';
-});
 
 // Trigger Inertia visit when comparison epoch changes
 // Use inertia to ensure SPA experience and preserve scroll/state, but still update the URL for shareability and back button support
@@ -93,44 +55,6 @@ watch(selectedComparison, (newComp) => {
     if (newComp) {
         router.get(window.location.pathname, { comparison: newComp }, { preserveScroll: true, preserveState: true });
     }
-});
-
-/**
- * Displacement table data — uses pre-computed backend values.
- * No raw coordinates needed in the frontend.
- */
-const pointDeltas = computed(() => {
-    if (!props.referenceId || !props.comparisonId) return [];
-
-    return props.points
-        .map((p) => {
-            const displacement = props.displacements[p.id];
-            if (!displacement) return null;
-
-            let displayDistance: number;
-            switch (displacementMode.value) {
-                case 'projection':
-                    // If no projection set, fallback to 2d (with warning icon)
-                    displayDistance = displacement.projectedDistance ?? displacement.distance2d;
-                    break;
-                case 'threeD':
-                    displayDistance = displacement.distance3d;
-                    break;
-                case 'twoD':
-                default:
-                    displayDistance = displacement.distance2d;
-            }
-
-            return {
-                id: p.id,
-                name: p.name,
-                deltaHeight: displacement.deltaHeight,
-                distance: displayDistance,
-                hasProjection: displacement.projectedDistance !== null,
-            };
-            // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
-        })
-        .filter((p): p is NonNullable<typeof p> => p !== null);
 });
 
 function invalidateMap() {
@@ -160,26 +84,27 @@ function zoomToPoint(pointId: number) {
         if (m) {
             map.value.setView([m.lat, m.lon], 17);
         }
-        // Also highlight the row in the table with a css animation (transform: scale, background: yellow fade out)
-        const row = document.querySelector(`tr[data-point-id="${pointId}"]`) as HTMLElement | null;
-        if (row) {
-            //row.scrollIntoView({ behavior: 'smooth', block: 'center' })
-
-            // Apply temporary styles for the highlight effect
-            row.style.transition = 'transform 0.2s, background-color 1s';
-            // zoom out a bit
-            row.style.transform = 'scale(1.02)';
-            // yellow-200
-            row.style.backgroundColor = '#fef08a';
-
-            // Remove styles 1s after animation
-            setTimeout(() => {
-                row.style.transform = '';
-                row.style.backgroundColor = '';
-            }, 1000);
+        // Set selected point id so the table can highlight the row.
+        // Clear any pending highlight timeout so successive clicks don't race.
+        if (highlightTimeout) {
+            clearTimeout(highlightTimeout);
+            highlightTimeout = null;
         }
+        selectedPointId.value = pointId;
+        highlightTimeout = window.setTimeout(() => {
+            // Only clear if the timeout is still the latest
+            selectedPointId.value = null;
+            highlightTimeout = null;
+        }, 1100);
     }
 }
+
+onUnmounted(() => {
+    if (highlightTimeout) {
+        clearTimeout(highlightTimeout);
+        highlightTimeout = null;
+    }
+});
 
 function drawMap() {
     if (!map.value) return;
@@ -286,7 +211,7 @@ function drawMap() {
     });
 }
 
-watch([selectedComparison, vectorScale, isGaitLine, displacementMode], () => {
+watch([selectedComparison, vectorScale, isGaitLine], () => {
     drawMap();
 });
 
@@ -391,112 +316,30 @@ onMounted(() => {
 
 <template>
     <div class="flex h-full w-full flex-col overflow-hidden">
-        <div class="z-10 flex shrink-0 items-center gap-4 bg-white p-4 shadow">
-            <div>
-                <label class="mb-1 block text-sm font-bold">Referenzepoche</label>
-                <span class="inline-block rounded border bg-gray-100 px-2 py-1 text-sm text-gray-700">
-                    {{ referenceLabel }}
-                </span>
-            </div>
-            <div>
-                <label class="mb-1 block text-sm font-bold">Vergleichsepoche</label>
-                <select
-                    v-model.number="selectedComparison"
-                    class="rounded border p-1 disabled:text-gray-400"
-                    :disabled="isGaitLine"
-                >
-                    <option v-for="m in props.measurements" :key="m.id" :value="m.id">
-                        {{ m.name }} ({{ new Date(m.datetime).toLocaleDateString('de-AT') }})
-                    </option>
-                </select>
-            </div>
-            <div>
-                <label class="mb-1 block text-sm font-bold">Vektormaßstab M 1&nbsp;:&nbsp;</label>
-                <input
-                    v-model.number="vectorScale"
-                    type="number"
-                    class="w-28 rounded border p-1"
-                    min="1"
-                    max="100000"
-                />
-            </div>
-            <div class="me-4 flex items-center">
-                <input
-                    type="checkbox"
-                    v-model="isGaitLine"
-                    id="checkboxIsGaitLine"
-                    class="border-default-medium bg-neutral-secondary-medium h-4 w-4 rounded-xs border"
-                />
-                <label class="text-heading ml-2 block text-sm font-bold select-none" for="checkboxIsGaitLine"
-                    >Ganglinie</label
-                >
-            </div>
-        </div>
+        <MapToolbar
+            :measurements="props.measurements"
+            :reference-id="props.referenceId"
+            v-model:selected-comparison="selectedComparison"
+            v-model:vector-scale="vectorScale"
+            v-model:is-gait-line="isGaitLine"
+        />
 
+        <!-- The map is always 80% high, no matter the table size -->
         <div class="flex h-[80vh] overflow-hidden">
             <div ref="mapContainer" class="relative z-0 h-full flex-1"></div>
 
-            <div
+            <!-- Table is only shown if there is a selected comparison epoch -->
+            <DisplacementTable
                 v-if="!isGaitLine"
-                class="z-10 h-full w-96 shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
+                :points="props.points"
+                :reference-id="props.referenceId"
+                :comparison-id="selectedComparison"
+                :highlighted-point-id="selectedPointId"
+                :displacements="props.displacements"
+                @select-point="zoomToPoint"
                 @vue:mounted="invalidateMap"
                 @vue:unmounted="invalidateMap"
-            >
-                <h2 class="mb-3 text-lg font-bold">Verschiebungen</h2>
-                <div class="mb-3">
-                    <label class="mb-1 block text-sm font-bold">Darstellungsart</label>
-                    <div class="flex gap-1">
-                        <button
-                            v-for="(label, mode) in displacementModeLabels"
-                            :key="mode"
-                            @click="displacementMode = mode"
-                            class="rounded px-2 py-1 text-xs transition-colors disabled:cursor-not-allowed disabled:opacity-40"
-                            :class="
-                                displacementMode === mode ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'
-                            "
-                        >
-                            {{ label }}
-                        </button>
-                    </div>
-                </div>
-                <table class="relative w-full border-collapse text-left text-sm">
-                    <thead class="top-0 z-10 border-b bg-gray-100 text-xs uppercase shadow-sm">
-                        <tr>
-                            <th class="px-3 py-2 font-semibold text-gray-800">Punkt</th>
-                            <th class="px-3 py-2 text-right font-semibold text-gray-800">
-                                Δ {{ displacementModeLabels[displacementMode] }} [cm]
-                            </th>
-                            <th class="px-3 py-2 text-right font-semibold text-gray-800">Δ Höhe [cm]</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                            v-for="p in pointDeltas"
-                            :key="p.id"
-                            class="cursor-pointer border-b bg-white odd:bg-gray-50 hover:bg-gray-100"
-                            @click="zoomToPoint(p.id)"
-                            :data-point-id="p.id"
-                        >
-                            <td class="px-3 py-2 font-medium text-gray-900">
-                                {{ p.name }}
-                                <span
-                                    v-if="displacementMode === 'projection' && !p.hasProjection"
-                                    class="text-xs text-amber-500"
-                                    title="Keine Projektionsachse"
-                                    >⚠</span
-                                >
-                            </td>
-                            <td class="px-3 py-2 text-right tabular-nums">{{ p.distance.toFixed(4) }}</td>
-                            <td class="px-3 py-2 text-right tabular-nums">
-                                {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(4) }}
-                            </td>
-                        </tr>
-                        <tr v-if="pointDeltas.length === 0">
-                            <td colspan="3" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            />
         </div>
     </div>
 </template>

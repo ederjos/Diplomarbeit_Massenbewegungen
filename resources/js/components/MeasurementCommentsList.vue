@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Measurement } from '@/@types/measurement';
+import { formatDate } from '@/utils/date';
 import { computed } from 'vue';
 
 const props = defineProps<{
@@ -12,6 +13,7 @@ const selectedComparisonMeasurement = computed(() => {
     return props.measurements.find((measurement) => measurement.id === props.comparisonId) ?? null;
 });
 </script>
+
 <template>
     <!--
     GPT-5.3-Codex, 2026-02-13
@@ -22,7 +24,7 @@ const selectedComparisonMeasurement = computed(() => {
     </h2>
     <p v-if="selectedComparisonMeasurement" class="mb-4 text-sm text-slate-600">
         {{ selectedComparisonMeasurement.name }}
-        ({{ new Date(selectedComparisonMeasurement.datetime).toLocaleDateString('de-AT') }})
+        ({{ formatDate(selectedComparisonMeasurement.datetime) }})
     </p>
 
     <p v-if="!selectedComparisonMeasurement" class="text-slate-500">Keine Vergleichsepoche ausgewählt.</p>

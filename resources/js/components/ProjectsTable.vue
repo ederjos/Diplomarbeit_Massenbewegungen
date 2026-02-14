@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ProjectOverview } from '@/@types/project';
+import { formatDate } from '@/utils/date';
 import { Link } from '@inertiajs/vue3';
 import SortableHeader from './SortableHeader.vue';
 
@@ -15,11 +16,6 @@ defineProps<{
 const emit = defineEmits<{
     sortBy: [column: keyof ProjectOverview];
 }>();
-
-function formatDate(dateStr?: string | null) {
-    if (!dateStr) return '-';
-    return new Date(dateStr).toLocaleDateString('de-AT');
-}
 </script>
 
 <template>

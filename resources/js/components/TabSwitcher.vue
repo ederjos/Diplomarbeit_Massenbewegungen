@@ -2,6 +2,7 @@
 // Modern way instead of emit and props for v-model
 const activeTab = defineModel<'results' | 'basics'>('activeTab');
 </script>
+
 <template>
     <div class="relative right-0">
         <ul
@@ -14,13 +15,13 @@ const activeTab = defineModel<'results' | 'basics'>('activeTab');
                 class="absolute z-10 h-9 rounded-md bg-white transition-transform duration-300 ease-in-out"
                 :style="{
                     width: '50%',
-                    transform: activeTab === 'results' ? 'translateX(0)' : 'translateX(100%)',
+                    transform: activeTab == 'results' ? 'translateX(0)' : 'translateX(100%)',
                 }"
             ></span>
             <li class="z-30 flex-auto text-center">
                 <a
                     class="relative z-20 mb-0 flex w-full cursor-pointer items-center justify-center rounded-md border-0 px-0 py-2 text-sm"
-                    :class="activeTab === 'results' ? 'font-semibold text-slate-700' : 'text-slate-600'"
+                    :class="activeTab == 'results' ? 'font-semibold text-slate-700' : 'text-slate-600'"
                     data-tab-target=""
                     role="tab"
                     @click="activeTab = 'results'"
@@ -31,7 +32,7 @@ const activeTab = defineModel<'results' | 'basics'>('activeTab');
             <li class="z-30 flex-auto text-center">
                 <a
                     class="relative z-20 mb-0 flex w-full cursor-pointer items-center justify-center rounded-lg border-0 px-0 py-2 text-sm"
-                    :class="activeTab === 'basics' ? 'font-semibold text-slate-700' : 'text-slate-600'"
+                    :class="activeTab == 'basics' ? 'font-semibold text-slate-700' : 'text-slate-600'"
                     data-tab-target=""
                     role="tab"
                     @click="activeTab = 'basics'"
