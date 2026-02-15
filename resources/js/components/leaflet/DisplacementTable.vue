@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DisplacementRow } from '@/@types/measurement';
-import { computed, ref } from 'vue';
 import { DISPLACEMENT_TABLE_WIDTH } from '@/config/mapConstants';
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
     displacementRows: DisplacementRow[];
@@ -65,7 +65,10 @@ const pointDeltas = computed(() => {
 </script>
 
 <template>
-    <div class="z-10 h-full shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg" :class="DISPLACEMENT_TABLE_WIDTH">
+    <div
+        class="z-10 h-full shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
+        :class="DISPLACEMENT_TABLE_WIDTH"
+    >
         <h2 class="mb-3 text-lg font-bold">Verschiebungen</h2>
         <div class="mb-3">
             <label class="mb-1 block text-sm font-bold">Darstellungsart</label>

@@ -2,13 +2,13 @@
 import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
 import { ProjectDetails } from '@/@types/project';
 import { User } from '@/@types/user';
-import { Head } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
 import ProjectDetailsTab from '@/components/ProjectDetailsTab.vue';
 import ProjectResultsTab from '@/components/ProjectResultsTab.vue';
 import TabSwitcher from '@/components/TabSwitcher.vue';
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 import { colors } from '@/config/colors';
+import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 const props = defineProps<{
     project: ProjectDetails;

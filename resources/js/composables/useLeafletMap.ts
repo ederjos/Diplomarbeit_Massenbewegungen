@@ -1,5 +1,4 @@
 import type { Point } from '@/@types/measurement';
-import { DEFAULT_WMS_OPTIONS, WMS_LAYERS } from '@/config/mapLayers';
 import {
     DEFAULT_MAP_CENTER,
     DEFAULT_ZOOM_LEVEL,
@@ -18,6 +17,7 @@ import {
     POLYLINE_MAIN_COLOR,
     POLYLINE_MAIN_WEIGHT,
 } from '@/config/mapConstants';
+import { DEFAULT_WMS_OPTIONS, WMS_LAYERS } from '@/config/mapLayers';
 import L from 'leaflet';
 import { onUnmounted, ref, type Ref } from 'vue';
 

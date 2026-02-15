@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ProjectOverview } from '@/@types/project';
+import SortableHeader from '@/components/SortableHeader.vue';
 import { formatDate } from '@/utils/date';
 import { Link } from '@inertiajs/vue3';
-import SortableHeader from '@/components/SortableHeader.vue';
 
 defineProps<{
     projects: ProjectOverview[];

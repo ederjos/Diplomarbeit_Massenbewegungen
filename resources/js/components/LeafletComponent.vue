@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Measurement, Point, PointDisplacement, DisplacementRow, BaseMeasurement } from '@/@types/measurement';
-import { useLeafletMap } from '@/composables/useLeafletMap';
-import { router } from '@inertiajs/vue3';
-import { computed, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
+import { BaseMeasurement, DisplacementRow, Measurement, Point, PointDisplacement } from '@/@types/measurement';
 import DisplacementTable from '@/components/leaflet/DisplacementTable.vue';
 import MapToolbar from '@/components/leaflet/MapToolbar.vue';
+import { useLeafletMap } from '@/composables/useLeafletMap';
 import { DEFAULT_VECTOR_SCALE, HIGHLIGHT_DURATION_MS } from '@/config/mapConstants';
+import { router } from '@inertiajs/vue3';
+import { computed, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
 
 /** -- Use PHP Configs in Vue --
  * import { usePage } from '@inertiajs/vue3';
@@ -93,22 +93,24 @@ const displacementRows = computed<DisplacementRow[]>(() => {
         return [];
     }
 
-    return props.points
-        .map((point) => {
-            const displacement = props.displacements[point.id];
-            if (!displacement) return null;
+    return (
+        props.points
+            .map((point) => {
+                const displacement = props.displacements[point.id];
+                if (!displacement) return null;
 
-            return {
-                pointId: point.id,
-                name: point.name,
-                distance2d: displacement.distance2d,
-                distance3d: displacement.distance3d,
-                projectedDistance: displacement.projectedDistance,
-                deltaHeight: displacement.deltaHeight,
-            };
-        })
-        // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
-        .filter((row): row is DisplacementRow => row !== null);
+                return {
+                    pointId: point.id,
+                    name: point.name,
+                    distance2d: displacement.distance2d,
+                    distance3d: displacement.distance3d,
+                    projectedDistance: displacement.projectedDistance,
+                    deltaHeight: displacement.deltaHeight,
+                };
+            })
+            // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
+            .filter((row): row is DisplacementRow => row !== null)
+    );
 });
 
 function handlePointClick(pointId: number) {

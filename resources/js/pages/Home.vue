@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ProjectOverview } from '@/@types/project';
-import { Head } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
 import ActiveProjectsToggle from '@/components/ActiveProjectsToggle.vue';
 import ProjectsTable from '@/components/ProjectsTable.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
 
 // Get data directly from inertia without an additional API call
 const props = defineProps<{

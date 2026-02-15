@@ -17,4 +17,3 @@ export const colors: string[] = [
     '#bdbf2f', // Olive
     '#17becf', // Cyan
 ];
-
