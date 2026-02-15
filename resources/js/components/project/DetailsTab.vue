@@ -34,10 +34,10 @@ defineProps<{
                     <DetailRow label="Letzte Messung" :value="formatDate(project.lastMeasurement)" />
                     <DetailRow label="Gemeinde" :value="project.municipality ?? '—'" />
                     <DetailRow label="Anmerkung" :value="project.comment ?? '—'" />
-                    <DetailRow :label="contactPersons.length == 1 ? 'Ansprechperson' : 'Ansprechpersonen'">
+                    <DetailRow :label="contactPersons.length === 1 ? 'Ansprechperson' : 'Ansprechpersonen'">
                         <ul
                             v-if="contactPersons.length > 0"
-                            :class="contactPersons.length == 1 ? 'list-none' : 'list-inside list-disc space-y-1'"
+                            :class="contactPersons.length === 1 ? 'list-none' : 'list-inside list-disc space-y-1'"
                         >
                             <li v-for="user in contactPersons" :key="user.id">
                                 <u

@@ -44,9 +44,9 @@ const displayedProjects = computed(() => {
 
             // Handle null/undefined values
             // Should technically never happen
-            if (valueA == null && valueB == null) return 0;
-            if (valueA == null) return 1;
-            if (valueB == null) return -1;
+            if (valueA === null && valueB === null) return 0;
+            if (valueA === null) return 1;
+            if (valueB === null) return -1;
 
             // Compare values
             let comparison = 0;
@@ -62,7 +62,7 @@ const displayedProjects = computed(() => {
 });
 
 function handleSort(column: keyof ProjectOverview) {
-    if (sortColumn.value == column) {
+    if (sortColumn.value === column) {
         // Toggle direction in the same column
         sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
     } else {

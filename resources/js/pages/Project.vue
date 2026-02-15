@@ -44,7 +44,7 @@ const pointColors = computed(() => {
             <div>
                 <ResultsTab
                     id="results"
-                    v-show="activeTab == 'results'"
+                    v-show="activeTab === 'results'"
                     :points="points"
                     :point-colors="pointColors"
                     :measurements="measurements"
@@ -54,7 +54,7 @@ const pointColors = computed(() => {
                 />
                 <DetailsTab
                     id="basics"
-                    v-show="activeTab == 'basics'"
+                    v-show="activeTab === 'basics'"
                     :project="project"
                     :contact-persons="contactPersons"
                 />

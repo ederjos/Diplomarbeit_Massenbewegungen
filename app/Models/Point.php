@@ -51,7 +51,7 @@ class Point extends Model
             return null;
         }
 
-        if ($firstMv->id == $lastMv->id) {
+        if ($firstMv->id === $lastMv->id) {
             // Only one measurement value, so we don't consider it
             return null;
         }

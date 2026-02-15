@@ -176,8 +176,8 @@ onUnmounted(() => {
             v-model:is-gait-line="isGaitLine"
         />
 
-        <!-- The map is always 80% high, no matter the table size -->
-        <div class="flex h-[80vh] overflow-hidden">
+        <!-- The map is always 85% high, no matter the table size -->
+        <div class="flex h-[85vh] overflow-hidden">
             <div ref="mapContainer" class="relative z-0 h-full flex-1"></div>
 
             <!-- Table is only shown if there is a selected comparison epoch -->

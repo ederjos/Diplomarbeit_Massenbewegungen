@@ -22,7 +22,7 @@ class ProjectionFactory extends Factory
             $ax = fake()->randomFloat(7, -1, 1);
             $ay = fake()->randomFloat(7, -1, 1);
             $length = sqrt(($ax * $ax) + ($ay * $ay));
-        } while ($length == 0.0);
+        } while ($length === 0.0);
 
         $ax /= $length;
         $ay /= $length;

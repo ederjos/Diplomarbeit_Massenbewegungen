@@ -63,9 +63,7 @@ const pointDeltas = computed(() => {
                 distance: displayDistance,
                 hasProjection: row.projectedDistance !== null,
             };
-            // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
         })
-        .filter((p): p is NonNullable<typeof p> => p != null);
 });
 </script>
 
@@ -104,13 +102,13 @@ const pointDeltas = computed(() => {
                     v-for="p in pointDeltas"
                     :key="p.pointId"
                     class="cursor-pointer border-b bg-white odd:bg-gray-50 hover:bg-gray-100"
-                    :class="{ 'leaflet-row-highlight': p.pointId == props.highlightedPointId }"
+                    :class="{ 'leaflet-row-highlight': p.pointId === props.highlightedPointId }"
                     @click="emit('selectPoint', p.pointId)"
                 >
                     <td class="px-3 py-2 font-medium text-gray-900">
                         {{ p.name }}
                         <span
-                            v-if="displacementMode == 'projection' && !p.hasProjection"
+                            v-if="displacementMode === 'projection' && !p.hasProjection"
                             class="text-xs text-amber-500"
                             title="Keine Projektionsachse"
                             >⚠</span
