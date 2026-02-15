@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { BaseMeasurement, DisplacementRow, Measurement, Point, PointDisplacement } from '@/@types/measurement';
-import DisplacementTable from '@/components/leaflet/DisplacementTable.vue';
-import MapToolbar from '@/components/leaflet/MapToolbar.vue';
+import DisplacementTable from '@/components/map/DisplacementTable.vue';
+import MapToolbar from '@/components/map/MapToolbar.vue';
 import { useLeafletMap } from '@/composables/useLeafletMap';
 import { DEFAULT_VECTOR_SCALE, HIGHLIGHT_DURATION_MS } from '@/config/mapConstants';
 import { router } from '@inertiajs/vue3';

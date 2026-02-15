@@ -3,7 +3,7 @@ import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-vue-next';
 
 defineProps<{
     label: string;
-    active: boolean;
+    isActive: boolean;
     direction: 'asc' | 'desc';
 }>();
 const emit = defineEmits<{
@@ -18,8 +18,8 @@ const emit = defineEmits<{
     >
         <div class="flex items-center gap-1">
             {{ label }}
-            <ArrowUp v-if="active && direction == 'asc'" class="h-4 w-4 text-indigo-600" />
-            <ArrowDown v-else-if="active && direction == 'desc'" class="h-4 w-4 text-indigo-600" />
+            <ArrowUp v-if="isActive && direction == 'asc'" class="h-4 w-4 text-indigo-600" />
+            <ArrowDown v-else-if="isActive && direction == 'desc'" class="h-4 w-4 text-indigo-600" />
             <ArrowUpDown v-else class="h-4 w-4 text-gray-400 opacity-0 group-hover:opacity-100" />
         </div>
     </th>

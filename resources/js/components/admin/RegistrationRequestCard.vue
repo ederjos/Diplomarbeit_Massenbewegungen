@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RegistrationRequest } from '@/@types/registration-request';
+import type { RegistrationRequest } from '@/@types/registrationRequest';
 import type { Role } from '@/@types/user';
 import { formatDate } from '@/utils/date';
 import { useForm } from '@inertiajs/vue3';

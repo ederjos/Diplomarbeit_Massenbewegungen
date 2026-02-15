@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ProjectDetails } from '@/@types/project';
 import { User } from '@/@types/user';
-import DetailRow from '@/components/DetailRow.vue';
+import DetailRow from '@/components/ui/DetailRow.vue';
 
 defineProps<{
     project: ProjectDetails;

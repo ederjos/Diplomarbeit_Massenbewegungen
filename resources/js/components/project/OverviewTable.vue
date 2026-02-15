@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ProjectOverview } from '@/@types/project';
-import SortableHeader from '@/components/SortableHeader.vue';
+import SortableHeader from '@/components/ui/SortableHeader.vue';
 import { formatDate } from '@/utils/date';
 import { Link } from '@inertiajs/vue3';
 
@@ -28,26 +28,26 @@ const emit = defineEmits<{
             <tr>
                 <SortableHeader
                     label="ID"
-                    :active="sortColumn == 'id'"
+                    :isActive="sortColumn == 'id'"
                     :direction="sortDirection"
                     @sort="emit('sortBy', 'id')"
                 />
                 <!-- Syntax to call an emit -->
                 <SortableHeader
                     label="Name"
-                    :active="sortColumn == 'name'"
+                    :isActive="sortColumn == 'name'"
                     :direction="sortDirection"
                     @sort="emit('sortBy', 'name')"
                 />
                 <SortableHeader
                     label="Letzte Messung"
-                    :active="sortColumn == 'lastMeasurement'"
+                    :isActive="sortColumn == 'lastMeasurement'"
                     :direction="sortDirection"
                     @sort="emit('sortBy', 'lastMeasurement')"
                 />
                 <SortableHeader
                     label="Nächste Messung"
-                    :active="sortColumn == 'nextMeasurement'"
+                    :isActive="sortColumn == 'nextMeasurement'"
                     :direction="sortDirection"
                     @sort="emit('sortBy', 'nextMeasurement')"
                 />
