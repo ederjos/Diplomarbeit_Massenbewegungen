@@ -3,6 +3,10 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 // workaround to allow the v-model to be "forwarded" to the input element
 const model = defineModel<string>();
 

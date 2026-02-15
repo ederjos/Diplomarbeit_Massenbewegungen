@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Measurement, MeasurementValue, Point } from '@/@types/measurement';
+import { distanceTo } from '@/utils/geo';
 import {
     Chart,
     ChartData,
@@ -15,13 +16,12 @@ import {
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 import { de } from 'date-fns/locale';
-import { latLng } from 'leaflet';
 import { computed, ref } from 'vue';
 import { Line } from 'vue-chartjs';
 
 Chart.register(LinearScale, PointElement, LineElement, Title, Tooltip, Legend, TimeScale);
 
-const chartRef = ref<any>(null);
+const chartRef = ref<{ chart: Chart<'line'> | null } | null>(null);
 
 const props = defineProps<{
     points: Point[];
@@ -40,7 +40,7 @@ const modeLabels: Record<Mode, string> = {
 const setVisibility = (visible: boolean) => {
     const chart = chartRef.value?.chart;
     if (chart) {
-        chart.data.datasets.forEach((_: any, index: number) => {
+        chart.data.datasets.forEach((_, index) => {
             chart.setDatasetVisibility(index, visible);
         });
         chart.update();
@@ -76,14 +76,10 @@ const chartData = computed<ChartData<'line'>>(() => {
 
                 if (!val || !initialValue) return null;
 
-                const pInit = latLng(initialValue.lat, initialValue.lon);
-                const pVal = latLng(val.lat, val.lon);
-                const horizontalDist = pInit.distanceTo(pVal) * 100; // cm
-
+                const horizontalDist = distanceTo(initialValue.lat, initialValue.lon, val.lat, val.lon) * 100; // cm
                 const verticalDist = (val.height - initialValue.height) * 100; // cm
 
                 let value = 0;
-
                 switch (currentMode.value) {
                     case 'horizontal':
                         value = -horizontalDist;
@@ -102,7 +98,7 @@ const chartData = computed<ChartData<'line'>>(() => {
                     measurementName: m.name, // For tooltip
                 };
             })
-            .filter((p) => p !== null) as any[]; // Remove nulls to prevent gaps
+            .filter((p) => p !== null); // Remove nulls to prevent gaps
 
         const color = props.pointColors[point.id] || '#000000';
 
