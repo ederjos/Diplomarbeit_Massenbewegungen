@@ -3,10 +3,15 @@ import { DisplacementRow } from '@/@types/measurement';
 import { DISPLACEMENT_TABLE_WIDTH } from '@/config/mapConstants';
 import { computed, ref } from 'vue';
 
-const props = defineProps<{
-    displacementRows: DisplacementRow[];
-    highlightedPointId?: number | null;
-}>();
+const props = withDefaults(
+    defineProps<{
+        displacementRows: DisplacementRow[];
+        highlightedPointId?: number | null;
+    }>(),
+    {
+        highlightedPointId: null,
+    },
+);
 
 // Quote "succinct" way to define emits
 const emit = defineEmits<{

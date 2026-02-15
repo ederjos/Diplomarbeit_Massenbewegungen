@@ -18,4 +18,6 @@ export interface ProjectDetails extends ProjectBase {
     municipality: string;
     type: string;
     averageYearlyMovement: number;
+    firstMeasurement: string | null;
+    lastMeasurement: string | null;
 }

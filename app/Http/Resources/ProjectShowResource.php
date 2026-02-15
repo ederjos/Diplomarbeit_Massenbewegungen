@@ -21,12 +21,14 @@ class ProjectShowResource extends JsonResource
             'lastFileNumber' => $this->last_file_number,
             'isActive' => $this->is_active,
             'period' => $this->period,
-            // whenLoaded not needed because of eager loading in controller
+            // whenLoaded is not needed because of eager loading in controller
             'client' => $this->client->name,
             'clerk' => $this->clerk->name,
             'municipality' => $this->municipality->name,
             'type' => $this->type->name,
             'averageYearlyMovement' => $this->averageYearlyMovement(),
+            'firstMeasurement' => $this->first_measurement,
+            'lastMeasurement' => $this->last_measurement,
         ];
     }
 }

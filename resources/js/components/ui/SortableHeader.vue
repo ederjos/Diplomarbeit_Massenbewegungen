@@ -6,6 +6,7 @@ defineProps<{
     isActive: boolean;
     direction: 'asc' | 'desc';
 }>();
+
 const emit = defineEmits<{
     sort: [];
 }>();

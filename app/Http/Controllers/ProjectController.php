@@ -35,6 +35,12 @@ class ProjectController extends Controller
     // Request to access the query string parameter 'comparison' for comparison measurement, e.g. /projects/1?comp=2
     public function show(Request $request, Project $project): Response
     {
+        // Apply scope to get first/last measurement dates
+        $project = Project::query()
+            ->where('id', $project->id)
+            ->withFirstAndLastMeasurementDate()
+            ->firstOrFail();
+
         // One project
         // Eager load everything: makes sure relations are loaded and ensures faster access
         $project->load([

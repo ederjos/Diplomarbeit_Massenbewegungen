@@ -43,14 +43,37 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 * Several templates use == (e.g., displacementMode == 'projection', sortColumn == 'id'). Prefer === for type safety.
 
-* Components with optional props (e.g., highlightedPointId, initialData) don't declare defaults. Not critical but recommended by the guide.
+* Component Structure:
+```vue
+<script setup lang="ts">
+// 1. Imports (external first, then internal)
+// 2. Props with withDefaults
+// 3. Emits
+// 4. Composables
+// 5. Local state (ref, reactive)
+// 6. Computed properties
+// 7. Watchers
+// 8. Methods/Event handlers
+// 9. Lifecycle hooks (onMounted, onUnmounted)
+</script>
+```
 
-* Add index.ts files for cleaner imports (e.g., import { useLeafletMap } from '@/composables').
+* Template structure:
+```vue
+<element
+    v-if v-show v-for
+    v-model
+    :key
+    ref
+    :prop-name (alphabetically)
+    @event-name
+    class
+    other-attributes
+>
+```
 
 * Nicht alle markers immer neu rendern / zeichnen
   For small datasets, this is fine. If the dataset grows, consider using a L.FeatureGroup or even a Canvas-based renderer for the markers.
-
-* Hardcoded Constants: VOGIS URLs; Move these to a config file. This makes the composable reusable for other map projects.
 
 * Extract Color Logic from Project.vue to Composable
 

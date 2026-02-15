@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ProjectOverview } from '@/@types/project';
 import OverviewTable from '@/components/project/OverviewTable.vue';
-import Toggle from '@/components/ui/Toggle.vue';
+import AppToggle from '@/components/ui/AppToggle.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
@@ -79,7 +79,7 @@ function handleSort(column: keyof ProjectOverview) {
         <h1 class="text-2xl font-bold">Projekte</h1>
         <div class="flex w-full max-w-4xl flex-col gap-4">
             <div class="flex items-center justify-end">
-                <Toggle v-model="showOnlyActive" label="Nur aktive Projekte anzeigen" />
+                <AppToggle v-model="showOnlyActive" label="Nur aktive Projekte anzeigen" />
             </div>
             <OverviewTable
                 :projects="displayedProjects"

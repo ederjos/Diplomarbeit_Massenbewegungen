@@ -2,6 +2,7 @@
 import { ProjectDetails } from '@/@types/project';
 import { User } from '@/@types/user';
 import DetailRow from '@/components/ui/DetailRow.vue';
+import { formatDate } from '@/utils/date';
 
 defineProps<{
     project: ProjectDetails;
@@ -29,6 +30,8 @@ defineProps<{
                         "
                     />
                     <DetailRow label="Status" :value="project.isActive ? 'Aktiv' : 'Inaktiv'" />
+                    <DetailRow label="Erste Messung" :value="formatDate(project.firstMeasurement)" />
+                    <DetailRow label="Letzte Messung" :value="formatDate(project.lastMeasurement)" />
                     <DetailRow label="Gemeinde" :value="project.municipality ?? '—'" />
                     <DetailRow label="Anmerkung" :value="project.comment ?? '—'" />
                     <DetailRow :label="contactPersons.length == 1 ? 'Ansprechperson' : 'Ansprechpersonen'">

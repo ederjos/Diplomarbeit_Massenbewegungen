@@ -11,10 +11,10 @@ defineProps<{
 }>();
 
 // https://vuejs.org/api/sfc-script-setup.html#defineprops-defineemits
-// Emit called sortBy with the column to sort by when a header is clicked
+// Emit called sort-by with the column to sort by when a header is clicked
 // Gets a function "sort" with parameter "column"
 const emit = defineEmits<{
-    sortBy: [column: keyof ProjectOverview];
+    'sort-by': [column: keyof ProjectOverview];
 }>();
 </script>
 
@@ -28,28 +28,28 @@ const emit = defineEmits<{
             <tr>
                 <SortableHeader
                     label="ID"
-                    :isActive="sortColumn == 'id'"
+                    :is-active="sortColumn === 'id'"
                     :direction="sortDirection"
-                    @sort="emit('sortBy', 'id')"
+                    @sort="emit('sort-by', 'id')"
                 />
                 <!-- Syntax to call an emit -->
                 <SortableHeader
                     label="Name"
-                    :isActive="sortColumn == 'name'"
+                    :is-active="sortColumn === 'name'"
                     :direction="sortDirection"
-                    @sort="emit('sortBy', 'name')"
+                    @sort="emit('sort-by', 'name')"
                 />
                 <SortableHeader
                     label="Letzte Messung"
-                    :isActive="sortColumn == 'lastMeasurement'"
+                    :is-active="sortColumn === 'lastMeasurement'"
                     :direction="sortDirection"
-                    @sort="emit('sortBy', 'lastMeasurement')"
+                    @sort="emit('sort-by', 'lastMeasurement')"
                 />
                 <SortableHeader
                     label="Nächste Messung"
-                    :isActive="sortColumn == 'nextMeasurement'"
+                    :is-active="sortColumn === 'nextMeasurement'"
                     :direction="sortDirection"
-                    @sort="emit('sortBy', 'nextMeasurement')"
+                    @sort="emit('sort-by', 'nextMeasurement')"
                 />
             </tr>
         </thead>

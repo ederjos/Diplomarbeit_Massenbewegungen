@@ -47,6 +47,20 @@ class Project extends Model
         ]);
     }
 
+    public function scopeWithFirstAndLastMeasurementDate(Builder $query): void
+    {
+        $query->addSelect([
+            'first_measurement' => Measurement::select('measurement_datetime')
+                ->whereColumn('project_id', 'projects.id')
+                ->oldest('measurement_datetime')
+                ->limit(1),
+            'last_measurement' => Measurement::select('measurement_datetime')
+                ->whereColumn('project_id', 'projects.id')
+                ->latest('measurement_datetime')
+                ->limit(1),
+        ]);
+    }
+
     /**
      * Gemini 3 Pro, 2025-12-30
      * "What is the code for the models to use a pivot table"

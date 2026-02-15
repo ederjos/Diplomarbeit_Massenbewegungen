@@ -1,8 +1,13 @@
 <script setup lang="ts">
-defineProps<{
-    label: string;
-    value?: string | number | null;
-}>();
+withDefaults(
+    defineProps<{
+        label: string;
+        value?: string | number | null;
+    }>(),
+    {
+        value: null,
+    },
+);
 </script>
 
 <template>
