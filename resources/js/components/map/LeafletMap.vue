@@ -1,8 +1,16 @@
 <script setup lang="ts">
-import { BaseMeasurement, DisplacementRow, Measurement, Point, PointDisplacement } from '@/@types/measurement';
+import {
+    BaseMeasurement,
+    DisplacementDistanceMode,
+    DisplacementRow,
+    Measurement,
+    Point,
+    PointDisplacement,
+} from '@/@types/measurement';
 import DisplacementTable from '@/components/map/DisplacementTable.vue';
 import MapToolbar from '@/components/map/MapToolbar.vue';
 import { useLeafletMap } from '@/composables/useLeafletMap';
+import { useSortableData } from '@/composables/useSortableData';
 import { DEFAULT_VECTOR_SCALE, HIGHLIGHT_DURATION_MS } from '@/config/mapConstants';
 import { router } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
@@ -40,6 +48,9 @@ const selectedComparison = ref<number | null>(props.comparisonId);
 const vectorScale = ref<number>(DEFAULT_VECTOR_SCALE);
 const isGaitLine = ref<boolean>(false);
 const selectedPointId = ref<number | null>(null);
+
+// Table state for displacement table
+const displacementMode = ref<DisplacementDistanceMode>('twoD');
 // If two points are clicked quickly after one another, the highlight animation should restart
 let highlightTimeout: number | null = null;
 // ResizeObserver detects size changes. More reliable than onmount of the table
@@ -84,34 +95,48 @@ const baseMeasurements = computed<BaseMeasurement[]>(() => {
 
 /**
  * Displacement table data — uses pre-computed backend values.
- * No raw coordinates needed in the frontend.
  * Also: Don't give DisplacementTable more data than necessary
  */
-const displacementRows = computed<DisplacementRow[]>(() => {
+const unsortedDisplacementRows = computed<DisplacementRow[]>(() => {
     // Don't compute if no comparison selected or gait line mode active
     if (!props.referenceId || !selectedComparison.value) {
         return [];
     }
 
-    return (
-        props.points
-            .map((point) => {
-                const displacement = props.displacements[point.id];
-                if (!displacement) return null;
+    return props.points
+        .map((point) => {
+            const displacement = props.displacements[point.id];
+            if (!displacement) return null;
+            // compute displayDistance according to current mode once here
+            const displayDistance =
+                displacementMode.value === 'projection'
+                    ? (displacement.projectedDistance ?? displacement.distance2d)
+                    : (displacementMode.value === 'threeD'
+                      ? displacement.distance3d
+                      : displacement.distance2d);
 
-                return {
-                    pointId: point.id,
-                    name: point.name,
-                    distance2d: displacement.distance2d,
-                    distance3d: displacement.distance3d,
-                    projectedDistance: displacement.projectedDistance,
-                    deltaHeight: displacement.deltaHeight,
-                };
-            })
-            // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
-            .filter((row): row is DisplacementRow => row !== null)
-    );
+            const result: DisplacementRow = {
+                pointId: point.id,
+                name: point.name,
+                distance2d: displacement.distance2d,
+                distance3d: displacement.distance3d,
+                projectedDistance: displacement.projectedDistance,
+                deltaHeight: displacement.deltaHeight,
+                displayDistance: displayDistance,
+                hasProjection: displacement.projectedDistance !== null,
+            };
+
+            return result;
+        })
+        // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
+        // Also tells TS now the type is DisplacementRow w/o "| null"
+        .filter((row): row is DisplacementRow => row !== null);
 });
+
+// Use composable for sorting with custom comparison
+const { sortColumn, sortDirection, sorted: displacementRows, handleSort } = useSortableData(
+    unsortedDisplacementRows
+);
 
 function handlePointClick(pointId: number) {
     zoomToPoint(pointId);
@@ -185,7 +210,11 @@ onUnmounted(() => {
                 v-if="!isGaitLine"
                 :displacement-rows="displacementRows"
                 :highlighted-point-id="selectedPointId"
+                v-model:displacement-mode="displacementMode"
+                :sort-column="sortColumn"
+                :sort-direction="sortDirection"
                 @select-point="handlePointClick"
+                @sort-by="handleSort"
             />
         </div>
     </div>

@@ -28,6 +28,7 @@ const emit = defineEmits<{
             <tr>
                 <SortableHeader
                     label="ID"
+                    styleClasses="px-6 py-3"
                     :is-active="sortColumn === 'id'"
                     :direction="sortDirection"
                     @sort="emit('sort-by', 'id')"
@@ -35,18 +36,21 @@ const emit = defineEmits<{
                 <!-- Syntax to call an emit -->
                 <SortableHeader
                     label="Name"
+                    styleClasses="px-6 py-3"
                     :is-active="sortColumn === 'name'"
                     :direction="sortDirection"
                     @sort="emit('sort-by', 'name')"
                 />
                 <SortableHeader
                     label="Letzte Messung"
+                    styleClasses="px-6 py-3"
                     :is-active="sortColumn === 'lastMeasurement'"
                     :direction="sortDirection"
                     @sort="emit('sort-by', 'lastMeasurement')"
                 />
                 <SortableHeader
                     label="Nächste Messung"
+                    styleClasses="px-6 py-3"
                     :is-active="sortColumn === 'nextMeasurement'"
                     :direction="sortDirection"
                     @sort="emit('sort-by', 'nextMeasurement')"
@@ -59,7 +63,7 @@ const emit = defineEmits<{
                 v-for="project in projects"
                 :key="project.id"
                 :href="`/projects/${project.id}`"
-                class="cursor-pointer hover:bg-gray-50"
+                class="cursor-pointer transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
                 :title="project.isActive ? 'Aktives Projekt' : 'Inaktives Projekt'"
             >
                 <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">

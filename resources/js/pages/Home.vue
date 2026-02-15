@@ -3,6 +3,7 @@ import { ProjectOverview } from '@/@types/project';
 import OverviewTable from '@/components/project/OverviewTable.vue';
 import AppToggle from '@/components/ui/AppToggle.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
+import { useSortableData } from '@/composables/useSortableData';
 import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
@@ -11,9 +12,6 @@ const props = defineProps<{
     projects: ProjectOverview[];
 }>();
 
-// only properties of Project allowed
-const sortColumn = ref<keyof ProjectOverview | null>(null);
-const sortDirection = ref<'asc' | 'desc'>('asc');
 const showOnlyActive = ref(false);
 
 /**
@@ -21,56 +19,15 @@ const showOnlyActive = ref(false);
  * "In this table I want you to add arrows in the thead part where the user can select by which column it is ordered and if its descending or ascending. Also, there should be a Checkbox with better design (like toggles in tailwind) that selects if only active projects will be displayed or if all the projects should be shown."
  */
 
-const displayedProjects = computed(() => {
-    let result = props.projects;
-
-    // Filter active projects if needed
-    if (showOnlyActive.value) {
-        result = result.filter((project) => project.isActive);
-    }
-
-    // Sort if a column is selected
-    if (sortColumn.value) {
-        // Create a copy of the array to avoid mutating the original
-        // props should be treated as immutable, Source: https://vuejs.org/guide/components/props.html#one-way-data-flow
-        result = [...result].sort((a, b) => {
-            // -1 -> a before b
-            // 0 -> unchanged
-            // 1 -> b before a
-
-            // Because of the if above, we can be sure that sortColumn.value is not null
-            const valueA = a[sortColumn.value!];
-            const valueB = b[sortColumn.value!];
-
-            // Handle null/undefined values
-            // Should technically never happen
-            if (valueA === null && valueB === null) return 0;
-            if (valueA === null) return 1;
-            if (valueB === null) return -1;
-
-            // Compare values
-            let comparison = 0;
-            if (valueA > valueB) comparison = 1;
-            if (valueA < valueB) comparison = -1;
-
-            // Apply sort direction
-            return sortDirection.value === 'asc' ? comparison : -comparison;
-        });
-    }
-
-    return result;
+// Filter logic separate from sorting
+const filteredProjects = computed(() => {
+    return showOnlyActive.value ? props.projects.filter((project) => project.isActive) : props.projects;
 });
 
-function handleSort(column: keyof ProjectOverview) {
-    if (sortColumn.value === column) {
-        // Toggle direction in the same column
-        sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
-    } else {
-        // Different column, start with ascending
-        sortColumn.value = column;
-        sortDirection.value = 'asc';
-    }
-}
+// Use composable for sorting logic
+const { sortColumn, sortDirection, sorted: displayedProjects, handleSort } = useSortableData(
+    filteredProjects,
+);
 </script>
 
 <template>

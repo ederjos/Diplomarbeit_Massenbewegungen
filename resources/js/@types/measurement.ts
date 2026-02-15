@@ -29,7 +29,11 @@ export interface DisplacementRow {
     distance3d: number;
     projectedDistance: number | null;
     deltaHeight: number;
+    displayDistance: number;
+    hasProjection: boolean;
 }
+
+export type DisplacementDistanceMode = 'twoD' | 'projection' | 'threeD';
 
 interface Comment {
     id: number;
