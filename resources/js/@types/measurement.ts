@@ -22,17 +22,29 @@ export interface PointDisplacement {
     deltaHeight: number;
 }
 
+export interface DisplacementRow {
+    pointId: number;
+    name: string;
+    distance2d: number;
+    distance3d: number;
+    projectedDistance: number | null;
+    deltaHeight: number;
+}
+
 interface Comment {
     id: number;
     content: string;
-    created_datetime: string;
-    updated_datetime: string;
+    createdDatetime: string;
+    updatedDatetime: string;
     user: User;
 }
 
-export interface Measurement {
+export interface BaseMeasurement {
     id: number;
     name: string;
     datetime: string;
+}
+
+export interface Measurement extends BaseMeasurement {
     comments: Comment[];
 }

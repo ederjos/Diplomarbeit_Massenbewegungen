@@ -1,5 +1,23 @@
 import type { Point } from '@/@types/measurement';
 import { DEFAULT_WMS_OPTIONS, WMS_LAYERS } from '@/config/mapLayers';
+import {
+    DEFAULT_MAP_CENTER,
+    DEFAULT_ZOOM_LEVEL,
+    MAP_BOUNDS_PADDING,
+    MARKER_BORDER_COLOR,
+    MARKER_BORDER_OPACITY,
+    MARKER_BORDER_WEIGHT,
+    MARKER_CIRCLE_RADIUS,
+    MARKER_FALLBACK_COLOR,
+    MARKER_FILL_OPACITY,
+    MAX_MAP_ZOOM,
+    MIN_MAP_ZOOM,
+    POINT_FOCUS_ZOOM_LEVEL,
+    POLYLINE_FRAME_COLOR,
+    POLYLINE_FRAME_WEIGHT,
+    POLYLINE_MAIN_COLOR,
+    POLYLINE_MAIN_WEIGHT,
+} from '@/config/mapConstants';
 import L from 'leaflet';
 import { onUnmounted, ref, type Ref } from 'vue';
 
@@ -23,15 +41,15 @@ export function useLeafletMap(
 
     function initMap(container: HTMLElement) {
         // Set to Bregenz as default view, will be changed to actual points later
-        const leafletMap = L.map(container).setView([47.5, 9.75], 13);
+        const leafletMap = L.map(container).setView(DEFAULT_MAP_CENTER, DEFAULT_ZOOM_LEVEL);
         map.value = leafletMap;
         markersLayer = new L.LayerGroup();
         markersLayer.addTo(leafletMap);
 
         const mainMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 23,
+            maxZoom: MAX_MAP_ZOOM,
             // default tile size (256)
-            minZoom: 4,
+            minZoom: MIN_MAP_ZOOM,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
             // show only this initially
         }).addTo(leafletMap);
@@ -61,7 +79,7 @@ export function useLeafletMap(
         const allCoords: [number, number][] = [];
         points.value.forEach((p) => p.measurementValues.forEach((m) => allCoords.push([m.lat, m.lon])));
         if (allCoords.length) {
-            map.value.fitBounds(allCoords, { padding: [50, 50] });
+            map.value.fitBounds(allCoords, { padding: MAP_BOUNDS_PADDING });
         }
     }
 
@@ -76,7 +94,7 @@ export function useLeafletMap(
         const m =
             point.measurementValues.find((m) => m.measurementId === referenceId.value) || point.measurementValues[0];
         if (m) {
-            map.value.setView([m.lat, m.lon], 17);
+            map.value.setView([m.lat, m.lon], POINT_FOCUS_ZOOM_LEVEL);
         }
     }
 
@@ -179,8 +197,8 @@ export function useLeafletMap(
             return;
         }
         // Polyline with white outline for contrast
-        const framePolyline = L.polyline(latlngs, { color: 'white', weight: 4 });
-        const currPolyline = L.polyline(latlngs, { color: 'black', weight: 2 });
+        const framePolyline = L.polyline(latlngs, { color: POLYLINE_FRAME_COLOR, weight: POLYLINE_FRAME_WEIGHT });
+        const currPolyline = L.polyline(latlngs, { color: POLYLINE_MAIN_COLOR, weight: POLYLINE_MAIN_WEIGHT });
         currPolyline.on('click', () => onPointClick(pointId));
         framePolyline.on('click', () => onPointClick(pointId));
         markersLayer.addLayer(framePolyline);
@@ -193,12 +211,12 @@ export function useLeafletMap(
         }
         // Draw small circle markers for the LAST measurement
         const marker = L.circleMarker(lastCoord, {
-            radius: 4,
-            fillColor: pointColors.value[pointId] || 'gray',
-            color: 'gray',
-            weight: 1,
-            opacity: 0.5,
-            fillOpacity: 0.8,
+            radius: MARKER_CIRCLE_RADIUS,
+            fillColor: pointColors.value[pointId] || MARKER_FALLBACK_COLOR,
+            color: MARKER_BORDER_COLOR,
+            weight: MARKER_BORDER_WEIGHT,
+            opacity: MARKER_BORDER_OPACITY,
+            fillOpacity: MARKER_FILL_OPACITY,
         });
 
         marker.on('click', () => onPointClick(pointId));

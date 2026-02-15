@@ -1,13 +1,14 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
 import { ProjectDetails } from '@/@types/project';
 import { User } from '@/@types/user';
 import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import ProjectDetailsTab from '../components/ProjectDetailsTab.vue';
-import ProjectResultsTab from '../components/ProjectResultsTab.vue';
-import TabSwitcher from '../components/TabSwitcher.vue';
-import AuthenticatedLayout from '../layouts/AuthenticatedLayout.vue';
+import ProjectDetailsTab from '@/components/ProjectDetailsTab.vue';
+import ProjectResultsTab from '@/components/ProjectResultsTab.vue';
+import TabSwitcher from '@/components/TabSwitcher.vue';
+import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
+import { colors } from '@/config/colors';
 
 const props = defineProps<{
     project: ProjectDetails;
@@ -20,23 +21,6 @@ const props = defineProps<{
 }>();
 
 const activeTab = ref<'results' | 'basics'>('results');
-
-/**
- * GPT-5 mini, 2026-02-03
- * "Please improve the colors array in Project.vue and add a comment next to each color with the name of the color."
- */
-const colors = [
-    '#1f77b4', // Blue
-    '#ff7f0e', // Orange
-    '#2ca02c', // Green
-    '#d62728', // Red
-    '#9467bd', // Purple
-    '#8b5e3c', // Brown
-    '#e377c2', // Pink
-    '#6b7280', // Gray
-    '#bdbf2f', // Olive
-    '#17becf', // Cyan
-];
 
 const pointColors = computed(() => {
     const colorMap: Record<number, string> = {};

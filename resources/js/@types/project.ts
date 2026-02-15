@@ -10,11 +10,8 @@ export interface ProjectOverview extends ProjectBase {
 }
 
 export interface ProjectDetails extends ProjectBase {
-    id: number;
-    name: string;
     comment: string;
-    last_file_number: number;
-    isActive: boolean;
+    lastFileNumber: number;
     period: string;
     client: string;
     clerk: string;

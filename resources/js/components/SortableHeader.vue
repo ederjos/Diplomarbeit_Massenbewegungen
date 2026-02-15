@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-vue-next';
 
 defineProps<{

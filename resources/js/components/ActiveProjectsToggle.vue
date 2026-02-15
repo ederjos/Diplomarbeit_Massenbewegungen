@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 const active = defineModel<boolean>({ required: true });
 </script>
 

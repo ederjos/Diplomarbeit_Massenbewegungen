@@ -1,8 +1,8 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
-import LeafletComponent from './LeafletComponent.vue';
-import MeasurementCommentsList from './MeasurementCommentsList.vue';
-import ProjectTimeline from './ProjectTimeline.vue';
+import LeafletComponent from '@/components/LeafletComponent.vue';
+import MeasurementCommentsList from '@/components/MeasurementCommentsList.vue';
+import ProjectTimeline from '@/components/ProjectTimeline.vue';
 
 defineProps<{
     points: Point[];

@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { Measurement } from '@/@types/measurement';
 import { formatDate } from '@/utils/date';
 import { computed } from 'vue';
@@ -43,11 +43,11 @@ const selectedComparisonMeasurement = computed(() => {
             <div class="grid gap-1 text-sm text-slate-600 md:grid-cols-2">
                 <p>
                     <span class="font-semibold text-slate-700">Erstellt:</span>
-                    {{ formatDate(comment.created_datetime) }}
+                    {{ formatDate(comment.createdDatetime, false) }}
                 </p>
                 <p>
                     <span class="font-semibold text-slate-700">Aktualisiert:</span>
-                    {{ formatDate(comment.updated_datetime) }}
+                    {{ formatDate(comment.updatedDatetime, false) }}
                 </p>
                 <p>
                     <span class="font-semibold text-slate-700">Autor:</span>

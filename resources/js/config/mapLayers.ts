@@ -1,4 +1,5 @@
 import type { WMSOptions } from 'leaflet';
+import { MAX_MAP_ZOOM, MIN_MAP_ZOOM } from './mapConstants';
 
 // Base URLs for map services
 export const MAP_LAYERS = {
@@ -12,8 +13,8 @@ export const MAP_LAYERS = {
 export const DEFAULT_WMS_OPTIONS: WMSOptions = {
     format: 'image/png',
     transparent: true,
-    maxZoom: 23,
-    minZoom: 4,
+    maxZoom: MAX_MAP_ZOOM,
+    minZoom: MIN_MAP_ZOOM,
     attribution: '&copy; VOGIS CNV',
 };
 

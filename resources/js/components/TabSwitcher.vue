@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 // Modern way instead of emit and props for v-model
 const activeTab = defineModel<'results' | 'basics'>('activeTab');
 </script>

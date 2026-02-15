@@ -17,8 +17,8 @@ class CommentResource extends JsonResource
         return [
             'id' => $this->id,
             'content' => $this->content,
-            'created_datetime' => $this->created_at,
-            'updated_datetime' => $this->updated_at,
+            'createdDatetime' => $this->created_at,
+            'updatedDatetime' => $this->updated_at,
             // resolve needed to get rid of the "data" wrapper
             'user' => (new UserResource($this->user))->resolve(),
         ];

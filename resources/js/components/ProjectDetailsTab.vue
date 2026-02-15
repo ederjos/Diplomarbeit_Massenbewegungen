@@ -1,7 +1,7 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import { ProjectDetails } from '@/@types/project';
 import { User } from '@/@types/user';
-import DetailRow from './DetailRow.vue';
+import DetailRow from '@/components/DetailRow.vue';
 
 defineProps<{
     project: ProjectDetails;
@@ -17,7 +17,7 @@ defineProps<{
                 <tbody>
                     <DetailRow label="ID" :value="project.id ?? '—'" />
                     <DetailRow label="Bezeichnung" :value="project.name ?? '—'" />
-                    <DetailRow label="Letzte Geschäftszahl" :value="project.last_file_number ?? '—'" />
+                    <DetailRow label="Letzte Geschäftszahl" :value="project.lastFileNumber ?? '—'" />
                     <DetailRow label="Auftraggeber" :value="project.client ?? '—'" />
                     <DetailRow label="Sachbearbeiter" :value="project.clerk ?? '—'" />
                     <DetailRow label="Intervall" :value="project.period ?? '—'" />
@@ -28,6 +28,7 @@ defineProps<{
                             project.averageYearlyMovement ? project.averageYearlyMovement.toFixed(4) + ' cm/Jahr' : '—'
                         "
                     />
+                    <DetailRow label="Status" :value="project.isActive ? 'Aktiv' : 'Inaktiv'" />
                     <DetailRow label="Gemeinde" :value="project.municipality ?? '—'" />
                     <DetailRow label="Anmerkung" :value="project.comment ?? '—'" />
                     <DetailRow :label="contactPersons.length == 1 ? 'Ansprechperson' : 'Ansprechpersonen'">

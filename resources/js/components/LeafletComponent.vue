@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
+import { Measurement, Point, PointDisplacement, DisplacementRow, BaseMeasurement } from '@/@types/measurement';
 import { useLeafletMap } from '@/composables/useLeafletMap';
 import { router } from '@inertiajs/vue3';
-import { onMounted, onUnmounted, ref, toRef, watch } from 'vue';
-import DisplacementTable from './DisplacementTable.vue';
-import MapToolbar from './MapToolbar.vue';
+import { computed, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
+import DisplacementTable from '@/components/leaflet/DisplacementTable.vue';
+import MapToolbar from '@/components/leaflet/MapToolbar.vue';
+import { DEFAULT_VECTOR_SCALE, HIGHLIGHT_DURATION_MS } from '@/config/mapConstants';
 
 /** -- Use PHP Configs in Vue --
  * import { usePage } from '@inertiajs/vue3';
@@ -36,7 +37,7 @@ const mapContainer = ref<HTMLDivElement | null>(null);
 // const map = ref<L.Map | null>(null);
 // former selectedMeasurement
 const selectedComparison = ref<number | null>(props.comparisonId);
-const vectorScale = ref<number>(100);
+const vectorScale = ref<number>(DEFAULT_VECTOR_SCALE);
 const isGaitLine = ref<boolean>(false);
 const selectedPointId = ref<number | null>(null);
 // If two points are clicked quickly after one another, the highlight animation should restart
@@ -69,6 +70,47 @@ watch(selectedComparison, (newComp) => {
     }
 });
 
+/**
+ * Extract only base measurement data (id, name, datetime) without comments.
+ * MapToolbar doesn't need the full Measurement objects.
+ */
+const baseMeasurements = computed<BaseMeasurement[]>(() => {
+    return props.measurements.map((m) => ({
+        id: m.id,
+        name: m.name,
+        datetime: m.datetime,
+    }));
+});
+
+/**
+ * Displacement table data — uses pre-computed backend values.
+ * No raw coordinates needed in the frontend.
+ * Also: Don't give DisplacementTable more data than necessary
+ */
+const displacementRows = computed<DisplacementRow[]>(() => {
+    // Don't compute if no comparison selected or gait line mode active
+    if (!props.referenceId || !selectedComparison.value) {
+        return [];
+    }
+
+    return props.points
+        .map((point) => {
+            const displacement = props.displacements[point.id];
+            if (!displacement) return null;
+
+            return {
+                pointId: point.id,
+                name: point.name,
+                distance2d: displacement.distance2d,
+                distance3d: displacement.distance3d,
+                projectedDistance: displacement.projectedDistance,
+                deltaHeight: displacement.deltaHeight,
+            };
+        })
+        // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
+        .filter((row): row is DisplacementRow => row !== null);
+});
+
 function handlePointClick(pointId: number) {
     zoomToPoint(pointId);
 
@@ -81,7 +123,6 @@ function handlePointClick(pointId: number) {
     selectedPointId.value = pointId;
 
     // Matches CSS animation (1s + 100ms buffer)
-    const HIGHLIGHT_DURATION_MS = 1100;
     highlightTimeout = window.setTimeout(() => {
         // Only clear if the timeout is still the latest
         selectedPointId.value = null;
@@ -126,7 +167,7 @@ onUnmounted(() => {
 <template>
     <div class="flex h-full w-full flex-col overflow-hidden">
         <MapToolbar
-            :measurements="props.measurements"
+            :measurements="baseMeasurements"
             :reference-id="props.referenceId"
             v-model:selected-comparison="selectedComparison"
             v-model:vector-scale="vectorScale"
@@ -140,11 +181,8 @@ onUnmounted(() => {
             <!-- Table is only shown if there is a selected comparison epoch -->
             <DisplacementTable
                 v-if="!isGaitLine"
-                :points="props.points"
-                :reference-id="props.referenceId"
-                :comparison-id="selectedComparison"
+                :displacement-rows="displacementRows"
                 :highlighted-point-id="selectedPointId"
-                :displacements="props.displacements"
                 @select-point="handlePointClick"
             />
         </div>

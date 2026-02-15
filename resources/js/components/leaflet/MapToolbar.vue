@@ -1,10 +1,11 @@
-<script lang="ts" setup>
-import { Measurement } from '@/@types/measurement';
+<script setup lang="ts">
+import { BaseMeasurement } from '@/@types/measurement';
 import { formatDate } from '@/utils/date';
 import { computed } from 'vue';
+import { MIN_VECTOR_SCALE, MAX_VECTOR_SCALE } from '@/config/mapConstants';
 
 const props = defineProps<{
-    measurements: Measurement[];
+    measurements: BaseMeasurement[];
     referenceId: number | null;
 }>();
 
@@ -22,15 +23,15 @@ const referenceLabel = computed(() => {
 // Prevent the user from entering invalid vector scales:
 const safeVectorScale = computed({
     get() {
-        return vectorScale.value ?? 1;
+        return vectorScale.value ?? MIN_VECTOR_SCALE;
     },
     set(value: number | null) {
-        if (value === null || !Number.isFinite(value) || value < 1) {
-            vectorScale.value = 1;
+        if (value === null || !Number.isFinite(value) || value < MIN_VECTOR_SCALE) {
+            vectorScale.value = MIN_VECTOR_SCALE;
             return;
         }
 
-        vectorScale.value = Math.min(Math.max(Math.floor(value), 1), 100000);
+        vectorScale.value = Math.min(Math.max(Math.floor(value), MIN_VECTOR_SCALE), MAX_VECTOR_SCALE);
     },
 });
 </script>
@@ -64,8 +65,8 @@ const safeVectorScale = computed({
                 v-model.number="safeVectorScale"
                 type="number"
                 class="w-28 rounded border p-1"
-                min="1"
-                max="100000"
+                :min="MIN_VECTOR_SCALE"
+                :max="MAX_VECTOR_SCALE"
                 id="input-vector-scale"
             />
         </div>

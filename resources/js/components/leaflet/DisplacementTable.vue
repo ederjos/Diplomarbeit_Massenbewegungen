@@ -1,12 +1,10 @@
-<script lang="ts" setup>
-import { Point, PointDisplacement } from '@/@types/measurement';
+<script setup lang="ts">
+import { DisplacementRow } from '@/@types/measurement';
 import { computed, ref } from 'vue';
+import { DISPLACEMENT_TABLE_WIDTH } from '@/config/mapConstants';
 
 const props = defineProps<{
-    points: Point[];
-    referenceId: number | null;
-    comparisonId: number | null;
-    displacements: Record<number, PointDisplacement>;
+    displacementRows: DisplacementRow[];
     highlightedPointId?: number | null;
 }>();
 
@@ -37,33 +35,28 @@ const displacementModeLabels: Record<DisplacementMode, string> = {
  * No raw coordinates needed in the frontend.
  */
 const pointDeltas = computed(() => {
-    if (!props.referenceId || !props.comparisonId) return [];
-
-    return props.points
-        .map((p) => {
-            const displacement = props.displacements[p.id];
-            if (!displacement) return null;
-
+    return props.displacementRows
+        .map((row) => {
             let displayDistance: number;
             switch (displacementMode.value) {
                 case 'projection':
                     // If no projection set, fallback to 2d (with warning icon)
-                    displayDistance = displacement.projectedDistance ?? displacement.distance2d;
+                    displayDistance = row.projectedDistance ?? row.distance2d;
                     break;
                 case 'threeD':
-                    displayDistance = displacement.distance3d;
+                    displayDistance = row.distance3d;
                     break;
                 case 'twoD':
                 default:
-                    displayDistance = displacement.distance2d;
+                    displayDistance = row.distance2d;
             }
 
             return {
-                id: p.id,
-                name: p.name,
-                deltaHeight: displacement.deltaHeight,
+                pointId: row.pointId,
+                name: row.name,
+                deltaHeight: row.deltaHeight,
                 distance: displayDistance,
-                hasProjection: displacement.projectedDistance != null,
+                hasProjection: row.projectedDistance !== null,
             };
             // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
         })
@@ -72,7 +65,7 @@ const pointDeltas = computed(() => {
 </script>
 
 <template>
-    <div class="z-10 h-full w-96 shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg">
+    <div class="z-10 h-full shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg" :class="DISPLACEMENT_TABLE_WIDTH">
         <h2 class="mb-3 text-lg font-bold">Verschiebungen</h2>
         <div class="mb-3">
             <label class="mb-1 block text-sm font-bold">Darstellungsart</label>
@@ -101,10 +94,10 @@ const pointDeltas = computed(() => {
             <tbody>
                 <tr
                     v-for="p in pointDeltas"
-                    :key="p.id"
+                    :key="p.pointId"
                     class="cursor-pointer border-b bg-white odd:bg-gray-50 hover:bg-gray-100"
-                    :class="{ 'leaflet-row-highlight': p.id == props.highlightedPointId }"
-                    @click="emit('selectPoint', p.id)"
+                    :class="{ 'leaflet-row-highlight': p.pointId == props.highlightedPointId }"
+                    @click="emit('selectPoint', p.pointId)"
                 >
                     <td class="px-3 py-2 font-medium text-gray-900">
                         {{ p.name }}

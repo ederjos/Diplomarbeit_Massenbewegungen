@@ -18,8 +18,8 @@ class ProjectShowResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'comment' => $this->comment,
-            'last_file_number' => $this->last_file_number,
-            'is_active' => $this->is_active,
+            'lastFileNumber' => $this->last_file_number,
+            'isActive' => $this->is_active,
             'period' => $this->period,
             // whenLoaded not needed because of eager loading in controller
             'client' => $this->client->name,
