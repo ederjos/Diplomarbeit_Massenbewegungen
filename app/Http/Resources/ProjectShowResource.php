@@ -26,7 +26,7 @@ class ProjectShowResource extends JsonResource
             'clerk' => $this->clerk->name,
             'municipality' => $this->municipality->name,
             'type' => $this->type->name,
-            'averageYearlyMovement' => $this->averageYearlyMovement(),
+            'medianYearlyMovement' => $this->medianYearlyMovement(),
             'firstMeasurement' => $this->first_measurement,
             'lastMeasurement' => $this->last_measurement,
         ];

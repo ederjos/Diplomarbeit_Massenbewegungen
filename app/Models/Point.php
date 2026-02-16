@@ -32,18 +32,18 @@ class Point extends Model
         return $this->belongsTo(Projection::class);
     }
 
-    public function yearlyMovementInCm()
+    public function yearlyMovementInCm(): ?float
     {
         $firstMv = $this->measurementValues()
             ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
             ->orderBy('measurements.measurement_datetime')
-            ->select('measurement_values.*', 'measurements.measurement_datetime')
+            ->select('measurement_values.id', 'measurement_values.geom', 'measurements.measurement_datetime')
             ->first();
 
         $lastMv = $this->measurementValues()
             ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
             ->orderByDesc('measurements.measurement_datetime')
-            ->select('measurement_values.*', 'measurements.measurement_datetime')
+            ->select('measurement_values.id', 'measurement_values.geom', 'measurements.measurement_datetime')
             ->first();
 
         if (! $firstMv || ! $lastMv || ! $firstMv->geom || ! $lastMv->geom) {
@@ -75,11 +75,11 @@ class Point extends Model
 
         $distance = $distanceResult->distance ?? null;
 
-        $timeDifferenceInYears = $firstDt->diffInSeconds($lastDt, true) / (365.25 * 24 * 3600);
+        $timeDifferenceInYears = $firstDt->diffInYears($lastDt, true);
 
         if ($timeDifferenceInYears <= 0) {
             // Avoid division by zero or negative time difference
-            return 0.0;
+            return null;
         }
 
         // Return the movement in cm/year

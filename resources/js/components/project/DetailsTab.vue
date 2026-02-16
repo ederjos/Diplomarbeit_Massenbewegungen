@@ -29,7 +29,7 @@ defineProps<{
                     <DetailRow
                         label="Durchschnittliche Bewegung (Median)"
                         :value="
-                            project.averageYearlyMovement ? project.averageYearlyMovement.toFixed(1) + ' cm/Jahr' : '—'
+                            project.medianYearlyMovement ? project.medianYearlyMovement.toFixed(1) + ' cm/Jahr' : '—'
                         "
                     />
                     <DetailRow label="Status" :value="project.isActive ? 'Aktiv' : 'Inaktiv'" />

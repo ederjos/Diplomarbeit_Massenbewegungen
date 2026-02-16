@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 /**
  * Claude 4.5 Sonnet, 2026-02-16
  * "Please implement the suggested ErrorBoundary around LealfetMap and ProjectTimeline for the reasons mentioned above."

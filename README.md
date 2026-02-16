@@ -33,7 +33,7 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 * je Projekt: Foto anzeigen; wo: unter Orthofoto oder unter ProjectTimeline
 
-* Projektion: immer auf aktuelle Referenzepoche
+* Projektion: immer auf aktuelle Referenzepoche; auch in ProjectTimeline anwenden!
 
 * Default für Mess-Intervall auf sinnvollen Wert (aktuell 6 mons)
 
@@ -52,6 +52,8 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 * Consider wrapping the LeafletComponent or ProjectTimeline (Chart.js) in an error boundary component using onErrorCaptured() — external libs can throw at runtime.
 
 * Several templates use == (e.g., displacementMode == 'projection', sortColumn == 'id'). Prefer === for type safety.
+
+* Get rid of ".*" queries in php -> loads unnecessarily much
 
 * Component Structure:
 ```vue

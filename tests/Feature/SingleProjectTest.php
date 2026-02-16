@@ -284,11 +284,12 @@ test('project calculates average yearly movement correctly', function () {
         'addition_id' => null,
     ]);
 
-    // Calculate average movement
-    $averageMovementInCm = $project->averageYearlyMovement();
+    // Calculate MEDIAN movement
+    $averageMovementInCm = $project->medianYearlyMovement();
 
-    // The overall average is 1m per year.
-    // The method returns cm/year, so we expect 100.
+    // The overall average is 100cm per year.
+    // However, we calculate the median of [0, 0, 1, 3], which is (0 + 1) / 2 = 0.5 m/year -> 50 cm/year
     $this->assertNotNull($averageMovementInCm);
-    $this->assertEqualsWithDelta(100.0, $averageMovementInCm, 0.1);
+    // Delta as year does not always have the same length
+    $this->assertEqualsWithDelta(50.0, $averageMovementInCm, 0.01);
 });

@@ -21,7 +21,11 @@ export const DEFAULT_WMS_OPTIONS: WMSOptions = {
 // Available WMS layers configuration
 
 export const WMS_LAYERS = [
-    { label: 'Schummerung Oberfläche 2023', url: MAP_LAYERS.vogis.schummerung, layers: 'schummerung_2023_oberflaeche_25cm' },
+    {
+        label: 'Schummerung Oberfläche 2023',
+        url: MAP_LAYERS.vogis.schummerung,
+        layers: 'schummerung_2023_oberflaeche_25cm',
+    },
     { label: 'Schummerung Gelände 2023', url: MAP_LAYERS.vogis.schummerung, layers: 'schummerung_2023_gelaende_25cm' },
     { label: 'Echtfarben-Orthofoto Winter 2024-25', url: MAP_LAYERS.vogis.luftbilder, layers: 'wi2024-25_20cm' },
     { label: 'Echtfarben-Orthofoto 2023 technisch', url: MAP_LAYERS.vogis.luftbilder, layers: 'ef2023_10cm_t' },

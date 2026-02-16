@@ -18,7 +18,7 @@ return new class extends Migration
             $table->text('comment')->default('');
             $table->integer('last_file_number');
             // for pgsql native datatype
-            $table->rawColumn('period', 'INTERVAL default \'2 months 14 days\'');
+            $table->rawColumn('period', 'INTERVAL default \'6 months\'');
 
             // use automatically id for foreign key (table name is retrieved from local column name)
             $table->foreignId('client_id')->constrained()->onDelete('restrict');
