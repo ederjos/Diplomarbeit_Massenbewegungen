@@ -61,7 +61,6 @@ const submit = () => {
                     <PasswordInput
                         id="password"
                         class="block w-full rounded-md border-gray-300 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        button-class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
                         v-model="form.password"
                         required
                         autocomplete="new-password"
@@ -76,7 +75,6 @@ const submit = () => {
                     <PasswordInput
                         id="password_confirmation"
                         class="block w-full rounded-md border-gray-300 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        button-class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
                         v-model="form.password_confirmation"
                         required
                         autocomplete="new-password"

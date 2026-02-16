@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Measurement, MeasurementValue, Point } from '@/@types/measurement';
+import { formatDate } from '@/utils/date';
 import { distanceTo } from '@/utils/geo';
 import {
     Chart,
@@ -11,15 +12,14 @@ import {
     LineElement,
     PointElement,
     TimeScale,
-    Title,
     Tooltip,
 } from 'chart.js';
 import 'chartjs-adapter-date-fns';
-import { de } from 'date-fns/locale';
+import zoomPlugin from 'chartjs-plugin-zoom';
 import { computed, ref } from 'vue';
 import { Line } from 'vue-chartjs';
 
-Chart.register(LinearScale, PointElement, LineElement, Title, Tooltip, Legend, TimeScale);
+Chart.register(LinearScale, TimeScale, LineElement, PointElement, Tooltip, Legend, zoomPlugin);
 
 const chartRef = ref<{ chart: Chart<'line'> | null } | null>(null);
 
@@ -33,7 +33,7 @@ type Mode = 'total' | 'horizontal' | 'vertical';
 const currentMode = ref<Mode>('total');
 const modeLabels: Record<Mode, string> = {
     total: '3D-Gesamt',
-    horizontal: 'Lage',
+    horizontal: '2D-Lage',
     vertical: 'Höhe',
 };
 
@@ -118,28 +118,23 @@ const chartData = computed<ChartData<'line'>>(() => {
 });
 
 const chartOptions = computed<ChartOptions<'line'>>(() => {
-    let titleText = '';
     let yAxisText = '';
 
     switch (currentMode.value) {
         case 'horizontal':
-            titleText = 'Lageänderungen';
             yAxisText = 'Horizontale Bewegung [cm]';
             break;
         case 'vertical':
-            titleText = 'Setzungskurven';
             yAxisText = 'Vertikale Bewegung [cm]';
             break;
         case 'total':
         default:
-            titleText = '3D-Veränderungen';
             yAxisText = 'Gesamte Bewegung [cm]';
             break;
     }
 
     return {
         responsive: true,
-        maintainAspectRatio: false,
         interaction: {
             mode: 'nearest',
             axis: 'x',
@@ -148,10 +143,6 @@ const chartOptions = computed<ChartOptions<'line'>>(() => {
         plugins: {
             legend: {
                 position: 'bottom',
-            },
-            title: {
-                display: false,
-                text: titleText,
             },
             /**
              * Claude Sonnet 4.5, 2025-11-25
@@ -165,22 +156,35 @@ const chartOptions = computed<ChartOptions<'line'>>(() => {
                         if (!tooltipItems.length) return '';
                         const item = tooltipItems[0];
                         const raw = item.raw as { x: number; y: number; measurementName: string };
-                        return `${raw.measurementName} (${new Date(raw.x).toLocaleDateString('de-DE')})`;
+                        return raw.measurementName + ' ' + formatDate(raw.x);
                     },
                     label: (context) => {
-                        let label = context.dataset.label || '';
-                        if (label) {
-                            label += ': ';
-                        }
-                        if (context.parsed.y !== null) {
+                        let label = context.dataset.label + ': ';
+                        let y = context.parsed.y;
+                        if (y !== null) {
                             label +=
-                                context.parsed.y.toLocaleString('de-DE', {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
+                                y.toLocaleString('de-AT', {
+                                    minimumFractionDigits: 1,
+                                    maximumFractionDigits: 1,
                                 }) + ' cm';
                         }
                         return label;
                     },
+                },
+            },
+            zoom: {
+                zoom: {
+                    wheel: {
+                        enabled: true,
+                    },
+                    pinch: {
+                        enabled: true,
+                    },
+                    mode: 'y',
+                },
+                pan: {
+                    enabled: true,
+                    mode: 'y',
                 },
             },
         },
@@ -188,16 +192,8 @@ const chartOptions = computed<ChartOptions<'line'>>(() => {
             x: {
                 type: 'time',
                 time: {
-                    unit: 'month',
-                    displayFormats: {
-                        month: 'MMM yyyy',
-                    },
+                    unit: 'year',
                     tooltipFormat: 'dd.MM.yyyy',
-                },
-                adapters: {
-                    date: {
-                        locale: de,
-                    },
                 },
                 title: {
                     display: true,

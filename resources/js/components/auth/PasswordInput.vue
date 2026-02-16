@@ -1,5 +1,3 @@
-<!-- This component exists to avoid code duplication for password inputs, especially the show/hide functionality. -->
-
 <script setup lang="ts">
 import { ref } from 'vue';
 
@@ -10,10 +8,6 @@ defineOptions({
 // workaround to allow the v-model to be "forwarded" to the input element
 const model = defineModel<string>();
 
-defineProps<{
-    buttonClass: string;
-}>();
-
 const hidden = ref(true);
 </script>
 
@@ -21,7 +15,12 @@ const hidden = ref(true);
     <div class="relative">
         <input v-model="model" v-bind="$attrs" :type="hidden ? 'password' : 'text'" />
 
-        <button type="button" :class="buttonClass" @click="hidden = !hidden" tabindex="-1">
+        <button
+            type="button"
+            class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
+            @click="hidden = !hidden"
+            tabindex="-1"
+        >
             <!-- Modified from "https://preline.co/docs/toggle-password.html" -->
             <svg
                 xmlns="http://www.w3.org/2000/svg"
