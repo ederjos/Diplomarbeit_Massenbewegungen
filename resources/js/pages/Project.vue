@@ -39,6 +39,8 @@ const pointColors = computed(() => {
              "Please fix the tab so that when changing the tab selection 'Results' or 'Basics' that the white background 'moves' from one to the other, like in the original."
          -->
         <div class="w-full">
+            <!-- Only for screen readers -->
+            <h1 class="sr-only">Projekt {{ project.name }}</h1>
             <!-- v-model used for 2-way data-binding -->
             <TabSwitcher v-model:activeTab="activeTab" />
             <div>

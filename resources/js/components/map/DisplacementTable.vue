@@ -41,7 +41,7 @@ const displacementModeLabels: Record<DisplacementDistanceMode, string> = {
         class="z-10 h-full shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
         :class="DISPLACEMENT_TABLE_WIDTH"
     >
-        <h2 class="mb-3 text-lg font-bold">Verschiebungen</h2>
+        <h3 class="mb-3 text-lg font-bold" id="displacement-heading">Verschiebungen</h3>
         <div class="mb-3">
             <label class="mb-1 block text-sm font-bold">Darstellungsart</label>
             <div class="flex gap-1">

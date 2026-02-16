@@ -11,10 +11,13 @@ defineProps<{
 </script>
 
 <template>
-    <section class="p-4">
+    <section aria-labelledby="details-heading" class="p-4">
         <div class="rounded-lg bg-white p-6 shadow-md">
-            <h2 class="mb-4 text-2xl font-bold text-slate-700">Projektdetails</h2>
-            <table class="w-full max-w-2xl">
+            <h3 id="details-heading" class="mb-4 text-2xl font-bold text-slate-700">Projektdetails</h3>
+            <!-- Without aria-label: Screen reader says "Table with 12 rows"
+                 With it: Screen reader says "Projektdetails Tabelle, table with 12 rows"
+            -->
+            <table class="w-full max-w-2xl" aria-label="Projektdetails Tabelle">
                 <tbody>
                     <DetailRow label="ID" :value="project.id ?? '—'" />
                     <DetailRow label="Bezeichnung" :value="project.name ?? '—'" />

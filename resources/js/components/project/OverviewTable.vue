@@ -45,6 +45,7 @@ const emit = defineEmits<{
             :href="`/projects/${project.id}`"
             class="cursor-pointer transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
             :title="project.isActive ? 'Aktives Projekt' : 'Inaktives Projekt'"
+            :aria-label="`Projekt ${project.name} öffnen`"
         >
             <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                 {{ project.id }}

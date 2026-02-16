@@ -19,7 +19,7 @@ const selectedComparisonMeasurement = computed(() => {
     GPT-5.3-Codex, 2026-02-13
     "Taking a look at measurement.ts and then Project.vue, please insert a list of all comments regarding the currently selected comparison measurement showing all data that is loaded, i.e. content, created, updated, author name, author role."
     -->
-    <h2 class="mb-4 text-xl font-bold text-slate-700">
+    <h2 class="mb-4 text-xl font-bold text-slate-700" id="comments-heading">
         Kommentare zur Messepoche {{ selectedComparisonMeasurement?.name }}
     </h2>
     <p v-if="selectedComparisonMeasurement" class="mb-4 text-sm text-slate-600">
