@@ -7,7 +7,6 @@ const props = withDefaults(
     defineProps<{
         displacementRows: DisplacementRow[];
         highlightedPointId?: number | null;
-        displacementMode: DisplacementDistanceMode;
         sortColumn: keyof DisplacementRow | null;
         sortDirection: 'asc' | 'desc';
     }>(),
@@ -16,23 +15,24 @@ const props = withDefaults(
     },
 );
 
+const displacementMode = defineModel<DisplacementDistanceMode>('displacementMode', {required: true});
+
 // Quote "succinct" way to define emits
 const emit = defineEmits<{
     'select-point': [pointId: number];
     'sort-by': [column: keyof DisplacementRow];
-    'update:displacement-mode': [mode: DisplacementDistanceMode];
 }>();
 
 /**
  * Displacement display mode (for table):
- *   'twoD'       — Option A: √(dX² + dY²) Pythagoras 2D
+ *   '2D'         — Option A: √(dX² + dY²) Pythagoras 2D
  *   'projection' — Option B: Dot product on normalized axis
- *   'threeD'     — Option C: √(dX² + dY² + dZ²) Pythagoras 3D
+ *   '3D'         — Option C: √(dX² + dY² + dZ²) Pythagoras 3D
  */
 const displacementModeLabels: Record<DisplacementDistanceMode, string> = {
-    twoD: '2D',
-    projection: 'Projektion',
-    threeD: '3D',
+    distance2d: '2D Lage',
+    projectedDistance: 'Projektion',
+    distance3d: '3D Gesamt',
 };
 </script>
 
@@ -48,11 +48,11 @@ const displacementModeLabels: Record<DisplacementDistanceMode, string> = {
                 <button
                     v-for="(label, mode) in displacementModeLabels"
                     :key="mode"
-                    @click="emit('update:displacement-mode', mode)"
-                    :aria-pressed="props.displacementMode === mode"
+                    @click="displacementMode = mode"
+                    :aria-pressed="displacementMode === mode"
                     class="rounded px-2 py-1 text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-40"
                     :class="
-                        props.displacementMode === mode
+                        displacementMode === mode
                             ? 'bg-blue-600 text-white shadow-sm'
                             : 'bg-gray-100 hover:bg-gray-200'
                     "
@@ -75,7 +75,7 @@ const displacementModeLabels: Record<DisplacementDistanceMode, string> = {
                         @sort="emit('sort-by', 'name')"
                     />
                     <SortableHeader
-                        :label="`Δ ${displacementModeLabels[props.displacementMode]} [cm]`"
+                        :label="`Δ ${displacementModeLabels[displacementMode]} [cm]`"
                         :is-active="props.sortColumn === 'displayDistance'"
                         :direction="props.sortDirection"
                         @sort="emit('sort-by', 'displayDistance')"
@@ -103,7 +103,7 @@ const displacementModeLabels: Record<DisplacementDistanceMode, string> = {
                     <td class="px-3 py-2 font-medium text-gray-900">
                         {{ p.name }}
                         <span
-                            v-if="props.displacementMode === 'projection' && !p.hasProjection"
+                            v-if="displacementMode === 'projectedDistance' && !p.hasProjection"
                             class="text-xs text-amber-500"
                             title="Keine Projektionsachse"
                             >⚠</span

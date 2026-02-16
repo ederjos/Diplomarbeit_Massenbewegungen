@@ -33,7 +33,8 @@ export interface DisplacementRow {
     hasProjection: boolean;
 }
 
-export type DisplacementDistanceMode = 'twoD' | 'projection' | 'threeD';
+// Must have the extact same keys as DisplacementRow (get rid of switch-case)
+export type DisplacementDistanceMode = 'distance2d' | 'projectedDistance' | 'distance3d';
 
 interface Comment {
     id: number;

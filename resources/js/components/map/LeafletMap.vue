@@ -50,7 +50,7 @@ const isGaitLine = ref<boolean>(false);
 const selectedPointId = ref<number | null>(null);
 
 // Table state for displacement table
-const displacementMode = ref<DisplacementDistanceMode>('twoD');
+const displacementMode = ref<DisplacementDistanceMode>('distance2d');
 // If two points are clicked quickly after one another, the highlight animation should restart
 let highlightTimeout: number | null = null;
 // ResizeObserver detects size changes. More reliable than onmount of the table
@@ -98,8 +98,8 @@ const baseMeasurements = computed<BaseMeasurement[]>(() => {
  * Also: Don't give DisplacementTable more data than necessary
  */
 const unsortedDisplacementRows = computed<DisplacementRow[]>(() => {
-    // Don't compute if no comparison selected or gait line mode active
-    if (!props.referenceId || !selectedComparison.value) {
+    // Don't compute if no comparison selected or table not shown
+    if (!props.referenceId || !selectedComparison.value || isGaitLine.value) {
         return [];
     }
 
@@ -108,12 +108,8 @@ const unsortedDisplacementRows = computed<DisplacementRow[]>(() => {
             const displacement = props.displacements[point.id];
             if (!displacement) return null;
             // compute displayDistance according to current mode once here
-            const displayDistance =
-                displacementMode.value === 'projection'
-                    ? (displacement.projectedDistance ?? displacement.distance2d)
-                    : (displacementMode.value === 'threeD'
-                      ? displacement.distance3d
-                      : displacement.distance2d);
+            const rawDisplayDistance = displacement[displacementMode.value];
+            const displayDistance = rawDisplayDistance ?? displacement.distance2d;
 
             const result: DisplacementRow = {
                 pointId: point.id,
