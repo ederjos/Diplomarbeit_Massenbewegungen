@@ -6,19 +6,12 @@ import { computed } from 'vue';
 
 const props = defineProps<{
     measurements: BaseMeasurement[];
-    referenceId: number | null;
 }>();
 
+const selectedReference = defineModel<number | null>('selectedReference');
 const selectedComparison = defineModel<number | null>('selectedComparison');
 const vectorScale = defineModel<number>('vectorScale');
 const isGaitLine = defineModel<boolean>('isGaitLine');
-
-/** Display name for the fixed reference epoch */
-const referenceLabel = computed(() => {
-    if (!props.referenceId) return 'Nicht gesetzt';
-    const m = props.measurements.find((m) => m.id === props.referenceId);
-    return m ? `${m.name} (${formatDate(m.datetime)})` : 'Unbekannt';
-});
 
 // Prevent the user from entering invalid vector scales:
 const safeVectorScale = computed({
@@ -39,10 +32,18 @@ const safeVectorScale = computed({
 <template>
     <div class="z-10 flex shrink-0 items-center gap-4 bg-white p-4 shadow">
         <div>
-            <label class="mb-1 block text-sm font-bold">Referenzepoche</label>
-            <span class="inline-block rounded border bg-gray-100 px-2 py-1 text-sm text-gray-700">
-                {{ referenceLabel }}
-            </span>
+            <label for="reference-select" class="mb-1 block text-sm font-bold">Referenzepoche</label>
+            <select
+                v-model.number="selectedReference"
+                class="rounded border p-1 disabled:text-gray-400"
+                :disabled="isGaitLine"
+                :aria-disabled="isGaitLine"
+                id="reference-select"
+            >
+                <option v-for="m in props.measurements" :key="m.id" :value="m.id">
+                    {{ m.name }} ({{ formatDate(m.datetime) }})
+                </option>
+            </select>
         </div>
         <div>
             <label for="comparison-select" class="mb-1 block text-sm font-bold">Vergleichsepoche</label>

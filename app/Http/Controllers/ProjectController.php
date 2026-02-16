@@ -57,28 +57,38 @@ class ProjectController extends Controller
             'type',
         ]);
 
-        // Reference measurement returns first measurement if not yet configured
-        $referenceId = $project->reference_measurement_id;
-        if (! $referenceId && $project->measurements->count() > 0) {
-            $referenceId = $project->measurements->first()->id;
+        // Compute reference and comparison measurement IDs
+
+        $measurementIds = $project->measurements->pluck('id');
+
+        $referenceParam = $request->query('reference');
+        if ($referenceParam && is_numeric($referenceParam) && $measurementIds->contains((int) $referenceParam)) {
+            // 1. If a reference query is provided, use it
+            $referenceId = (int) $referenceParam;
+        } else {
+            $refFromProject = $project->reference_measurement_id;
+            if ($refFromProject && $measurementIds->contains($refFromProject)) {
+                // 2. Otherwise, use configured reference measurement
+                $referenceId = $refFromProject;
+            } elseif ($project->measurements->count() > 0) {
+                // 3. Finally, fall back to first measurement
+                $referenceId = $project->measurements->first()->id;
+            } else {
+                // 4. If no measurements -> has to be null
+                $referenceId = null;
+            }
         }
 
-        /**
-         * Claude Opus 4.6, 2026-02-11
-         * "now, take a look at the entire #codebase. is this code ready to be commited? Can you still find some errors?"
-         * Rem.: Before, I was using is_int which didn't work with query _string_ parameters
-         */
         // Comparison epoch from query param, defaults to last measurement
-        $comparisonId = $request->query('comparison');
-
-        if (! $comparisonId || ! is_numeric($comparisonId) || ! $project->measurements->pluck('id')->contains($comparisonId)) {
+        $comparisonParam = $request->query('comparison');
+        if ($comparisonParam && is_numeric($comparisonParam) && $measurementIds->contains((int) $comparisonParam)) {
+            // id is valid, just convert it to int
+            $comparisonId = (int) $comparisonParam;
+        } else {
             // if id invalid -> take last measurement as default
             $comparisonId = $project->measurements->count() > 1
                 ? $project->measurements->last()->id
                 : null;
-        } else {
-            // id is valid, just convert it to int
-            $comparisonId = (int) $comparisonId;
         }
 
         // Only include visible points

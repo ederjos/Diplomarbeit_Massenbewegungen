@@ -35,13 +35,14 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 * Projektion: immer auf aktuelle Referenzepoche; auch in ProjectTimeline anwenden!
 
-* Default für Mess-Intervall auf sinnvollen Wert (aktuell 6 mons)
-
 * Berichte drucken? (Print-Funktion auf /projects/id) (evtl.)
   * aktueller Zoomausschnitt aus ProjectTimeline
   * Querformat
 
-* Reference auch auswählen (DB-Wert einfach nur Standard)
+
+* Projekte favorisieren
+
+* Slaven fragen: Reset-Button für Formular-Eingabe?
 
 * Was automatisieren? -> Trendanalyse? Projekte mit großen Änderungen hervorheben! (Slaven: nein)
 
@@ -49,9 +50,7 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 ###  Refactor
 
-* Consider wrapping the LeafletComponent or ProjectTimeline (Chart.js) in an error boundary component using onErrorCaptured() — external libs can throw at runtime.
-
-* Several templates use == (e.g., displacementMode == 'projection', sortColumn == 'id'). Prefer === for type safety.
+* Calculations (distance) to utils/geo.ts
 
 * Get rid of ".*" queries in php -> loads unnecessarily much
 
@@ -71,18 +70,18 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 ```
 
 * Template structure:
-```vue
-<element
-    v-if v-show v-for
-    v-model
-    :key
-    ref
-    :prop-name (alphabetically)
-    @event-name
-    class
-    other-attributes
->
-```
+    ```vue
+    <element
+        v-if v-show v-for
+        v-model
+        :key
+        ref
+        :prop-name (alphabetically)
+        @event-name
+        class
+        other-attributes
+    >
+    ```
 
 * Nicht alle markers immer neu rendern / zeichnen
   For small datasets, this is fine. If the dataset grows, consider using a L.FeatureGroup or even a Canvas-based renderer for the markers.

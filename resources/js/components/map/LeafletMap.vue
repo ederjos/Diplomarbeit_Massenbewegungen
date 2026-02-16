@@ -28,7 +28,7 @@ const props = defineProps<{
     // like hash map
     pointColors: Record<number, string>;
     measurements: Measurement[];
-    /** Fixed reference measurement ID (Bezugsepoche, set per project by Admin/Editor) */
+    /** Selected reference measurement ID (or set per project by Admin/Editor) */
     referenceId: number | null;
     /** Selected comparison measurement ID */
     comparisonId: number | null;
@@ -45,6 +45,7 @@ const mapContainer = ref<HTMLDivElement | null>(null);
 
 // former selectedMeasurement
 const selectedComparison = ref<number | null>(props.comparisonId);
+const selectedReference = ref<number | null>(props.referenceId);
 const vectorScale = ref<number>(DEFAULT_VECTOR_SCALE);
 const isGaitLine = ref<boolean>(false);
 const selectedPointId = ref<number | null>(null);
@@ -62,7 +63,7 @@ let resizeObserver: ResizeObserver | null = null;
 const { initMap, fitBounds, zoomToPoint, invalidateMap, drawMap } = useLeafletMap(
     toRef(props.points),
     toRef(props.pointColors),
-    toRef(props.referenceId),
+    selectedReference,
     selectedComparison,
     vectorScale,
     isGaitLine,
@@ -74,12 +75,18 @@ const { initMap, fitBounds, zoomToPoint, invalidateMap, drawMap } = useLeafletMa
  * "[...] Then, apply the projection changes to the LeafletComponent file, so that the user can select the display mode for the displacements (2D, projection, 3D) and the map updates accordingly."
  */
 
-// Trigger Inertia visit when comparison epoch changes
-// Use inertia to ensure SPA experience and preserve scroll/state, but still update the URL for shareability and back button support
-watch(selectedComparison, (newComp) => {
-    if (newComp) {
-        router.get(window.location.pathname, { comparison: newComp }, { preserveScroll: true, preserveState: true });
+// Trigger Inertia visit when reference or comparison epoch changes
+// Use Inertia to ensure SPA experience and preserve scroll/state, but still update the URL for shareability and back button support
+watch([selectedReference, selectedComparison], ([refVal, compVal]) => {
+    if (refVal === null && compVal === null) {
+        return;
     }
+
+    const query: Record<string, any> = {};
+    if (refVal != null) query.reference = refVal;
+    if (compVal != null) query.comparison = compVal;
+
+    router.get(window.location.pathname, query, { preserveScroll: true, preserveState: true });
 });
 
 /**
@@ -100,7 +107,7 @@ const baseMeasurements = computed<BaseMeasurement[]>(() => {
  */
 const unsortedDisplacementRows = computed<DisplacementRow[]>(() => {
     // Don't compute if no comparison selected or table not shown
-    if (!props.referenceId || !selectedComparison.value || isGaitLine.value) {
+    if (!selectedReference.value || !selectedComparison.value || isGaitLine.value) {
         return [];
     }
 
@@ -156,7 +163,9 @@ function handlePointClick(pointId: number) {
 
 // Plain prop array wouldn't trigger updates -> watch with toRef to make it reactive
 // also watch for changes deep inside the points array, e.g. new measurements being added to an epoch
-watch([toRef(props.points), selectedComparison, vectorScale, isGaitLine], () => drawMap(), { deep: true });
+watch([toRef(props.points), selectedReference, selectedComparison, vectorScale, isGaitLine], () => drawMap(), {
+    deep: true,
+});
 
 onMounted(() => {
     // If no map can be found, there's nothing we can do.
@@ -166,9 +175,6 @@ onMounted(() => {
 
     // Initial setup
     if (props.points.length > 0) {
-        if (!selectedComparison.value && props.measurements.length > 1) {
-            selectedComparison.value = props.measurements[props.measurements.length - 1].id;
-        }
         drawMap();
         fitBounds();
     }
@@ -192,7 +198,7 @@ onUnmounted(() => {
     <div class="flex h-full w-full flex-col overflow-hidden">
         <MapToolbar
             :measurements="baseMeasurements"
-            :reference-id="props.referenceId"
+            v-model:selected-reference="selectedReference"
             v-model:selected-comparison="selectedComparison"
             v-model:vector-scale="vectorScale"
             v-model:is-gait-line="isGaitLine"
