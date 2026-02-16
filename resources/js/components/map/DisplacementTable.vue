@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { DisplacementDistanceMode, DisplacementRow } from '@/@types/measurement';
-import SortableHeader from '@/components/ui/SortableHeader.vue';
 import { DISPLACEMENT_TABLE_WIDTH } from '@/config/mapConstants';
+import AppTableWrapper from '../ui/AppTableWrapper.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -15,7 +15,7 @@ const props = withDefaults(
     },
 );
 
-const displacementMode = defineModel<DisplacementDistanceMode>('displacementMode', {required: true});
+const displacementMode = defineModel<DisplacementDistanceMode>('displacementMode', { required: true });
 
 // Quote "succinct" way to define emits
 const emit = defineEmits<{
@@ -52,73 +52,50 @@ const displacementModeLabels: Record<DisplacementDistanceMode, string> = {
                     :aria-pressed="displacementMode === mode"
                     class="rounded px-2 py-1 text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-40"
                     :class="
-                        displacementMode === mode
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'bg-gray-100 hover:bg-gray-200'
+                        displacementMode === mode ? 'bg-blue-600 text-white shadow-sm' : 'bg-gray-100 hover:bg-gray-200'
                     "
                 >
                     {{ label }}
                 </button>
             </div>
         </div>
-        <table class="relative w-full border-collapse text-left text-sm">
-            <thead class="sticky top-0 z-10 border-b bg-gray-100 text-xs uppercase shadow-sm">
-                <tr>
-                    <!--
-                    Claude Sonnet 4.5, 2026-02-15
-                    "please improve the tailwind style of SortableHeader and all uses of SortableHeader where, depending on the situation, a few additional style changes can be applied."
-                    -->
-                    <SortableHeader
-                        label="Punkt"
-                        :is-active="props.sortColumn === 'name'"
-                        :direction="props.sortDirection"
-                        @sort="emit('sort-by', 'name')"
-                    />
-                    <SortableHeader
-                        :label="`Δ ${displacementModeLabels[displacementMode]} [cm]`"
-                        :is-active="props.sortColumn === 'displayDistance'"
-                        :direction="props.sortDirection"
-                        @sort="emit('sort-by', 'displayDistance')"
-                    />
-                    <SortableHeader
-                        label="Δ Höhe [cm]"
-                        :is-active="props.sortColumn === 'deltaHeight'"
-                        :direction="props.sortDirection"
-                        @sort="emit('sort-by', 'deltaHeight')"
-                    />
-                </tr>
-            </thead>
-            <tbody>
-                <tr
-                    v-for="p in props.displacementRows"
-                    :key="p.pointId"
-                    tabindex="0"
-                    role="button"
-                    class="cursor-pointer border-b bg-white transition-colors odd:bg-gray-50 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
-                    :class="{ 'leaflet-row-highlight': p.pointId === props.highlightedPointId }"
-                    @click="emit('select-point', p.pointId)"
-                    @keydown.enter="emit('select-point', p.pointId)"
-                    @keydown.space.prevent="emit('select-point', p.pointId)"
-                >
-                    <td class="px-3 py-2 font-medium text-gray-900">
-                        {{ p.name }}
-                        <span
-                            v-if="displacementMode === 'projectedDistance' && !p.hasProjection"
-                            class="text-xs text-amber-500"
-                            title="Keine Projektionsachse"
-                            >⚠</span
-                        >
-                    </td>
-                    <td class="px-3 py-2 text-right tabular-nums">{{ p.displayDistance.toFixed(4) }}</td>
-                    <td class="px-3 py-2 text-right tabular-nums">
-                        {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(4) }}
-                    </td>
-                </tr>
-                <tr v-if="props.displacementRows.length === 0">
-                    <td colspan="3" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
-                </tr>
-            </tbody>
-        </table>
+        <AppTableWrapper
+            :columns="[
+                { label: 'Punkt', columnName: 'name' },
+                { label: `Δ ${displacementModeLabels[displacementMode]} [cm]`, columnName: 'displayDistance' },
+                { label: 'Δ Höhe [cm]', columnName: 'deltaHeight' },
+            ]"
+            :sort-column="sortColumn"
+            :sort-direction="sortDirection"
+            tableClass="relative w-full border-collapse text-left text-sm"
+            theadClass="sticky top-0 z-10 border-b bg-gray-100 text-xs uppercase shadow-sm"
+            @sort-by="(col) => emit('sort-by', col)"
+        >
+            <tr
+                v-for="p in props.displacementRows"
+                :key="p.pointId"
+                class="cursor-pointer border-b bg-white transition-colors odd:bg-gray-50 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
+                :class="{ 'leaflet-row-highlight': p.pointId === props.highlightedPointId }"
+                @click="emit('select-point', p.pointId)"
+            >
+                <td class="px-3 py-2 font-medium text-gray-900">
+                    {{ p.name }}
+                    <span
+                        v-if="displacementMode === 'projectedDistance' && !p.hasProjection"
+                        class="text-xs text-amber-500"
+                        title="Keine Projektionsachse"
+                        >⚠</span
+                    >
+                </td>
+                <td class="px-3 py-2 text-right tabular-nums">{{ p.displayDistance.toFixed(4) }}</td>
+                <td class="px-3 py-2 text-right tabular-nums">
+                    {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(4) }}
+                </td>
+            </tr>
+            <tr v-if="props.displacementRows.length === 0">
+                <td colspan="3" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
+            </tr>
+        </AppTableWrapper>
     </div>
 </template>
 

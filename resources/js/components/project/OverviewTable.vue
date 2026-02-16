@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ProjectOverview } from '@/@types/project';
-import SortableHeader from '@/components/ui/SortableHeader.vue';
 import { formatDate } from '@/utils/date';
 import { Link } from '@inertiajs/vue3';
+import AppTableWrapper from '../ui/AppTableWrapper.vue';
 
 defineProps<{
     projects: ProjectOverview[];
@@ -23,62 +23,41 @@ const emit = defineEmits<{
     Claude Sonnet 4.5, 2026-02-13
     "Now, give this table a good Tailwind design again."
     -->
-    <table class="min-w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
-        <thead class="bg-gray-50">
-            <tr>
-                <SortableHeader
-                    label="ID"
-                    styleClasses="px-6 py-3"
-                    :is-active="sortColumn === 'id'"
-                    :direction="sortDirection"
-                    @sort="emit('sort-by', 'id')"
-                />
-                <!-- Syntax to call an emit -->
-                <SortableHeader
-                    label="Name"
-                    styleClasses="px-6 py-3"
-                    :is-active="sortColumn === 'name'"
-                    :direction="sortDirection"
-                    @sort="emit('sort-by', 'name')"
-                />
-                <SortableHeader
-                    label="Letzte Messung"
-                    styleClasses="px-6 py-3"
-                    :is-active="sortColumn === 'lastMeasurement'"
-                    :direction="sortDirection"
-                    @sort="emit('sort-by', 'lastMeasurement')"
-                />
-                <SortableHeader
-                    label="Nächste Messung"
-                    styleClasses="px-6 py-3"
-                    :is-active="sortColumn === 'nextMeasurement'"
-                    :direction="sortDirection"
-                    @sort="emit('sort-by', 'nextMeasurement')"
-                />
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-200">
-            <Link
-                as="tr"
-                v-for="project in projects"
-                :key="project.id"
-                :href="`/projects/${project.id}`"
-                class="cursor-pointer transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
-                :title="project.isActive ? 'Aktives Projekt' : 'Inaktives Projekt'"
-            >
-                <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                    {{ project.id }}
-                </td>
-                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
-                    {{ project.name }}
-                </td>
-                <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                    {{ formatDate(project.lastMeasurement) }}
-                </td>
-                <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                    {{ project.isActive ? formatDate(project.nextMeasurement) : '-' }}
-                </td>
-            </Link>
-        </tbody>
-    </table>
+    <AppTableWrapper
+        :columns="[
+            { label: 'ID', columnName: 'id' },
+            { label: 'Name', columnName: 'name' },
+            { label: 'Letzte Messung', columnName: 'lastMeasurement' },
+            { label: 'Nächste Messung', columnName: 'nextMeasurement' },
+        ]"
+        :sort-column="sortColumn"
+        :sort-direction="sortDirection"
+        table-class="min-w-full overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm"
+        thead-class="bg-gray-50"
+        tbody-class="divide-y divide-gray-200"
+        th-class="px-6 py-3"
+        @sort-by="(col) => emit('sort-by', col)"
+    >
+        <Link
+            as="tr"
+            v-for="project in projects"
+            :key="project.id"
+            :href="`/projects/${project.id}`"
+            class="cursor-pointer transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
+            :title="project.isActive ? 'Aktives Projekt' : 'Inaktives Projekt'"
+        >
+            <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                {{ project.id }}
+            </td>
+            <td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
+                {{ project.name }}
+            </td>
+            <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                {{ formatDate(project.lastMeasurement) }}
+            </td>
+            <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                {{ project.isActive ? formatDate(project.nextMeasurement) : '-' }}
+            </td>
+        </Link>
+    </AppTableWrapper>
 </template>

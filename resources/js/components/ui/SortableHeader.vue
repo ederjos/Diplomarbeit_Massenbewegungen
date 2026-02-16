@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-vue-next';
 
-defineProps<{
-    label: string;
-    isActive: boolean;
-    direction: 'asc' | 'desc';
-    styleClasses?: string;
-}>();
+withDefaults(
+    defineProps<{
+        label: string;
+        isActive: boolean;
+        direction: 'asc' | 'desc';
+        styleClass?: string;
+    }>(),
+    {
+        styleClass: '',
+    },
+);
 
 const emit = defineEmits<{
     sort: [];
@@ -26,7 +31,7 @@ const emit = defineEmits<{
         role="button"
         :aria-sort="isActive ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'"
         class="group cursor-pointer bg-gray-50 px-2 py-2 text-xs font-semibold text-gray-600 uppercase transition-colors select-none hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
-        :class="styleClasses"
+        :class="styleClass"
     >
         <div class="flex items-center gap-1">
             {{ label }}

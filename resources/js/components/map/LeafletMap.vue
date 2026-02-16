@@ -42,7 +42,7 @@ const props = defineProps<{
  */
 
 const mapContainer = ref<HTMLDivElement | null>(null);
-// const map = ref<L.Map | null>(null);
+
 // former selectedMeasurement
 const selectedComparison = ref<number | null>(props.comparisonId);
 const vectorScale = ref<number>(DEFAULT_VECTOR_SCALE);
@@ -51,6 +51,7 @@ const selectedPointId = ref<number | null>(null);
 
 // Table state for displacement table
 const displacementMode = ref<DisplacementDistanceMode>('distance2d');
+
 // If two points are clicked quickly after one another, the highlight animation should restart
 let highlightTimeout: number | null = null;
 // ResizeObserver detects size changes. More reliable than onmount of the table
@@ -103,36 +104,36 @@ const unsortedDisplacementRows = computed<DisplacementRow[]>(() => {
         return [];
     }
 
-    return props.points
-        .map((point) => {
-            const displacement = props.displacements[point.id];
-            if (!displacement) return null;
-            // compute displayDistance according to current mode once here
-            const rawDisplayDistance = displacement[displacementMode.value];
-            const displayDistance = rawDisplayDistance ?? displacement.distance2d;
+    return (
+        props.points
+            .map((point) => {
+                const displacement = props.displacements[point.id];
+                if (!displacement) return null;
+                // compute displayDistance according to current mode once here
+                const rawDisplayDistance = displacement[displacementMode.value];
+                const displayDistance = rawDisplayDistance ?? displacement.distance2d;
 
-            const result: DisplacementRow = {
-                pointId: point.id,
-                name: point.name,
-                distance2d: displacement.distance2d,
-                distance3d: displacement.distance3d,
-                projectedDistance: displacement.projectedDistance,
-                deltaHeight: displacement.deltaHeight,
-                displayDistance: displayDistance,
-                hasProjection: displacement.projectedDistance !== null,
-            };
+                const result: DisplacementRow = {
+                    pointId: point.id,
+                    name: point.name,
+                    distance2d: displacement.distance2d,
+                    distance3d: displacement.distance3d,
+                    projectedDistance: displacement.projectedDistance,
+                    deltaHeight: displacement.deltaHeight,
+                    displayDistance: displayDistance,
+                    hasProjection: displacement.projectedDistance !== null,
+                };
 
-            return result;
-        })
-        // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
-        // Also tells TS now the type is DisplacementRow w/o "| null"
-        .filter((row): row is DisplacementRow => row !== null);
+                return result;
+            })
+            // filters all null out (points w/o data for this epoch) & guarantees that there are no nulls
+            // Also tells TS now the type is DisplacementRow w/o "| null"
+            .filter((row): row is DisplacementRow => row !== null)
+    );
 });
 
 // Use composable for sorting with custom comparison
-const { sortColumn, sortDirection, sorted: displacementRows, handleSort } = useSortableData(
-    unsortedDisplacementRows
-);
+const { sortColumn, sortDirection, sorted: displacementRows, handleSort } = useSortableData(unsortedDisplacementRows);
 
 function handlePointClick(pointId: number) {
     zoomToPoint(pointId);

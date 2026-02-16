@@ -2,8 +2,8 @@
 import { ProjectOverview } from '@/@types/project';
 import OverviewTable from '@/components/project/OverviewTable.vue';
 import AppToggle from '@/components/ui/AppToggle.vue';
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 import { useSortableData } from '@/composables/useSortableData';
+import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
@@ -25,9 +25,7 @@ const filteredProjects = computed(() => {
 });
 
 // Use composable for sorting logic
-const { sortColumn, sortDirection, sorted: displayedProjects, handleSort } = useSortableData(
-    filteredProjects,
-);
+const { sortColumn, sortDirection, sorted: displayedProjects, handleSort } = useSortableData(filteredProjects);
 </script>
 
 <template>

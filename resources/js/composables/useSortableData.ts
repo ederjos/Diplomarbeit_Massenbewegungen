@@ -1,6 +1,6 @@
 import { computed, Ref, ref } from 'vue';
 
-/** 
+/**
  * Claude Sonnet 4.5, 2026-02-15
  * "Can this code be put into a composable to reuse it in Home and LeafletMap? [old sorting code from those two vue files]"
  * Rem: Adjusted by hand
