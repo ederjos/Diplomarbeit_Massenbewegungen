@@ -26,16 +26,26 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
 ### Technical Debt
 
-* URL hashen? Oder Zugriff im Rendering unterbinden?
-
 * (SRID (nur EPSG) in Formular auswählen (default vbg 31254))
     * Backend: Standard-SRID auf Lat/Lon setzen
+    * anderes Koordinatensystem: nicht so wichtig
+    * je Projekt auswählen
 
-* Default für Mess-Intervall auf sinnvollen Wert (aktuell 2 mons 14 days)
+* je Projekt: Foto anzeigen; wo: unter Orthofoto oder unter ProjectTimeline
 
-* Berichte drucken? (Print-Funktion auf /projects/id)
+* Projektion: immer auf aktuelle Referenzepoche
 
-* Was automatisieren? -> Trendanalyse? Projekte mit großen Änderungen hervorheben!
+* Default für Mess-Intervall auf sinnvollen Wert (aktuell 6 mons)
+
+* Berichte drucken? (Print-Funktion auf /projects/id) (evtl.)
+  * aktueller Zoomausschnitt aus ProjectTimeline
+  * Querformat
+
+* Reference auch auswählen (DB-Wert einfach nur Standard)
+
+* Was automatisieren? -> Trendanalyse? Projekte mit großen Änderungen hervorheben! (Slaven: nein)
+
+* KI: hinfällig
 
 ###  Refactor
 

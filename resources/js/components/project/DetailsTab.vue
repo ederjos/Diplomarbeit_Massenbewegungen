@@ -27,9 +27,9 @@ defineProps<{
                     <DetailRow label="Intervall" :value="project.period ?? '—'" />
                     <DetailRow label="Typ" :value="project.type ?? '—'" />
                     <DetailRow
-                        label="Durchschnittl. Bewegung"
+                        label="Durchschnittliche Bewegung (Median)"
                         :value="
-                            project.averageYearlyMovement ? project.averageYearlyMovement.toFixed(4) + ' cm/Jahr' : '—'
+                            project.averageYearlyMovement ? project.averageYearlyMovement.toFixed(1) + ' cm/Jahr' : '—'
                         "
                     />
                     <DetailRow label="Status" :value="project.isActive ? 'Aktiv' : 'Inaktiv'" />

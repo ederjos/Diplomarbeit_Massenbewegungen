@@ -15,15 +15,15 @@ export const DEFAULT_WMS_OPTIONS: WMSOptions = {
     transparent: true,
     maxZoom: MAX_MAP_ZOOM,
     minZoom: MIN_MAP_ZOOM,
-    attribution: '&copy; VOGIS CNV',
+    attribution: '&copy; Land Vorarlberg',
 };
 
 // Available WMS layers configuration
 
 export const WMS_LAYERS = [
-    { label: 'Schummerung Oberfläche', url: MAP_LAYERS.vogis.schummerung, layers: 'schummerung_2023_oberflaeche_25cm' },
-    { label: 'Schummerung Gelände', url: MAP_LAYERS.vogis.schummerung, layers: 'schummerung_2023_gelaende_25cm' },
-    { label: 'Luftbild: Echtfarben Winter Mosaik 2024-25', url: MAP_LAYERS.vogis.luftbilder, layers: 'wi2024-25_20cm' },
-    { label: 'Luftbild: 2018', url: MAP_LAYERS.vogis.luftbilder, layers: 'ef2018_10cm' },
-    { label: 'Echtfarbenbild_2023_10cm_technisch', url: MAP_LAYERS.vogis.luftbilder, layers: 'ef2023_10cm_t' },
+    { label: 'Schummerung Oberfläche 2023', url: MAP_LAYERS.vogis.schummerung, layers: 'schummerung_2023_oberflaeche_25cm' },
+    { label: 'Schummerung Gelände 2023', url: MAP_LAYERS.vogis.schummerung, layers: 'schummerung_2023_gelaende_25cm' },
+    { label: 'Echtfarben-Orthofoto Winter 2024-25', url: MAP_LAYERS.vogis.luftbilder, layers: 'wi2024-25_20cm' },
+    { label: 'Echtfarben-Orthofoto 2023 technisch', url: MAP_LAYERS.vogis.luftbilder, layers: 'ef2023_10cm_t' },
+    { label: 'Echtfarben-Orthofoto 2022', url: MAP_LAYERS.vogis.luftbilder, layers: 'ef2022_10cm' },
 ];

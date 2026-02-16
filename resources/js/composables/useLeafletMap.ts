@@ -124,10 +124,10 @@ export function useLeafletMap(
             const latlngs = computeLatLngs(point, scale);
             if (!latlngs.length) return;
 
-            const lastCoord = latlngs[latlngs.length - 1];
+            const firstCoord = latlngs[0];
             addPolylines(latlngs, point.id);
-            addCircleMarker(lastCoord, point.id);
-            addTextMarker(lastCoord, point.id, point.name);
+            addCircleMarker(firstCoord, point.id);
+            addTextMarker(firstCoord, point.id, point.name);
         });
     }
 

@@ -87,9 +87,9 @@ const displacementModeLabels: Record<DisplacementDistanceMode, string> = {
                         >⚠</span
                     >
                 </td>
-                <td class="px-3 py-2 text-right tabular-nums">{{ p.displayDistance.toFixed(4) }}</td>
+                <td class="px-3 py-2 text-right tabular-nums">{{ p.displayDistance.toFixed(1) }}</td>
                 <td class="px-3 py-2 text-right tabular-nums">
-                    {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(4) }}
+                    {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(1) }}
                 </td>
             </tr>
             <tr v-if="props.displacementRows.length === 0">
