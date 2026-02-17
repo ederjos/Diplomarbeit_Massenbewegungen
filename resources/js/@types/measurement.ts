@@ -11,6 +11,17 @@ export interface Point {
     id: number;
     name: string;
     measurementValues: MeasurementValue[];
+    axis: ProjectionAxis | null;
+}
+
+export interface ProjectionAxis {
+    // TEMP - will be shortened to necessary values only
+    startLat: number;
+    startLon: number;
+    endLat: number;
+    endLon: number;
+    vectorLat: number;
+    vectorLon: number;
 }
 
 export interface PointDisplacement {

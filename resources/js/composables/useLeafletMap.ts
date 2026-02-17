@@ -125,6 +125,11 @@ export function useLeafletMap(
             if (!latlngs.length) return;
 
             const firstCoord = latlngs[0];
+            // First, draw projection line if requested
+            if (isGaitLine.value && point.axis){
+                addProjectionLine(point);
+            }
+
             addPolylines(latlngs, point.id);
             addCircleMarker(firstCoord, point.id);
             addTextMarker(firstCoord, point.id, point.name);
@@ -190,6 +195,37 @@ export function useLeafletMap(
 
             return [newLat, newLon];
         });
+    }
+
+    function addProjectionLine(point: Point) {
+        if (!point.axis || !markersLayer) {
+            return;
+        }
+
+        const scale = vectorScale.value;
+        const { startLat, startLon, vectorLat, vectorLon } = point.axis;
+
+        // Calculate scaled end point: start + vector * scale
+        const endLat = startLat + vectorLat * scale;
+        const endLon = startLon + vectorLon * scale;
+
+        // Draw projection axis line
+        const projectionLine = L.polyline(
+            [
+                // from
+                [startLat, startLon],
+                // to
+                [endLat, endLon],
+            ],
+            {
+                color: '#FF6B6B', // Use color from LVG design
+                weight: 2,
+                opacity: 0.7,
+            }
+        );
+
+        projectionLine.on('click', () => onPointClick(point.id));
+        markersLayer.addLayer(projectionLine);
     }
 
     function addPolylines(latlngs: [number, number][], pointId: number) {
