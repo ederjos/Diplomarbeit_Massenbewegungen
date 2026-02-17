@@ -126,7 +126,7 @@ export function useLeafletMap(
 
             const firstCoord = latlngs[0];
             // First, draw projection line if requested
-            if (isGaitLine.value && point.axis){
+            if (isGaitLine.value && point.axis) {
                 addProjectionLine(point);
             }
 
@@ -221,7 +221,7 @@ export function useLeafletMap(
                 color: '#FF6B6B', // Use color from LVG design
                 weight: 2,
                 opacity: 0.7,
-            }
+            },
         );
 
         projectionLine.on('click', () => onPointClick(point.id));

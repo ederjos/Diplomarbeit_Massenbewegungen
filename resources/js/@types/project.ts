@@ -17,7 +17,7 @@ export interface ProjectDetails extends ProjectBase {
     clerk: string;
     municipality: string;
     type: string;
-    medianYearlyMovement: number | null;
+    movementMagnitude: number | null;
     firstMeasurement: string | null;
     lastMeasurement: string | null;
 }

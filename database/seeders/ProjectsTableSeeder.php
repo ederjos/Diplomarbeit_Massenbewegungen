@@ -19,6 +19,7 @@ class ProjectsTableSeeder extends Seeder
             'comment' => 'Dies ist das Testprojekt für die Entwicklung.',
             'last_file_number' => 7273,
             'period' => '2 months 14 days',
+            'movement_magnitude' => '3 cm/Jahr in den letzten zwei Jahren',
             'client_id' => 1,
             'clerk_id' => 1,
             'type_id' => 1,

@@ -26,12 +26,7 @@ defineProps<{
                     <DetailRow label="Sachbearbeiter" :value="project.clerk ?? '—'" />
                     <DetailRow label="Intervall" :value="project.period ?? '—'" />
                     <DetailRow label="Typ" :value="project.type ?? '—'" />
-                    <DetailRow
-                        label="Durchschnittliche Bewegung (Median)"
-                        :value="
-                            project.medianYearlyMovement ? project.medianYearlyMovement.toFixed(1) + ' cm/Jahr' : '—'
-                        "
-                    />
+                    <DetailRow label="Größenordnung Bewegung" :value="project.movementMagnitude ?? '—'" />
                     <DetailRow label="Status" :value="project.isActive ? 'Aktiv' : 'Inaktiv'" />
                     <DetailRow label="Erste Messung" :value="formatDate(project.firstMeasurement)" />
                     <DetailRow label="Letzte Messung" :value="formatDate(project.lastMeasurement)" />
@@ -43,11 +38,7 @@ defineProps<{
                             :class="contactPersons.length === 1 ? 'list-none' : 'list-inside list-disc space-y-1'"
                         >
                             <li v-for="user in contactPersons" :key="user.id">
-                                <u
-                                    ><a :href="'mailto:' + user.email"
-                                        >{{ user.name }} ({{ user.role?.name ?? 'no role assigned' }})</a
-                                    ></u
-                                >
+                                {{ user.name }} ({{ user.role?.name ?? 'ohne Rolle' }})
                             </li>
                         </ul>
                         <span v-else>—</span>

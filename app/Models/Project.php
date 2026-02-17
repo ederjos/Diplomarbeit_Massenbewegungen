@@ -109,37 +109,4 @@ class Project extends Model
         // Set by admin
         return $this->belongsTo(Measurement::class, 'reference_measurement_id');
     }
-
-    public function medianYearlyMovement(): ?float
-    {
-        $points = $this->points()->with('measurementValues.measurement')->get();
-
-        $values = [];
-
-        foreach ($points as $point) {
-            $yearlyMovement = $point->yearlyMovementInCm();
-
-            if ($yearlyMovement !== null) {
-                $values[] = $yearlyMovement;
-            }
-        }
-
-        $count = count($values);
-
-        if ($count === 0) {
-            return null;
-        }
-
-        sort($values);
-
-        $middle = floor($count / 2);
-
-        if ($count % 2 === 0) {
-            // even -> average of the two middle values (float)
-            return (float) (($values[$middle - 1] + $values[$middle]) / 2);
-        }
-
-        // odd -> exact middle (cast to float to match return type)
-        return (float) $values[$middle];
-    }
 }

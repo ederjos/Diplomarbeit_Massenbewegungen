@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 use Clickbar\Magellan\Database\PostgisFunctions\ST;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -82,6 +81,12 @@ class Point extends Model
 
         // Transform both points to EPSG:4326 (WGS84 for Leaflet)
         // Needs POSGIS, therefore DB::query
+
+        /**
+         * Gemini 2.5 Pro, 2026-02-13
+         * "So, I'd rather have geodetic correctness. Transform the coordinates to lat, lon upon selecting them from the db. [...]"
+         * Rem.: This comment was copied from the (now deleted) method yearlyMovementInCm() as this code was inspired by the distance calculation there.
+         */
         $result = DB::query()
             ->select([
                 ST::x(ST::transform($firstMv->geom, config('spatial.srids.wgs84')))->as('start_lon'),
@@ -103,59 +108,5 @@ class Point extends Model
             'vectorLat' => $result->end_lat - $result->start_lat,
             'vectorLon' => $result->end_lon - $result->start_lon,
         ];
-    }
-
-    public function yearlyMovementInCm(): ?float
-    {
-        $firstMv = $this->measurementValues()
-            ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
-            ->orderBy('measurements.measurement_datetime')
-            ->select('measurement_values.id', 'measurement_values.geom', 'measurements.measurement_datetime')
-            ->first();
-
-        $lastMv = $this->measurementValues()
-            ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
-            ->orderByDesc('measurements.measurement_datetime')
-            ->select('measurement_values.id', 'measurement_values.geom', 'measurements.measurement_datetime')
-            ->first();
-
-        if (! $firstMv || ! $lastMv || ! $firstMv->geom || ! $lastMv->geom) {
-            // Must all be set
-            return null;
-        }
-
-        if ($firstMv->id === $lastMv->id) {
-            // Only one measurement value, so we don't consider it
-            return null;
-        }
-
-        // Join needs to parse as Eloquent cast is not applied
-        $firstDt = Carbon::parse($firstMv->measurement_datetime);
-        $lastDt = Carbon::parse($lastMv->measurement_datetime);
-
-        /**
-         * Gemini 2.5 Pro, 2026-02-13
-         * "So, I'd rather have geodetic correctness. Transform the coordinates to lat, lon upon selecting them from the db. [...]"
-         */
-        $distanceResult = DB::query()
-            ->select(
-                // Returned as meters in EPSG:31254; in WGS84, it would be in degrees!
-                ST::distance3D(
-                    ST::transform($firstMv->geom, config('spatial.srids.default')),
-                    ST::transform($lastMv->geom, config('spatial.srids.default'))
-                )->as('distance')
-            )->first();
-
-        $distance = $distanceResult->distance ?? null;
-
-        $timeDifferenceInYears = $firstDt->diffInYears($lastDt, true);
-
-        if ($timeDifferenceInYears <= 0) {
-            // Avoid division by zero or negative time difference
-            return null;
-        }
-
-        // Return the movement in cm/year
-        return $distance * 100 / $timeDifferenceInYears;
     }
 }
