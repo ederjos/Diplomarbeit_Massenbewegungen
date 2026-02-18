@@ -163,3 +163,21 @@ test('comparison parameter defaults to latest measurement when invalid', functio
                 ->where('comparisonId', $thirdMeasurement->id)
         );
 });
+
+test('project page works with zero measurements', function () {
+    /** @var \Tests\TestCase $this */
+    $project = Project::factory()->createOne();
+
+    /** @var \App\Models\User $user */
+    $user = User::factory()->createOne();
+    $response = $this->actingAs($user)->get(route('project', $project));
+
+    // Mainly done with Copilot autocomplete
+    $response->assertStatus(200)
+        ->assertInertia(
+            fn (Assert $page) => $page
+                ->component('Project')
+                ->where('measurements', [])
+                ->where('points', [])
+        );
+});

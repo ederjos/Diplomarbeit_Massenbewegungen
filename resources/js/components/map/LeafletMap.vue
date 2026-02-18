@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {
     BaseMeasurement,
-    DisplacementDistanceMode,
     DisplacementRow,
     Measurement,
     Point,
@@ -49,9 +48,6 @@ const selectedReference = ref<number | null>(props.referenceId);
 const vectorScale = ref<number>(DEFAULT_VECTOR_SCALE);
 const isGaitLine = ref<boolean>(false);
 const selectedPointId = ref<number | null>(null);
-
-// Table state for displacement table
-const displacementMode = ref<DisplacementDistanceMode>('distance2d');
 
 // If two points are clicked quickly after one another, the highlight animation should restart
 let highlightTimeout: number | null = null;
@@ -116,19 +112,13 @@ const unsortedDisplacementRows = computed<DisplacementRow[]>(() => {
             .map((point) => {
                 const displacement = props.displacements[point.id];
                 if (!displacement) return null;
-                // compute displayDistance according to current mode once here
-                const rawDisplayDistance = displacement[displacementMode.value];
-                const displayDistance = rawDisplayDistance ?? displacement.distance2d;
 
                 const result: DisplacementRow = {
                     pointId: point.id,
                     name: point.name,
-                    distance2d: displacement.distance2d,
+                    distance2dOrProjection: displacement.projectedDistance ?? displacement.distance2d,
                     distance3d: displacement.distance3d,
-                    projectedDistance: displacement.projectedDistance,
                     deltaHeight: displacement.deltaHeight,
-                    displayDistance: displayDistance,
-                    hasProjection: displacement.projectedDistance !== null,
                 };
 
                 return result;
@@ -213,7 +203,6 @@ onUnmounted(() => {
                 v-if="!isGaitLine"
                 :displacement-rows="displacementRows"
                 :highlighted-point-id="selectedPointId"
-                v-model:displacement-mode="displacementMode"
                 :sort-column="sortColumn"
                 :sort-direction="sortDirection"
                 @select-point="handlePointClick"

@@ -175,3 +175,44 @@ test('displacement calculations skip points without comparison values', function
         ->missing("displacements.{$pointWithoutReference->id}")
     );
 });
+
+test('points without projection have null projectedDistance', function () {
+    /** @var \Tests\TestCase $this */
+    $project = Project::factory()->createOne();
+
+    $referenceMeasurement = Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => '2025-01-01 00:00:00',
+    ]);
+
+    $comparisonMeasurement = Measurement::factory()->createOne([
+        'project_id' => $project->id,
+        'measurement_datetime' => '2026-01-01 00:00:00',
+    ]);
+
+    $pointWithoutProjection = Point::factory()->createOne([
+        'project_id' => $project->id,
+        'is_visible' => true,
+        'projection_id' => null,
+    ]);
+
+    // Both measurements have values for the point
+    MeasurementValue::factory()->createOne([
+        'point_id' => $pointWithoutProjection->id,
+        'measurement_id' => $referenceMeasurement->id,
+    ]);
+
+    MeasurementValue::factory()->createOne([
+        'point_id' => $pointWithoutProjection->id,
+        'measurement_id' => $comparisonMeasurement->id,
+    ]);
+
+    /** @var User $user */
+    $user = User::factory()->createOne();
+
+    $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id.'&reference='.$referenceMeasurement->id);
+
+    $response->assertInertia(fn (Assert $page) => $page
+        ->where("displacements.{$pointWithoutProjection->id}.projectedDistance", null)
+    );
+});

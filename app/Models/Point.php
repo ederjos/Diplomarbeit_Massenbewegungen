@@ -103,8 +103,6 @@ class Point extends Model
         return [
             'startLat' => $result->start_lat,
             'startLon' => $result->start_lon,
-            'endLat' => $result->end_lat,
-            'endLon' => $result->end_lon,
             'vectorLat' => $result->end_lat - $result->start_lat,
             'vectorLon' => $result->end_lon - $result->start_lon,
         ];

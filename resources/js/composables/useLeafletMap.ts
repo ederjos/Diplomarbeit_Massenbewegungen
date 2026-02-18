@@ -203,17 +203,17 @@ export function useLeafletMap(
         }
 
         const scale = vectorScale.value;
-        const { startLat, startLon, vectorLat, vectorLon } = point.axis;
+        const axis = point.axis;
 
         // Calculate scaled end point: start + vector * scale
-        const endLat = startLat + vectorLat * scale;
-        const endLon = startLon + vectorLon * scale;
+        const endLat = axis.startLat + axis.vectorLat * scale;
+        const endLon = axis.startLon + axis.vectorLon * scale;
 
         // Draw projection axis line
         const projectionLine = L.polyline(
             [
                 // from
-                [startLat, startLon],
+                [axis.startLat, axis.startLon],
                 // to
                 [endLat, endLon],
             ],

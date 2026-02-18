@@ -15,11 +15,8 @@ export interface Point {
 }
 
 export interface ProjectionAxis {
-    // TEMP - will be shortened to necessary values only
     startLat: number;
     startLon: number;
-    endLat: number;
-    endLon: number;
     vectorLat: number;
     vectorLon: number;
 }
@@ -36,16 +33,11 @@ export interface PointDisplacement {
 export interface DisplacementRow {
     pointId: number;
     name: string;
-    distance2d: number;
+    // distance 2d or projection
+    distance2dOrProjection: number;
     distance3d: number;
-    projectedDistance: number | null;
     deltaHeight: number;
-    displayDistance: number;
-    hasProjection: boolean;
 }
-
-// Must have the extact same keys as DisplacementRow (get rid of switch-case)
-export type DisplacementDistanceMode = 'distance2d' | 'projectedDistance' | 'distance3d';
 
 interface Comment {
     id: number;

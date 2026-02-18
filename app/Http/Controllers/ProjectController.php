@@ -136,7 +136,8 @@ class ProjectController extends Controller
                 // Projection to user-defined axis (dot product)
                 $projectedDistance = null;
                 if ($point->projection) {
-                    $projectedDistance = $dX * $point->projection->ax + $dY * $point->projection->ay;
+                    // Make projection unsigned like 2D delta
+                    $projectedDistance = abs($dX * $point->projection->ax + $dY * $point->projection->ay);
                 }
 
                 $displacements[$point->id] = [

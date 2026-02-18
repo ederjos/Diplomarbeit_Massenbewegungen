@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { DisplacementDistanceMode, DisplacementRow } from '@/@types/measurement';
+import { DisplacementRow } from '@/@types/measurement';
 import { DISPLACEMENT_TABLE_WIDTH } from '@/config/mapConstants';
 import AppTableWrapper from '../ui/AppTableWrapper.vue';
 
@@ -15,25 +15,11 @@ const props = withDefaults(
     },
 );
 
-const displacementMode = defineModel<DisplacementDistanceMode>('displacementMode', { required: true });
-
 // Quote "succinct" way to define emits
 const emit = defineEmits<{
     'select-point': [pointId: number];
     'sort-by': [column: keyof DisplacementRow];
 }>();
-
-/**
- * Displacement display mode (for table):
- *   '2D'         — Option A: √(dX² + dY²) Pythagoras 2D
- *   'projection' — Option B: Dot product on normalized axis
- *   '3D'         — Option C: √(dX² + dY² + dZ²) Pythagoras 3D
- */
-const displacementModeLabels: Record<DisplacementDistanceMode, string> = {
-    distance2d: '2D Lage',
-    projectedDistance: 'Projektion',
-    distance3d: '3D Gesamt',
-};
 </script>
 
 <template>
@@ -42,28 +28,12 @@ const displacementModeLabels: Record<DisplacementDistanceMode, string> = {
         :class="DISPLACEMENT_TABLE_WIDTH"
     >
         <h3 class="mb-3 text-lg font-bold" id="displacement-heading">Verschiebungen</h3>
-        <div class="mb-3">
-            <label class="mb-1 block text-sm font-bold">Darstellungsart</label>
-            <div class="flex gap-1">
-                <button
-                    v-for="(label, mode) in displacementModeLabels"
-                    :key="mode"
-                    @click="displacementMode = mode"
-                    :aria-pressed="displacementMode === mode"
-                    class="rounded px-2 py-1 text-xs transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:cursor-not-allowed disabled:opacity-40"
-                    :class="
-                        displacementMode === mode ? 'bg-blue-600 text-white shadow-sm' : 'bg-gray-100 hover:bg-gray-200'
-                    "
-                >
-                    {{ label }}
-                </button>
-            </div>
-        </div>
         <AppTableWrapper
             :columns="[
                 { label: 'Punkt', columnName: 'name' },
-                { label: `Δ ${displacementModeLabels[displacementMode]} [cm]`, columnName: 'displayDistance' },
-                { label: 'Δ Höhe [cm]', columnName: 'deltaHeight' },
+                { label: `Δ2D Lage [cm]`, columnName: 'distance2dOrProjection' },
+                { label: `ΔHöhe [cm]`, columnName: 'deltaHeight' },
+                { label: 'ΔGesamt [cm]', columnName: 'distance3d' },
             ]"
             :sort-column="sortColumn"
             :sort-direction="sortDirection"
@@ -78,22 +48,15 @@ const displacementModeLabels: Record<DisplacementDistanceMode, string> = {
                 :class="{ 'leaflet-row-highlight': p.pointId === props.highlightedPointId }"
                 @click="emit('select-point', p.pointId)"
             >
-                <td class="px-3 py-2 font-medium text-gray-900">
-                    {{ p.name }}
-                    <span
-                        v-if="displacementMode === 'projectedDistance' && !p.hasProjection"
-                        class="text-xs text-amber-500"
-                        title="Keine Projektionsachse"
-                        >⚠</span
-                    >
-                </td>
-                <td class="px-3 py-2 text-right tabular-nums">{{ p.displayDistance.toFixed(1) }}</td>
+                <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
+                <td class="px-3 py-2 text-right tabular-nums">{{ p.distance2dOrProjection.toFixed(1) }}</td>
                 <td class="px-3 py-2 text-right tabular-nums">
                     {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(1) }}
                 </td>
+                <td class="px-3 py-2 text-right tabular-nums">{{ p.distance3d.toFixed(1) }}</td>
             </tr>
             <tr v-if="props.displacementRows.length === 0">
-                <td colspan="3" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
+                <td colspan="4" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>
             </tr>
         </AppTableWrapper>
     </div>
