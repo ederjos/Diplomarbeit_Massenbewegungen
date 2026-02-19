@@ -31,7 +31,7 @@ const { sortColumn, sortDirection, sorted: displayedProjects, handleSort } = use
 <template>
     <Head title="Home" />
     <AuthenticatedLayout>
-        <h1 class="text-2xl font-bold">Projekte</h1>
+        <h1 class="text-2xl font-bold text-slate-700">Projekte</h1>
         <div class="flex w-full max-w-4xl flex-col gap-4">
             <div class="flex items-center justify-end">
                 <AppToggle v-model="showOnlyActive" label="Nur aktive Projekte anzeigen" />

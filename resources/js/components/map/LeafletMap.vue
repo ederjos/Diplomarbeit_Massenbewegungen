@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-    BaseMeasurement,
-    DisplacementRow,
-    Measurement,
-    Point,
-    PointDisplacement,
-} from '@/@types/measurement';
+import { BaseMeasurement, DisplacementRow, Measurement, Point, PointDisplacement } from '@/@types/measurement';
 import DisplacementTable from '@/components/map/DisplacementTable.vue';
 import MapToolbar from '@/components/map/MapToolbar.vue';
 import { useLeafletMap } from '@/composables/useLeafletMap';
