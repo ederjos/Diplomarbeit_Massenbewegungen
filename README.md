@@ -12,6 +12,11 @@ Auf Linux or via WSL:
 Zum Starten: `./start.sh` ausführen  
 Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
+## Nach dem Pushen
+
+Manchmal wird bei Commits die Datenbank bearbeitet. Danach einfach diesen Befehl ausführen:  
+`./vendor/bin/sail artisan migrate:fresh --seed`
+
 ## TBD/TODO
 
 ### From Lastenheft (not yet implemented)
@@ -39,8 +44,7 @@ Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
   * aktueller Zoomausschnitt aus ProjectTimeline
   * Querformat
 
-
-* Projekte favorisieren
+* Remove email from user in frontend
 
 * Slaven fragen: Reset-Button für Formular-Eingabe?
 

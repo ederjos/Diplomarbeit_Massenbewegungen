@@ -7,6 +7,7 @@ interface ProjectBase {
 export interface ProjectOverview extends ProjectBase {
     lastMeasurement: string | null;
     nextMeasurement: string | null;
+    isFavorite: boolean;
 }
 
 export interface ProjectDetails extends ProjectBase {

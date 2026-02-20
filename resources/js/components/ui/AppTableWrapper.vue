@@ -8,7 +8,8 @@ import SortableHeader from '@/components/ui/SortableHeader.vue';
 
 type TableLabel<T> = {
     label: string;
-    columnName: keyof T;
+    // null for non-sortable columns
+    columnName: keyof T | null;
 };
 
 const props = withDefaults(
@@ -43,15 +44,23 @@ const emit = defineEmits<{
     <table :class="props.tableClass">
         <thead :class="props.theadClass">
             <tr>
-                <SortableHeader
-                    v-for="column in props.columns"
-                    :key="String(column.columnName)"
-                    :label="column.label"
-                    :is-active="props.sortColumn === column.columnName"
-                    :direction="props.sortDirection"
-                    :style-class="props.thClass"
-                    @sort="emit('sort-by', column.columnName)"
-                />
+                <template v-for="column in props.columns" :key="column.columnName">
+                    <SortableHeader
+                        v-if="column.columnName !== null"
+                        :label="column.label"
+                        :is-active="props.sortColumn === column.columnName"
+                        :direction="props.sortDirection"
+                        :style-class="props.thClass"
+                        @sort="emit('sort-by', column.columnName)"
+                    />
+                    <th
+                        v-else
+                        class="bg-gray-50 px-2 py-2 text-xs font-semibold text-gray-600 uppercase select-none"
+                        :class="props.thClass"
+                    >
+                        {{ column.label }}
+                    </th>
+                </template>
             </tr>
         </thead>
         <tbody :class="props.tbodyClass">

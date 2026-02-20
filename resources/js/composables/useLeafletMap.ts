@@ -46,13 +46,16 @@ export function useLeafletMap(
         markersLayer = new L.LayerGroup();
         markersLayer.addTo(leafletMap);
 
-        const mainMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: MAX_MAP_ZOOM,
-            // default tile size (256)
-            minZoom: MIN_MAP_ZOOM,
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            // show only this initially
-        }).addTo(leafletMap);
+        const mainMap = L.tileLayer(
+            'https://mapsneu.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png',
+            {
+                maxZoom: MAX_MAP_ZOOM,
+                // default tile size (256)
+                minZoom: MIN_MAP_ZOOM,
+                attribution: '&copy; Grundkarte: <a href="https://basemap.at">basemap.at</a>',
+                // show only this initially
+            },
+        ).addTo(leafletMap);
 
         const baseLayers: Record<string, L.TileLayer> = { 'Standard Karte': mainMap };
 

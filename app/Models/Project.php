@@ -70,7 +70,7 @@ class Project extends Model
         // n:m relationship with User
         return $this->belongsToMany(User::class)
             // all values stored in pivot table
-            ->withPivot('is_contact_person')
+            ->withPivot('is_contact_person', 'is_favorite')
             ->withTimestamps();
     }
 

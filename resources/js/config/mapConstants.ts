@@ -29,7 +29,7 @@ export const MAX_VECTOR_SCALE = 100_000;
 export const MIN_MAP_ZOOM = 9;
 
 /** Maximum zoom level for map tiles */
-export const MAX_MAP_ZOOM = 20;
+export const MAX_MAP_ZOOM = 19;
 
 /** Default map center coordinates [latitude, longitude] - Bregenz, Austria */
 export const DEFAULT_MAP_CENTER: [number, number] = [47.5, 9.75];

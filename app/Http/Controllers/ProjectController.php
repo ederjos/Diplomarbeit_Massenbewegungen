@@ -12,6 +12,7 @@ use App\Models\Project;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ProjectController extends Controller
 {
@@ -30,6 +31,31 @@ class ProjectController extends Controller
             // ->resolve() removes the 'data' wrapper that strictly JsonResource adds
             'projects' => ProjectResource::collection($projects)->resolve(),
         ]);
+    }
+
+    public function toggleFavorite(Request $request, Project $project): RedirectResponse
+    {
+        $user = $request->user();
+
+        if (! $user) {
+            // Throws an exception (401 = unauthorized)
+            abort(401);
+        }
+
+        // Check if the user is already linked to the project
+        $existingAssociation = $project->users()->where('user_id', $user->id)->first();
+
+        if (! $existingAssociation) {
+            // Error 403 = forbidden
+            abort(403, 'You are not a member of this project.');
+        }
+
+        // Toggle the is_favorite value
+        $currentValue = $existingAssociation->pivot->is_favorite;
+        $project->users()->updateExistingPivot($user->id, ['is_favorite' => ! $currentValue]);
+
+        // Create a new redirect response to the previous location
+        return back();
     }
 
     // Request to access the query string parameter 'comparison' for comparison measurement, e.g. /projects/1?comp=2

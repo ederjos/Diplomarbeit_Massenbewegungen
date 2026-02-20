@@ -29,7 +29,7 @@ class User extends Authenticatable
     public function projects()
     {
         return $this->belongsToMany(Project::class)
-            ->withPivot('is_contact_person')
+            ->withPivot('is_contact_person', 'is_favorite')
             ->withTimestamps();
     }
 

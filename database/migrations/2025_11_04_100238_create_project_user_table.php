@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->boolean('is_contact_person')->default(false);
+            $table->boolean('is_favorite')->default(false);
             $table->timestamps();
         });
     }
