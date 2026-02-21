@@ -3,16 +3,17 @@
 use App\Models\Measurement;
 use App\Models\Project;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 
-// pest()->use(RefreshDatabase::class);
-// https://laravel.com/docs/12.x/database-testing
-// RefreshDatabase does not migrate your database if your schema is up to date.
-// Instead, it will only execute the test within a database transaction.
-// Therefore, any records added to the database by test cases
-// that do not use this trait may still exist in the database.
-// -> Defined globally in Pest.php
+/**
+ * pest()->use(RefreshDatabase::class);
+ * https://laravel.com/docs/12.x/database-testing
+ * RefreshDatabase does not migrate your database if your schema is up to date.
+ * Instead, it will only execute the test within a database transaction.
+ * Therefore, any records added to the database by test cases
+ * that do not use this trait may still exist in the database.
+ * -> Defined globally in Pest.php
+ */
 
 test('projects in home calculate next measurement correctly', function () {
     /** @var \Tests\TestCase $this */

@@ -16,6 +16,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ProjectController extends Controller
 {
+    const METERS_TO_CENTIMETERS = 100;
+
     public function index(): Response
     {
         /**
@@ -34,13 +36,12 @@ class ProjectController extends Controller
         $favoriteProjectIds = $user ? 
             $user->projects()->wherePivot('is_favorite', true)->pluck('projects.id')->toArray()
             : [];
+        // Set the static property in the Resource (help provided by Claude Opus 4.6)
+        ProjectResource::$favoriteProjectIds = $favoriteProjectIds;
 
         return Inertia::render('Home', [
             // ->resolve() removes the 'data' wrapper that strictly JsonResource adds
-            'projects' => ProjectResource::collection($projects)
-                // add extra data to the resource collection
-                ->additional(['favoriteProjectIds' => $favoriteProjectIds])    
-                ->resolve(),
+            'projects' => ProjectResource::collection($projects)->resolve(),
         ]);
     }
 
@@ -181,10 +182,10 @@ class ProjectController extends Controller
 
                 $displacements[$point->id] = [
                     // m -> cm
-                    'distance2d' => $distance2d * 100,
-                    'distance3d' => $distance3d * 100,
-                    'projectedDistance' => $projectedDistance !== null ? $projectedDistance * 100 : null,
-                    'deltaHeight' => $dZ * 100,
+                    'distance2d' => $distance2d * self::METERS_TO_CENTIMETERS,
+                    'distance3d' => $distance3d * self::METERS_TO_CENTIMETERS,
+                    'projectedDistance' => $projectedDistance !== null ? $projectedDistance * self::METERS_TO_CENTIMETERS : null,
+                    'deltaHeight' => $dZ * self::METERS_TO_CENTIMETERS,
                 ];
             }
         }
