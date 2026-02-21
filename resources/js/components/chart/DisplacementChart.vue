@@ -31,28 +31,16 @@ const currentMode = ref<Mode>('total');
 const modeLabels: Record<Mode, { short: string; long: string }> = {
     total: {
         short: '3D-Gesamt',
-        long: 'Gesamte Bewegung [cm]',
+        long: 'Gesamte Bewegung',
     },
     horizontal: {
         short: '2D-Lage',
-        long: 'Horizontale Bewegung [cm]',
+        long: 'Horizontale Bewegung',
     },
     vertical: {
         short: 'Höhe',
-        long: 'Vertikale Bewegung [cm]',
+        long: 'Vertikale Bewegung',
     },
-};
-
-const setVisibility = (visible: boolean) => {
-    chartRef.value?.dispatchAction({
-        type: 'legendAllSelect',
-    });
-
-    if (!visible) {
-        chartRef.value?.dispatchAction({
-            type: 'legendInverseSelect',
-        });
-    }
 };
 
 const timestampToMeasurementName = new Map(props.measurements.map((m) => [new Date(m.datetime).getTime(), m.name]));
@@ -94,14 +82,17 @@ const chartOption = computed<EChartsOption>(() => {
             type: 'line',
             name: point.name,
             symbol: 'circle',
-            symbolSize: 8,
+            symbolSize: 10,
             connectNulls: true,
             itemStyle: {
                 color: color,
             },
             lineStyle: {
                 color: color,
-                width: 3,
+                width: 4,
+            },
+            emphasis: {
+                focus: 'series',
             },
             data: data,
         };
@@ -128,7 +119,7 @@ const chartOption = computed<EChartsOption>(() => {
             nameTextStyle: {
                 fontSize: 14,
             },
-            splitNumber: 20,
+            splitNumber: 15,
             axisLine: {
                 show: false,
             },
@@ -138,7 +129,7 @@ const chartOption = computed<EChartsOption>(() => {
         },
         yAxis: {
             type: 'value',
-            name: modeLabels[currentMode.value].long,
+            name: modeLabels[currentMode.value].long + ' [cm]',
             nameLocation: 'middle',
             nameTextStyle: {
                 fontSize: 14,
@@ -174,33 +165,36 @@ const chartOption = computed<EChartsOption>(() => {
                     },
                 },
             },
+            confine: true,
             valueFormatter: (value) => {
                 return typeof value === 'number'
                     ? `${value.toLocaleString('de-AT', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} cm`
                     : String(value);
             },
+            order: 'valueDesc',
         },
-        /*
-        toolbox: {
-            feature: {
-                saveAsImage: {
-                    title: 'Als Bild speichern',
-                },
-                restore: {
-                    title: 'Zurücksetzen',
-                },
-                dataZoom: {
-                    title: {
-                        zoom: 'Bereich zoomen',
-                        back: 'Zoom zurücksetzen',
-                    },
-                },
-            },
-        },
-        */
         series: series,
     };
 });
+
+function setVisibility(visible: boolean) {
+    chartRef.value?.dispatchAction({
+        type: 'legendAllSelect',
+    });
+
+    if (!visible) {
+        chartRef.value?.dispatchAction({
+            type: 'legendInverseSelect',
+        });
+    }
+}
+
+function restoreView() {
+    chartRef.value?.dispatchAction({
+        type: 'restore',
+    });
+    currentMode.value = 'total';
+}
 </script>
 
 <!--
@@ -234,6 +228,12 @@ const chartOption = computed<EChartsOption>(() => {
                 </button>
                 <button @click="setVisibility(false)" class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200">
                     Keine
+                </button>
+
+                <div class="mx-1 w-px bg-gray-300"></div>
+
+                <button @click="restoreView()" class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200">
+                    Zurücksetzen
                 </button>
             </div>
         </div>

@@ -7,7 +7,7 @@
 ---
 
 - DisplacementChart:
-    - Im Tooltip ersichtlich machen, über welchen Punkt man hovert
+    - Projektion verwenden
 
 - Formular für Add/Edit/Delete von Projekten & Messungen.
 

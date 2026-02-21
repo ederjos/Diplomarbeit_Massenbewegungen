@@ -2,16 +2,15 @@
 
 namespace App\Http\Requests;
 
-use App\Actions\Fortify\PasswordValidationRules;
 use App\Models\RegistrationRequest;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Email;
+use Illuminate\Validation\Rules\Password;
 
 class StoreRegistrationRequest extends FormRequest
 {
-    use PasswordValidationRules;
-
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -31,13 +30,17 @@ class StoreRegistrationRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
-                'string',
-                'email',
+                Email::default()->rfcCompliant()->preventSpoofing()->rules([
+                    Rule::unique(User::class, 'email'),
+                    Rule::unique(RegistrationRequest::class, 'email'),
+                ]),
                 'max:255',
-                Rule::unique(User::class, 'email'),
-                Rule::unique(RegistrationRequest::class, 'email'),
             ],
-            'password' => $this->passwordRules(),
+            'password' => [
+                // long passwords are more secure than complex ones
+                Password::required()->min(16)->uncompromised(),
+                'confirmed',
+            ],
             'note' => ['nullable', 'string', 'max:1000'],
         ];
     }
