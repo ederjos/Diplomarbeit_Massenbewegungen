@@ -32,36 +32,11 @@ class Point extends Model
         return $this->belongsTo(Projection::class);
     }
 
-    public function axisPoint(?MeasurementValue $firstMv = null, ?MeasurementValue $lastMv = null): ?array
+    public function axisPoint(MeasurementValue $firstMv, MeasurementValue $lastMv): ?array
     {
         $projection = $this->projection;
 
-        // If no projection is set, we cannot calculate an axis
-        if (! $projection) {
-            return null;
-        }
-
-        /**
-         * Having two extra queries for every point would be very expensive.
-         * Therefore, only load them if they are not provided as arguments (e.g. by eager loading in the controller).
-         */
-        if (!$firstMv){
-            $firstMv = $this->measurementValues()
-                ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
-                ->orderBy('measurements.measurement_datetime')
-                ->select('measurement_values.geom')
-                ->first();
-        }
-
-        if (!$lastMv){
-            $lastMv = $this->measurementValues()
-                ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
-                ->orderByDesc('measurements.measurement_datetime')
-                ->select('measurement_values.geom')
-                ->first();
-        }
-
-        if (! $firstMv || ! $firstMv->geom || ! $lastMv || ! $lastMv->geom) {
+        if (! $projection || ! $firstMv || ! $firstMv->geom || ! $lastMv || ! $lastMv->geom) {
             return null;
         }
 

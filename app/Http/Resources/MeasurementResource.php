@@ -18,7 +18,7 @@ class MeasurementResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'datetime' => $this->measurement_datetime,
-            'comments' => CommentResource::collection($this->comments)->resolve(),
+            'comments' => $this->whenLoaded('comments', fn () => CommentResource::collection($this->comments)->resolve(), []),
         ];
     }
 }

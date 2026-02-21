@@ -17,7 +17,7 @@ class PointResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'axis' => $this->axisPoint() ?? null,
+            'axis' => $this->axisPoint($this->preloadedFirstMv, $this->preloadedLastMv) ?? null,
             'measurementValues' => MeasurementValueResource::collection($this->measurementValues)->resolve(),
         ];
     }

@@ -24,14 +24,14 @@ const emit = defineEmits<{
     "please improve the tailwind style of SortableHeader and all uses of SortableHeader where, depending on the situation, a few additional style changes can be applied."
     -->
     <th
+        :aria-sort="isActive ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'"
         @click="emit('sort')"
         @keydown.enter="emit('sort')"
         @keydown.space.prevent="emit('sort')"
-        tabindex="0"
-        role="button"
-        :aria-sort="isActive ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'"
         class="group cursor-pointer bg-gray-50 px-2 py-2 text-xs font-semibold text-gray-600 uppercase transition-colors select-none hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
         :class="styleClass"
+        tabindex="0"
+        role="button"
     >
         <div class="flex items-center gap-1">
             {{ label }}

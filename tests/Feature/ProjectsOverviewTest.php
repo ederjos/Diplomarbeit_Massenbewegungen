@@ -14,7 +14,6 @@ use Inertia\Testing\AssertableInertia as Assert;
  * that do not use this trait may still exist in the database.
  * -> Defined globally in Pest.php
  */
-
 test('projects in home calculate next measurement correctly', function () {
     /** @var \Tests\TestCase $this */
     // For intelephense autocomplete

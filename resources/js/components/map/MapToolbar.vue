@@ -35,9 +35,9 @@ const safeVectorScale = computed({
             <label for="reference-select" class="mb-1 block text-sm font-bold">Referenzepoche</label>
             <select
                 v-model.number="selectedReference"
-                class="rounded border p-1 disabled:text-gray-400"
                 :disabled="isGaitLine"
                 :aria-disabled="isGaitLine"
+                class="rounded border p-1 disabled:text-gray-400"
                 id="reference-select"
             >
                 <option v-for="m in props.measurements" :key="m.id" :value="m.id">
@@ -50,9 +50,9 @@ const safeVectorScale = computed({
             <!-- aria-disabled -> accessibility announcement -> tells screen readers it's disabled -->
             <select
                 v-model.number="selectedComparison"
-                class="rounded border p-1 disabled:text-gray-400"
                 :disabled="isGaitLine"
                 :aria-disabled="isGaitLine"
+                class="rounded border p-1 disabled:text-gray-400"
                 id="comparison-select"
             >
                 <option v-for="m in props.measurements" :key="m.id" :value="m.id">
@@ -64,19 +64,19 @@ const safeVectorScale = computed({
             <label class="mb-1 block text-sm font-bold" for="input-vector-scale">Vektormaßstab M 1&nbsp;:&nbsp;</label>
             <input
                 v-model.number="safeVectorScale"
-                type="number"
-                class="w-28 rounded border p-1"
                 :min="MIN_VECTOR_SCALE"
                 :max="MAX_VECTOR_SCALE"
+                class="w-28 rounded border p-1"
+                type="number"
                 id="input-vector-scale"
             />
         </div>
         <div class="me-4 flex items-center">
             <input
-                type="checkbox"
                 v-model="isGaitLine"
-                id="checkbox-is-gait-line"
                 class="border-default-medium bg-neutral-secondary-medium h-4 w-4 rounded-xs border"
+                type="checkbox"
+                id="checkbox-is-gait-line"
             />
             <label class="text-heading ml-2 block text-sm font-bold select-none" for="checkbox-is-gait-line"
                 >Ganglinie</label

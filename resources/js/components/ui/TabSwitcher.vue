@@ -19,26 +19,28 @@ const activeTab = defineModel<'results' | 'basics'>('activeTab');
                 }"
             ></span>
             <li class="z-30 flex-auto text-center">
-                <a
+                <button
+                    @click="activeTab = 'results'"
                     class="relative z-20 mb-0 flex w-full cursor-pointer items-center justify-center rounded-md border-0 px-0 py-2 text-sm"
                     :class="activeTab === 'results' ? 'font-semibold text-slate-700' : 'text-slate-600'"
-                    data-tab-target=""
                     role="tab"
-                    @click="activeTab = 'results'"
+                    :aria-selected="activeTab === 'results'"
+                    type="button"
                 >
                     Ergebnisse
-                </a>
+                </button>
             </li>
             <li class="z-30 flex-auto text-center">
-                <a
+                <button
+                    @click="activeTab = 'basics'"
                     class="relative z-20 mb-0 flex w-full cursor-pointer items-center justify-center rounded-lg border-0 px-0 py-2 text-sm"
                     :class="activeTab === 'basics' ? 'font-semibold text-slate-700' : 'text-slate-600'"
-                    data-tab-target=""
                     role="tab"
-                    @click="activeTab = 'basics'"
+                    :aria-selected="activeTab === 'basics'"
+                    type="button"
                 >
                     Grundlagen
-                </a>
+                </button>
             </li>
         </ul>
     </div>

@@ -20,7 +20,7 @@ class CommentResource extends JsonResource
             'createdDatetime' => $this->created_at,
             'updatedDatetime' => $this->updated_at,
             // resolve needed to get rid of the "data" wrapper
-            'user' => (new UserResource($this->user))->resolve(),
+            'user' => $this->whenLoaded('user', fn () => (new UserResource($this->user))->resolve()),
         ];
     }
 }

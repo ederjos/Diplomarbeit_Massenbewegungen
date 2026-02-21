@@ -30,10 +30,10 @@ class ProjectController extends Controller
             ->select(['id', 'name', 'is_active', 'period'])
             ->withLastAndNextMeasurementDate()
             ->get();
-        
+
         $user = request()->user();
 
-        $favoriteProjectIds = $user ? 
+        $favoriteProjectIds = $user ?
             $user->projects()->wherePivot('is_favorite', true)->pluck('projects.id')->toArray()
             : [];
         // Set the static property in the Resource (help provided by Claude Opus 4.6)
@@ -132,6 +132,35 @@ class ProjectController extends Controller
         // Only include visible points
         $visiblePoints = $project->points->filter(fn ($p) => $p->is_visible)->values();
 
+        // Preload first and last measurement values for axis calculations
+        // this avoids N+1 queries in the PointResource
+        $pointIds = $visiblePoints->pluck('id');
+
+        /**
+         * Claude Opus 4.6, 2026-02-21
+         * "Please optimize the loading as realized previously in this chat for the axis inside the ProjectController."
+         */
+        $firstMvs = MeasurementValue::whereIn('point_id', $pointIds)
+            ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
+            ->orderBy('measurements.measurement_datetime')
+            ->select('measurement_values.point_id', 'measurement_values.geom')
+            ->get()
+            ->unique('point_id')
+            ->keyBy('point_id');
+        $lastMvs = MeasurementValue::whereIn('point_id', $pointIds)
+            ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
+            ->orderByDesc('measurements.measurement_datetime')
+            ->select('measurement_values.point_id', 'measurement_values.geom')
+            ->get()
+            ->unique('point_id')
+            ->keyBy('point_id');
+
+        // Attach to each point so the resource can use them
+        foreach ($visiblePoints as $point) {
+            $point->preloadedFirstMv = $firstMvs->get($point->id);
+            $point->preloadedLastMv = $lastMvs->get($point->id);
+        }
+
         /**
          * Claude Opus 4.6, 2026-02-10
          * "Please apply the attached projection calculations to the project controller [...]"
@@ -191,7 +220,7 @@ class ProjectController extends Controller
         }
 
         $contactPersons = $project->users()
-            // not all users workking on this project, only contact persons
+            // not all users working on this project, only contact persons
             ->wherePivot('is_contact_person', true)
             ->with('role')
             ->orderBy('name')

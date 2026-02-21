@@ -19,60 +19,30 @@ Manchmal wird bei Commits die Datenbank bearbeitet. Danach einfach diesen Befehl
 
 ## TBD/TODO
 
-### From Lastenheft (not yet implemented)
+### Technical Debt
 
 * **Bezugsepoche GUI**: Admin/Editor soll Bezugsepoche pro Projekt setzen können (Settings-Seite)
 * **Punktesichtbarkeit**: Einzelne Messpunkte ein-/ausblenden (für Admin)
 * **Kommentare editierbar**: Admin/Editor sollen Kommentare zu Messepochen ändern können (CRUD-UI)
-* **Übersichtsbild pro Messepoche**: Upload/Link eines Orthophotos oder Fotos pro Messepoche
 * **Transformationen pro Punkt**: GUI zum Festlegen ob Addition, Projektion oder beides pro Punkt
 * **CSV-Import im Web-Interface**: Import von Messdaten
 * **Rollenbasierte Berechtigungen**: Viewer hat nur Leserechte, Editor kann hinzufügen/bearbeiten, Admin kann alles (Authorization Policies fehlen)
-
-### Technical Debt
 
 * je Projekt: Foto anzeigen; wo: unter Orthofoto oder unter ProjectTimeline
 
 * Projektion: immer auf aktuelle Referenzepoche; auch in ProjectTimeline anwenden!
 
-* Slaven fragen: Reset-Button für Formular-Eingabe?
-
 ###  Refactor
-
-* Get rid of ".*" queries in php -> loads unnecessarily much
-
-* Component Structure:
-```vue
-<script setup lang="ts">
-// 1. Imports (external first, then internal)
-// 2. Props with withDefaults
-// 3. Emits
-// 4. Composables
-// 5. Local state (ref, reactive)
-// 6. Computed properties
-// 7. Watchers
-// 8. Methods/Event handlers
-// 9. Lifecycle hooks (onMounted, onUnmounted)
-</script>
-```
-
-* Template structure:
-    ```vue
-    <element
-        v-if v-show v-for
-        v-model
-        :key
-        ref
-        :prop-name (alphabetically)
-        @event-name
-        class
-        other-attributes
-    >
-    ```
 
 * phpDocumentor
 
 * change db password
+
+* Harden Models
+
+* Return types, docstrings?
+
+* test coverage?
 
 ### Patterns
 

@@ -8,12 +8,12 @@ defineProps<{
 <template>
     <label class="flex cursor-pointer items-center gap-3">
         <input
-            type="checkbox"
             v-model="isChecked"
-            class="sr-only"
             :aria-label="label"
-            role="switch"
             :aria-checked="isChecked"
+            class="sr-only"
+            type="checkbox"
+            role="switch"
         />
         <div
             class="relative h-6 w-11 rounded-full transition-colors"

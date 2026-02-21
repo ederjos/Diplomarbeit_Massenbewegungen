@@ -29,11 +29,6 @@ const props = defineProps<{
     displacements: Record<number, PointDisplacement>;
 }>();
 
-/**
- * Gemini 3 Pro, 2025-12-02
- * "this component works greatly. now, we want to rearrange the design though and add a new table. in this table there should be a col for point name, one for delta pos (x and y) and one for delta height (z). keep in mind that the values in the Measurement interface of x,y,z are in the epsg 31254"
- */
-
 const mapContainer = ref<HTMLDivElement | null>(null);
 
 // former selectedMeasurement
@@ -59,25 +54,6 @@ const { initMap, fitBounds, zoomToPoint, invalidateMap, drawMap } = useLeafletMa
     isGaitLine,
     handlePointClick,
 );
-
-/**
- * Claude Opus 4.6, 2026-02-11
- * "[...] Then, apply the projection changes to the LeafletComponent file, so that the user can select the display mode for the displacements (2D, projection, 3D) and the map updates accordingly."
- */
-
-// Trigger Inertia visit when reference or comparison epoch changes
-// Use Inertia to ensure SPA experience and preserve scroll/state, but still update the URL for shareability and back button support
-watch([selectedReference, selectedComparison], ([refVal, compVal]) => {
-    if (refVal === null && compVal === null) {
-        return;
-    }
-
-    const query: Record<string, any> = {};
-    if (refVal != null) query.reference = refVal;
-    if (compVal != null) query.comparison = compVal;
-
-    router.get(window.location.pathname, query, { preserveScroll: true, preserveState: true });
-});
 
 /**
  * Extract only base measurement data (id, name, datetime) without comments.
@@ -121,6 +97,25 @@ const unsortedDisplacementRows = computed<DisplacementRow[]>(() => {
             // Also tells TS now the type is DisplacementRow w/o "| null"
             .filter((row): row is DisplacementRow => row !== null)
     );
+});
+
+/**
+ * Claude Opus 4.6, 2026-02-11
+ * "[...] Then, apply the projection changes to the LeafletComponent file, so that the user can select the display mode for the displacements (2D, projection, 3D) and the map updates accordingly."
+ */
+
+// Trigger Inertia visit when reference or comparison epoch changes
+// Use Inertia to ensure SPA experience and preserve scroll/state, but still update the URL for shareability and back button support
+watch([selectedReference, selectedComparison], ([refVal, compVal]) => {
+    if (refVal === null && compVal === null) {
+        return;
+    }
+
+    const query: Record<string, any> = {};
+    if (refVal != null) query.reference = refVal;
+    if (compVal != null) query.comparison = compVal;
+
+    router.get(window.location.pathname, query, { preserveScroll: true, preserveState: true });
 });
 
 // Use composable for sorting with custom comparison

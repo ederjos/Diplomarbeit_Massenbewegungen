@@ -26,16 +26,16 @@ const props = withDefaults(
 
 const error = ref<Error | null>(null);
 
+function reset() {
+    error.value = null;
+}
+
 onErrorCaptured((err, instance, info) => {
     error.value = err as Error;
     console.error(`Error in ${props.componentName}:`, err, info);
     // Return false to stop error propagation
     return false;
 });
-
-function reset() {
-    error.value = null;
-}
 </script>
 
 <template>

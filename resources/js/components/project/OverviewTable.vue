@@ -3,6 +3,9 @@ import { ProjectOverview } from '@/@types/project';
 import { formatDate } from '@/utils/date';
 import { Link, router } from '@inertiajs/vue3';
 import AppTableWrapper from '../ui/AppTableWrapper.vue';
+// works thanks to laravel wayfinder, no hardcoded URL
+import { show } from '@/actions/App/Http/Controllers/ProjectController';
+import { toggleFavorite } from '@/routes/project';
 
 defineProps<{
     projects: ProjectOverview[];
@@ -17,12 +20,12 @@ const emit = defineEmits<{
     'sort-by': [column: keyof ProjectOverview];
 }>();
 
-function toggleFavorite(event: Event, projectId: number) {
+function handleToggleFavorite(event: Event, projectId: number) {
     event.preventDefault();
     // Also prevent parent handlers (like the Link!)
     event.stopPropagation();
     router.post(
-        `/projects/${projectId}/favorite`,
+        toggleFavorite(projectId),
         {},
         {
             preserveState: true,
@@ -54,14 +57,14 @@ function toggleFavorite(event: Event, projectId: number) {
         @sort-by="(col) => emit('sort-by', col)"
     >
         <Link
-            as="tr"
             v-for="project in projects"
             :key="project.id"
-            :href="`/projects/${project.id}`"
-            class="cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
-            :class="project.isFavorite ? 'bg-amber-50 hover:bg-amber-100' : 'hover:bg-gray-50'"
+            :href="show.url(project.id)"
             :title="project.isActive ? 'Aktives Projekt' : 'Inaktives Projekt'"
             :aria-label="`Projekt ${project.name} öffnen`"
+            class="cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
+            :class="project.isFavorite ? 'bg-amber-50 hover:bg-amber-100' : 'hover:bg-gray-50'"
+            as="tr"
         >
             <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                 {{ project.id }}
@@ -79,7 +82,7 @@ function toggleFavorite(event: Event, projectId: number) {
             Claude Sonnet 4.6, 2026-02-20
             "Edit this th to have a star icon for selecting whether a project is a favorite."
             -->
-            <td class="px-4 py-4 text-center" @click="toggleFavorite($event, project.id)">
+            <td class="px-4 py-4 text-center" @click="handleToggleFavorite($event, project.id)">
                 <button :title="project.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'">
                     <!-- filled star -->
                     <svg

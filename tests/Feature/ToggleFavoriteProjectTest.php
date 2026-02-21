@@ -23,7 +23,7 @@ test('user can toggle favorite on a project they belong to', function () {
     // Check the next measurement is calculated correctly (1 year later)
     $response->assertStatus(200)
         ->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('Home')
                 ->has('projects', 1)
                 ->where('projects.0.isFavorite', true)
@@ -37,7 +37,7 @@ test('user cannot toggle favorite on a project they are not a member of', functi
     $user = User::factory()->createOne();
 
     $response = $this->actingAs($user)->post(route('project.toggleFavorite', $project));
-    
+
     // Forbidden
     $response->assertStatus(403);
 });
