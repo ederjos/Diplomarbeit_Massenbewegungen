@@ -15,15 +15,17 @@ class ProjectResource extends JsonResource
     public function toArray(Request $request): array
     {
         // This resource is used for project listing
+
+        $favoriteIds = $this->additional['favoriteProjectIds'] ?? [];
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'isActive' => (bool) $this->is_active,
             'lastMeasurement' => $this->last_measurement,
             'nextMeasurement' => $this->is_active ? $this->next_measurement : null,
-            // This line was completed with Copilot autocomplete
-            // check if the user has the project marked as favorite in the pivot table
-            'isFavorite' => $request->user() ? $request->user()->projects()->wherePivot('is_favorite', true)->where('projects.id', $this->id)->exists() : false,
+            // check if the project id is in the list of favorite projects
+            'isFavorite' => in_array($this->id, $favoriteIds),
         ];
     }
 }

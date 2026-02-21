@@ -24,12 +24,23 @@ class ProjectController extends Controller
          * "Update the controller of index to correctly and simply return the requested data. no errors should appear when working with timezones +2 or +1. just return the date in the same form as you get it from measurement_datetime without timezone: 2025-06-04 00:00:00"
          */
         $projects = Project::query()
+            // Only select necessary columns
+            ->select(['id', 'name', 'is_active', 'period'])
             ->withLastAndNextMeasurementDate()
             ->get();
+        
+        $user = request()->user();
+
+        $favoriteProjectIds = $user ? 
+            $user->projects()->wherePivot('is_favorite', true)->pluck('projects.id')->toArray()
+            : [];
 
         return Inertia::render('Home', [
             // ->resolve() removes the 'data' wrapper that strictly JsonResource adds
-            'projects' => ProjectResource::collection($projects)->resolve(),
+            'projects' => ProjectResource::collection($projects)
+                // add extra data to the resource collection
+                ->additional(['favoriteProjectIds' => $favoriteProjectIds])    
+                ->resolve(),
         ]);
     }
 
@@ -132,11 +143,13 @@ class ProjectController extends Controller
             $refValues = MeasurementValue::where('measurement_id', $referenceId)
                 // only values whose point id is in the visible points
                 ->whereIn('point_id', $visiblePoints->pluck('id'))
+                ->select(['point_id', 'geom'])
                 // keyBy ->
                 ->get()->keyBy('point_id');
 
             $compValues = MeasurementValue::where('measurement_id', $comparisonId)
                 ->whereIn('point_id', $visiblePoints->pluck('id'))
+                ->select(['point_id', 'geom'])
                 ->get()->keyBy('point_id');
 
             foreach ($visiblePoints as $point) {
@@ -181,7 +194,8 @@ class ProjectController extends Controller
             ->wherePivot('is_contact_person', true)
             ->with('role')
             ->orderBy('name')
-            ->get();
+            // Only the columns UserResource needs
+            ->get(['users.id', 'users.name', 'users.role_id']);
 
         return Inertia::render('Project', [
             'project' => (new ProjectShowResource($project))->resolve(),

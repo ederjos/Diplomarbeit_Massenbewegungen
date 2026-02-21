@@ -32,7 +32,7 @@ class Point extends Model
         return $this->belongsTo(Projection::class);
     }
 
-    public function axisPoint(): ?array
+    public function axisPoint(?MeasurementValue $firstMv = null, ?MeasurementValue $lastMv = null): ?array
     {
         $projection = $this->projection;
 
@@ -41,17 +41,25 @@ class Point extends Model
             return null;
         }
 
-        $firstMv = $this->measurementValues()
-            ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
-            ->orderBy('measurements.measurement_datetime')
-            ->select('measurement_values.geom')
-            ->first();
+        /**
+         * Having two extra queries for every point would be very expensive.
+         * Therefore, only load them if they are not provided as arguments (e.g. by eager loading in the controller).
+         */
+        if (!$firstMv){
+            $firstMv = $this->measurementValues()
+                ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
+                ->orderBy('measurements.measurement_datetime')
+                ->select('measurement_values.geom')
+                ->first();
+        }
 
-        $lastMv = $this->measurementValues()
-            ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
-            ->orderByDesc('measurements.measurement_datetime')
-            ->select('measurement_values.geom')
-            ->first();
+        if (!$lastMv){
+            $lastMv = $this->measurementValues()
+                ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
+                ->orderByDesc('measurements.measurement_datetime')
+                ->select('measurement_values.geom')
+                ->first();
+        }
 
         if (! $firstMv || ! $firstMv->geom || ! $lastMv || ! $lastMv->geom) {
             return null;
