@@ -30,7 +30,7 @@
 
 - Upgrades:
     - Laravel 13
-    - PHP 8.5 & PostgreSQL 18 (with PostGIS)
-    - Laravel Boost
+    - PHP 8.5 (also: publish sail config)
+    - PostgreSQL 18 (with PostGIS)
 
 - (maybe) Tailwind-Klassen zusammenfassen anstatt sie überall zu wiederholen
