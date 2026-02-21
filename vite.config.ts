@@ -2,9 +2,13 @@ import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
+    test: {
+        // configure vitest
+        reporters: 'verbose',
+    },
     plugins: [
         laravel({
             input: ['resources/js/app.ts'],
