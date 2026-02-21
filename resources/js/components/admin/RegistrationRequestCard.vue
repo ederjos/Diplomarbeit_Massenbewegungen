@@ -52,9 +52,9 @@ const reject = () => {
 
             <div class="flex items-end gap-3 sm:flex-col sm:items-end">
                 <div class="flex items-center gap-2">
-                    <label :for="'role-' + request.id" class="text-sm font-medium text-gray-700"> Rolle: </label>
+                    <label :for="`role-${request.id}`" class="text-sm font-medium text-gray-700"> Rolle: </label>
                     <select
-                        :id="'role-' + request.id"
+                        :id="`role-${request.id}`"
                         v-model="selectedRoleId"
                         class="rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                     >

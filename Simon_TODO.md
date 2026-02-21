@@ -6,9 +6,8 @@
 
 ---
 
-- ProjectTimeline.vue
-    - (maybe) auswahl über mehrere messungen, wie bei google stocks
-    - (mabye) beim Hovern nur einen einzelnen Punkt hervorheben, nicht alle Punkte der selben Messung
+- DisplacementChart:
+    - Im Tooltip ersichtlich machen, über welchen Punkt man hovert
 
 - Formular für Add/Edit/Delete von Projekten & Messungen.
 

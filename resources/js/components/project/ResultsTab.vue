@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
-import ProjectTimeline from '@/components/chart/ProjectTimeline.vue';
+import DisplacementChart from '@/components/chart/DisplacementChart.vue';
 import LeafletMap from '@/components/map/LeafletMap.vue';
 import CommentsList from '@/components/measurement/CommentsList.vue';
 import ErrorBoundary from '@/components/ui/ErrorBoundary.vue';
@@ -32,9 +32,10 @@ defineProps<{
 
         <section class="flex justify-center">
             <ErrorBoundary component-name="Zeitachse">
-                <ProjectTimeline :points="points" :point-colors="pointColors" :measurements="measurements" />
+                <DisplacementChart :points="points" :point-colors="pointColors" :measurements="measurements" />
             </ErrorBoundary>
         </section>
+
         <section class="rounded-lg bg-white p-6 shadow-md">
             <CommentsList :measurements="measurements" :comparison-id="comparisonId" />
         </section>
