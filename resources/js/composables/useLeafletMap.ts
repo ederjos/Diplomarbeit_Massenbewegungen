@@ -221,7 +221,8 @@ export function useLeafletMap(
                 [endLat, endLon],
             ],
             {
-                color: '#FF6B6B', // Use color from LVG design
+                // Use color from LVG design
+                color: '#FF6B6B',
                 weight: 2,
                 opacity: 0.7,
             },

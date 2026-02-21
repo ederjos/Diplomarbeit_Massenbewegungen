@@ -80,10 +80,7 @@ function toggleFavorite(event: Event, projectId: number) {
             "Edit this th to have a star icon for selecting whether a project is a favorite."
             -->
             <td class="px-4 py-4 text-center" @click="toggleFavorite($event, project.id)">
-                <button
-                    :title="project.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'"
-                    class="transition-colors"
-                >
+                <button :title="project.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'">
                     <!-- filled star -->
                     <svg
                         v-if="project.isFavorite"

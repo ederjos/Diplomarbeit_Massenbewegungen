@@ -31,30 +31,13 @@ Manchmal wird bei Commits die Datenbank bearbeitet. Danach einfach diesen Befehl
 
 ### Technical Debt
 
-* (SRID (nur EPSG) in Formular auswählen (default vbg 31254))
-    * Backend: Standard-SRID auf Lat/Lon setzen
-    * anderes Koordinatensystem: nicht so wichtig
-    * je Projekt auswählen
-
 * je Projekt: Foto anzeigen; wo: unter Orthofoto oder unter ProjectTimeline
 
 * Projektion: immer auf aktuelle Referenzepoche; auch in ProjectTimeline anwenden!
 
-* Berichte drucken? (Print-Funktion auf /projects/id) (evtl.)
-  * aktueller Zoomausschnitt aus ProjectTimeline
-  * Querformat
-
-* Remove email from user in frontend
-
 * Slaven fragen: Reset-Button für Formular-Eingabe?
 
-* Was automatisieren? -> Trendanalyse? Projekte mit großen Änderungen hervorheben! (Slaven: nein)
-
-* KI: hinfällig
-
 ###  Refactor
-
-* Calculations (distance) to utils/geo.ts
 
 * Get rid of ".*" queries in php -> loads unnecessarily much
 
@@ -86,21 +69,6 @@ Manchmal wird bei Commits die Datenbank bearbeitet. Danach einfach diesen Befehl
         other-attributes
     >
     ```
-
-* Nicht alle markers immer neu rendern / zeichnen
-  For small datasets, this is fine. If the dataset grows, consider using a L.FeatureGroup or even a Canvas-based renderer for the markers.
-
-* Extract Color Logic from Project.vue to Composable
-
-* Use shallowRef for large data
-
-* PHP-Comments on own line
-
-* Ambiguous numbers MUST be clarified
-
-* Single quotes MUST be used
-
-* Check for type-hinting
 
 * phpDocumentor
 

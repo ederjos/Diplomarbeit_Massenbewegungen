@@ -70,7 +70,7 @@ const emit = defineEmits<{
 @keyframes leaflet-highlight {
     0% {
         transform: none;
-        background-color: transparent; /* yellow-200 */
+        background-color: transparent;
     }
     50%,
     60% {
