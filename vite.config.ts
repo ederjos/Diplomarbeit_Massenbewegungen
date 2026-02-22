@@ -8,6 +8,7 @@ export default defineConfig({
     test: {
         // configure vitest
         reporters: 'verbose',
+        environment: 'jsdom',
     },
     plugins: [
         laravel({

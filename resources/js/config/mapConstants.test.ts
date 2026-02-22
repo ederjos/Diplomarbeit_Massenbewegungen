@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest';
 import {
     DEFAULT_VECTOR_SCALE,
     DEFAULT_ZOOM_LEVEL,
@@ -14,7 +15,6 @@ import {
     POLYLINE_FRAME_WEIGHT,
     POLYLINE_MAIN_WEIGHT,
 } from './mapConstants';
-import { expect, test } from 'vitest';
 
 test('mapConstants has valid zoom range', () => {
     expect(MIN_MAP_ZOOM).toBeLessThan(MAX_MAP_ZOOM);
