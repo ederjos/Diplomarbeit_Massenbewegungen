@@ -25,6 +25,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function isMemberOfProject(int $projectId): bool
+    {
+        return $this->projects()->where('projects.id', $projectId)->exists();
+    }
+
     // Same as project
     public function projects()
     {

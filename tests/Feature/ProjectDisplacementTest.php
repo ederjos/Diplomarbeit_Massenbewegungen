@@ -94,6 +94,7 @@ test('project page exposes displacement values for the selected comparison epoch
 
     /** @var User $user */
     $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id);
 
     $response->assertStatus(200)
@@ -209,6 +210,7 @@ test('points without projection have null projectedDistance', function () {
 
     /** @var User $user */
     $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
 
     $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id.'&reference='.$referenceMeasurement->id);
 

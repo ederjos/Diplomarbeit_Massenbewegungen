@@ -91,6 +91,7 @@ class MeasurementValuesTableSeeder extends Seeder
         }
 
         if (count($measurementValues) > 0) {
+            // fillAndInsert() instead of insert() to automatically set created_at and updated_at timestamps
             MeasurementValue::fillAndInsert($measurementValues);
         }
 

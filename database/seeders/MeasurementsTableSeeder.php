@@ -34,7 +34,8 @@ class MeasurementsTableSeeder extends Seeder
         }
 
         if (count($measurements) > 0) {
-            Measurement::insert($measurements);
+            // fillAndInsert() instead of insert() to automatically set created_at and updated_at timestamps
+            Measurement::fillAndInsert($measurements);
         }
     }
 }

@@ -21,6 +21,7 @@ class ProjectUserSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        // update autoincrement value (this doesn't happen automatically when inserting with an id)
         if (DB::getDriverName() === 'pgsql') {
             DB::statement('SELECT setval(\'project_user_id_seq\', (SELECT MAX(id) FROM project_user));');
         }

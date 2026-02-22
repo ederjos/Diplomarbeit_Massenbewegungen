@@ -18,8 +18,10 @@ class RoleFactory extends Factory
     {
         return [
             'name' => fake()->jobTitle(),
-            'can_add' => fake()->boolean(),
-            'can_edit' => fake()->boolean(),
+            'manage_users' => fake()->boolean(),
+            'manage_projects' => fake()->boolean(),
+            'manage_measurements' => fake()->boolean(),
+            'manage_comments' => fake()->boolean(),
         ];
     }
 }

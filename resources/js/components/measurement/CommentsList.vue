@@ -55,7 +55,7 @@ const selectedComparisonMeasurement = computed(() => {
                 </p>
                 <p>
                     <span class="font-semibold text-slate-700">Rolle:</span>
-                    {{ comment.user.role?.name || '—' }}
+                    {{ comment.user.role.name }}
                 </p>
             </div>
         </article>

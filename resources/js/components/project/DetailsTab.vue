@@ -38,7 +38,7 @@ defineProps<{
                             :class="contactPersons.length === 1 ? 'list-none' : 'list-inside list-disc space-y-1'"
                         >
                             <li v-for="user in contactPersons" :key="user.id">
-                                {{ user.name }} ({{ user.role?.name ?? 'ohne Rolle' }})
+                                {{ user.name }} ({{ user.role.name }})
                             </li>
                         </ul>
                         <span v-else>—</span>

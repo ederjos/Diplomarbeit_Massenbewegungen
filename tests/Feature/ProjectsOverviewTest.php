@@ -33,6 +33,7 @@ test('projects in home calculate next measurement correctly', function () {
 
     /** @var \App\Models\User $user */
     $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
     // the names from web.php
     $response = $this->actingAs($user)->get(route('home'));
 
@@ -62,6 +63,7 @@ test('inactive projects don\'t show next measurement', function () {
 
     /** @var \App\Models\User $user */
     $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('home'));
 
     $response->assertStatus(200)
@@ -77,12 +79,13 @@ test('inactive projects don\'t show next measurement', function () {
 
 test('projects without any measurements show no measurement dates at all', function () {
     /** @var \Tests\TestCase $this */
-    Project::factory()->createOne([
+    $project = Project::factory()->createOne([
         'is_active' => false,
     ]);
 
     /** @var \App\Models\User $user */
     $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('home'));
 
     $response->assertStatus(200)

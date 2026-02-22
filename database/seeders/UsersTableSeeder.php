@@ -23,6 +23,7 @@ class UsersTableSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        // update autoincrement value (this doesn't happen automatically when inserting with an id)
         if (DB::getDriverName() === 'pgsql') {
             DB::statement('SELECT setval(\'users_id_seq\', (SELECT MAX(id) FROM users));');
         }

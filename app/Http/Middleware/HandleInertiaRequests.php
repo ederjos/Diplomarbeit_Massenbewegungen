@@ -2,7 +2,6 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -36,23 +35,24 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+        $user = $request->user();
+        $userRole = $user?->role;
 
         return [
             ...parent::share($request),
             'name' => config('app.name'),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user() ? [
-                    'id' => $request->user()->id,
-                    'name' => $request->user()->name,
-                    'role' => $request->user()->role ? [
-                        'id' => $request->user()->role->id,
-                        'name' => $request->user()->role->name,
-                    ] : null,
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'permissions' => [
+                        'manage_users' => $userRole?->manage_users === true,
+                        'manage_projects' => $userRole?->manage_projects === true,
+                        'manage_measurements' => $userRole?->manage_measurements === true,
+                        'manage_comments' => $userRole?->manage_comments === true,
+                    ],
                 ] : null,
             ],
-            'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
         ];
     }
 }

@@ -2,8 +2,6 @@
 
 **Auch CSS verstehen!**
 
-(Login & Register Tests)
-
 ---
 
 - DisplacementChart:
@@ -11,18 +9,18 @@
 
 - Formular für Add/Edit/Delete von Projekten & Messungen.
 
+- Admins sollten sich selbst zu einem Projekt hinzufügen können, um Zugriff auf dieses zu erhalten.
+
 - Admin-Bereich:
     - Benutzer & Rollen verwalten
         - Tabellen für Benutzer & Rollen
         - Formular für Add/Edit/Delete von Benutzern & Rollen
-- Rollen & Rechte:
-    - Admin kann alles, andere nur ansehen oder nur kommentieren.
-    - Nur Mitglieder eines Projektes können auf dieses zugreifen.
-    - Nur Benutzer, welche eine Rolle mit den entsprechenden Rechten haben, können gewisse Aktionen durchführen (z.B. Add & Edit / Comment)
 
-- Passwort ändern (aber maybe nicht erlaubt für alle Rollen?)!
+- Passwort ändern! (aber maybe nicht erlaubt für alle Rollen?)
 
 - für admin: mailto an alle mitglieder des projektes
+
+- (wenn Zeit bleibt) weitere Tests
 
 ---
 
@@ -33,4 +31,4 @@
     - PHP 8.5 (also: publish sail config)
     - PostgreSQL 18 (with PostGIS)
 
-- (maybe) Tailwind-Klassen zusammenfassen anstatt sie überall zu wiederholen
+- (maybe) Tailwind-Klassen zusammenfassen anstatt sie überall zu wiederholen & Tailwind-Theme korrekt verwenden

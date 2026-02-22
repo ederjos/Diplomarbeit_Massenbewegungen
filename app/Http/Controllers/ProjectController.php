@@ -25,13 +25,13 @@ class ProjectController extends Controller
          * "What comes into ProjectController.php to get all projects with their last measurement date and next measurement date based on period?"
          * "Update the controller of index to correctly and simply return the requested data. no errors should appear when working with timezones +2 or +1. just return the date in the same form as you get it from measurement_datetime without timezone: 2025-06-04 00:00:00"
          */
-        $projects = Project::query()
+        $user = request()->user();
+
+        $projects = $user->projects()
             // Only select necessary columns
-            ->select(['id', 'name', 'is_active', 'period'])
+            ->select(['projects.id', 'projects.name', 'projects.is_active', 'projects.period'])
             ->withLastAndNextMeasurementDate()
             ->get();
-
-        $user = request()->user();
 
         $favoriteProjectIds = $user ?
             $user->projects()->wherePivot('is_favorite', true)->pluck('projects.id')->toArray()
@@ -49,19 +49,7 @@ class ProjectController extends Controller
     {
         $user = $request->user();
 
-        if (! $user) {
-            // Throws an exception (401 = unauthorized)
-            abort(401);
-        }
-
-        // Check if the user is already linked to the project
         $existingAssociation = $project->users()->where('user_id', $user->id)->first();
-
-        if (! $existingAssociation) {
-            // Error 403 = forbidden
-            abort(403, 'You are not a member of this project.');
-        }
-
         // Toggle the is_favorite value
         $currentValue = $existingAssociation->pivot->is_favorite;
         $project->users()->updateExistingPivot($user->id, ['is_favorite' => ! $currentValue]);

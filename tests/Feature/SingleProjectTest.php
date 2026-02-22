@@ -29,6 +29,7 @@ test('measurements on project page are loaded chronologically', function () {
 
     /** @var \App\Models\User $user */
     $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project));
 
     $response->assertStatus(200)
@@ -74,6 +75,7 @@ test('project details include valid coordinates converted to lat/lon', function 
 
     /** @var \App\Models\User $user */
     $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project));
 
     $response->assertInertia(
@@ -119,6 +121,7 @@ test('fallback to earliest and latest measurements for reference and comparison 
 
     /** @var \App\Models\User $user */
     $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project));
 
     $response->assertStatus(200)
@@ -154,6 +157,7 @@ test('comparison parameter defaults to latest measurement when invalid', functio
 
     /** @var \App\Models\User $user */
     $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project).'?comparison=not-a-number');
 
     $response->assertStatus(200)
@@ -170,6 +174,7 @@ test('project page works with zero measurements', function () {
 
     /** @var \App\Models\User $user */
     $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project));
 
     // Mainly done with Copilot autocomplete
@@ -180,4 +185,20 @@ test('project page works with zero measurements', function () {
                 ->where('measurements', [])
                 ->where('points', [])
         );
+});
+
+/**
+ * Claude Sonnet 4.6, 2026-02-22
+ * "Add a test to verify that users can't access projects they are not a member of."
+ */
+test('non-member cannot access project', function () {
+    /** @var \Tests\TestCase $this */
+    $project = Project::factory()->createOne();
+
+    /** @var \App\Models\User $user */
+    $user = User::factory()->createOne();
+    // User is NOT attached to the project
+    $response = $this->actingAs($user)->get(route('project', $project));
+
+    $response->assertStatus(403);
 });

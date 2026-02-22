@@ -11,7 +11,7 @@ class ApproveRegistrationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->role?->name === 'admin';
+        return $this->user()?->role?->manage_users === true;
     }
 
     /**

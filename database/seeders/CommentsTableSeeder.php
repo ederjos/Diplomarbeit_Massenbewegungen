@@ -22,6 +22,7 @@ class CommentsTableSeeder extends Seeder
             'updated_at' => now(),
         ]);
 
+        // update autoincrement value (this doesn't happen automatically when inserting with an id)
         if (DB::getDriverName() === 'pgsql') {
             DB::statement('SELECT setval(\'comments_id_seq\', (SELECT MAX(id) FROM comments));');
         }

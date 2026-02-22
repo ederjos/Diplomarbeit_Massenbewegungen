@@ -28,8 +28,8 @@ class DatabaseSeeder extends Seeder
             UsersTableSeeder::class,
             ProjectsTableSeeder::class,
             ProjectUserSeeder::class,
-            // PointsTableSeeder::class
             // Points are now created dynamically in MeasurementValuesTableSeeder
+            // PointsTableSeeder::class,
             MeasurementsTableSeeder::class,
             AdditionsTableSeeder::class,
             MeasurementValuesTableSeeder::class,

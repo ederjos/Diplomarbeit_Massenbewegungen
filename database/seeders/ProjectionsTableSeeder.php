@@ -22,6 +22,7 @@ class ProjectionsTableSeeder extends Seeder
         // Update point 5 to use the new projection
         DB::table('points')->where('id', 5)->update(['projection_id' => 1]);
 
+        // update autoincrement value (this doesn't happen automatically when inserting with an id)
         if (DB::getDriverName() === 'pgsql') {
             DB::statement('SELECT setval(\'projections_id_seq\', (SELECT MAX(id) FROM projections));');
         }

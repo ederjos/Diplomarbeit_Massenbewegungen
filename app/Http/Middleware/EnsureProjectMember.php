@@ -6,15 +6,14 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserIsAdmin
+class EnsureProjectMember
 {
-    /**
-     * Handle an incoming request.
-     */
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()?->role?->name !== 'admin') {
-            abort(403);
+        $projectId = $request->route('project')?->id;
+
+        if (! $request->user()?->isMemberOfProject($projectId)) {
+            abort(403); // Forbidden
         }
 
         return $next($request);
