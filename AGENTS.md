@@ -9,12 +9,11 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4.18
+- php - 8.5.3
 - inertiajs/inertia-laravel (INERTIA_LARAVEL) - v2
 - laravel/fortify (FORTIFY) - v1
 - laravel/framework (LARAVEL) - v12
 - laravel/prompts (PROMPTS) - v0
-- laravel/sanctum (SANCTUM) - v4
 - laravel/wayfinder (WAYFINDER) - v0
 - laravel/boost (BOOST) - v2
 - laravel/mcp (MCP) - v0
@@ -211,7 +210,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Authentication & Authorization
 
-- Use Laravel's built-in authentication and authorization features (gates, policies, Sanctum, etc.).
+- Use Laravel's built-in authentication and authorization features (gates, policies, etc.).
 
 ## URL Generation
 

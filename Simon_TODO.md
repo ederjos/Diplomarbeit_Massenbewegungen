@@ -24,11 +24,10 @@
 
 ---
 
+- Sail Config publishen
 - App Config (Name, Beschreibung, Sprache, etc.)!
 
 - Upgrades:
     - Laravel 13
-    - PHP 8.5 (also: publish sail config)
-    - PostgreSQL 18 (with PostGIS)
 
-- (maybe) Tailwind-Klassen zusammenfassen anstatt sie überall zu wiederholen & Tailwind-Theme korrekt verwenden
+- (maybe) Tailwind-Klassen zusammenfassen anstatt sie überall zu wiederholen & Tailwind-Theme korrekt verwenden (e.g. color-chart-1)

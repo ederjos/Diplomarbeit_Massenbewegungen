@@ -16,7 +16,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:17-3.6-alpine
+        image: postgis/postgis:18-3.6-alpine
         env:
           POSTGRES_DB: testing
           POSTGRES_USER: sail
@@ -34,19 +34,19 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: '8.5'
           tools: composer:v2
           coverage: xdebug
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install Node Dependencies
@@ -73,12 +73,12 @@ jobs:
     # Needs php because of wayfinder
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: '8.5'
 
       - name: Install Dependencies
         run: |

@@ -75,7 +75,6 @@ Enable in `config/fortify.php` features array:
 
 ```
 - [ ] Set 'views' => false in config/fortify.php
-- [ ] Install and configure Laravel Sanctum
 - [ ] Use 'web' guard in fortify config
 - [ ] Set up CSRF token handling
 - [ ] Test XHR authentication flows
