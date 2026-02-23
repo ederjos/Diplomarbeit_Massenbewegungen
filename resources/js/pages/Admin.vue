@@ -1,9 +1,9 @@
 <script setup lang="ts">
+import { Head } from '@inertiajs/vue3';
 import type { RegistrationRequest } from '@/@types/registrationRequest';
 import type { Role } from '@/@types/user';
 import RegistrationRequestCard from '@/components/admin/RegistrationRequestCard.vue';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
 
 defineProps<{
     registrationRequests: RegistrationRequest[];

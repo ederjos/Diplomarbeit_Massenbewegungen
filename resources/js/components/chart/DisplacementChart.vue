@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import type { Measurement, Point } from '@/@types/measurement';
-import { formatDate } from '@/utils/date';
-import { distanceTo } from '@/utils/geo';
 import type { EChartsInitOpts, EChartsOption, LineSeriesOption } from 'echarts';
 import { LineChart } from 'echarts/charts';
 import { DataZoomComponent, GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
 import { use } from 'echarts/core';
-import 'echarts/i18n/langDE';
 import { SVGRenderer } from 'echarts/renderers';
 import { computed, ref } from 'vue';
 import VChart from 'vue-echarts';
+import 'echarts/i18n/langDE';
+import type { Measurement, Point } from '@/@types/measurement';
+import { formatDate } from '@/utils/date';
+import { distanceTo } from '@/utils/geo';
 
 const props = defineProps<{
     points: Point[];

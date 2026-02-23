@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { AuthUser } from '@/@types/user';
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import type { AuthUser } from '@/@types/user';
 
 const page = usePage();
 const user = computed(() => (page.props.auth as { user: AuthUser | null }).user);

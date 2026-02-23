@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { Measurement, Point, PointDisplacement } from '@/@types/measurement';
-import { ProjectDetails } from '@/@types/project';
-import { User } from '@/@types/user';
+import { Head } from '@inertiajs/vue3';
+import { computed, ref } from 'vue';
+import type { Measurement, Point, PointDisplacement } from '@/@types/measurement';
+import type { ProjectDetails } from '@/@types/project';
+import type { User } from '@/@types/user';
 import DetailsTab from '@/components/project/DetailsTab.vue';
 import ResultsTab from '@/components/project/ResultsTab.vue';
 import TabSwitcher from '@/components/ui/TabSwitcher.vue';
 import { colors } from '@/config/colors';
 import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { computed, ref } from 'vue';
 
 const props = defineProps<{
     project: ProjectDetails;

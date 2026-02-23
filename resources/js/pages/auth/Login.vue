@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import PasswordInput from '@/components/auth/PasswordInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import PasswordInput from '@/components/auth/PasswordInput.vue';
 
 defineProps<{
     status?: string;
