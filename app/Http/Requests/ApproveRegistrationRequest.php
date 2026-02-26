@@ -11,7 +11,8 @@ class ApproveRegistrationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->role?->manage_users === true;
+        // EnsureAdminPermissions middleware already checks if the user is an admin
+        return true;
     }
 
     /**

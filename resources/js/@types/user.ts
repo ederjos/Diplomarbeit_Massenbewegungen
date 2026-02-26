@@ -6,10 +6,10 @@ export interface AuthUser {
 }
 
 export interface Permissions {
-    manage_users: boolean;
-    manage_projects: boolean;
-    manage_measurements: boolean;
-    manage_comments: boolean;
+    isAdmin: boolean;
+    canManageProjects: boolean;
+    canManageMeasurements: boolean;
+    canComment: boolean;
 }
 
 // the user model without permissions but with the role name

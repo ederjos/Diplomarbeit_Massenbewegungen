@@ -16,6 +16,7 @@ class StoreRegistrationRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        // anyone can make a registration request
         return true;
     }
 

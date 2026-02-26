@@ -13,7 +13,7 @@ class EnsureAdminPermissions
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->user()?->role?->manage_users) {
+        if (! $request->user()?->role?->is_admin) {
             abort(403); // Forbidden
         }
 

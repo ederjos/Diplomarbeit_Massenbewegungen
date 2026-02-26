@@ -11,20 +11,20 @@ class Role extends Model
 
     protected $fillable = [
         'name',
-        'manage_users',
-        'manage_projects',
-        'manage_measurements',
-        'manage_comments',
+        'is_admin',
+        'can_manage_projects',
+        'can_manage_measurements',
+        'can_comment',
     ];
 
     protected function casts(): array
     {
         // ensure that bools are correctly interpreted (some dbs store them as 0/1)
         return [
-            'manage_users' => 'boolean',
-            'manage_projects' => 'boolean',
-            'manage_measurements' => 'boolean',
-            'manage_comments' => 'boolean',
+            'is_admin' => 'boolean',
+            'can_manage_projects' => 'boolean',
+            'can_manage_measurements' => 'boolean',
+            'can_comment' => 'boolean',
         ];
     }
 

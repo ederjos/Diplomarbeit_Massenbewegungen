@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::table('roles', function (Blueprint $table) {
             $table->dropColumn(['can_add', 'can_edit']);
-            $table->boolean('manage_users')->default(false);
-            $table->boolean('manage_projects')->default(false);
-            $table->boolean('manage_measurements')->default(false);
-            $table->boolean('manage_comments')->default(false);
+            $table->boolean('is_admin')->default(false);
+            $table->boolean('can_manage_projects')->default(false);
+            $table->boolean('can_manage_measurements')->default(false);
+            $table->boolean('can_comment')->default(false);
         });
     }
 
@@ -29,10 +29,10 @@ return new class extends Migration
             $table->boolean('can_add')->default(false);
             $table->boolean('can_edit')->default(false);
             $table->dropColumn([
-                'manage_users',
-                'manage_projects',
-                'manage_measurements',
-                'manage_comments',
+                'is_admin',
+                'can_manage_projects',
+                'can_manage_measurements',
+                'can_comment',
             ]);
         });
     }

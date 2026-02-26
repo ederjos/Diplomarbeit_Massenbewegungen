@@ -7,7 +7,7 @@ const page = usePage();
 const user = computed(() => (page.props.auth as { user: AuthUser | null }).user);
 
 const isHome = computed(() => page.url === '/');
-const canManageUsers = computed(() => user.value?.permissions.manage_users === true);
+const isAdmin = computed(() => user.value?.permissions.isAdmin === true);
 </script>
 
 <!--
@@ -25,7 +25,7 @@ const canManageUsers = computed(() => user.value?.permissions.manage_users === t
 
             <div class="flex items-center gap-4">
                 <span v-if="user" class="text-sm text-gray-700"> Eingeloggt als {{ user.name }} </span>
-                <Link v-if="canManageUsers" href="/admin" class="font-medium text-indigo-600 hover:text-indigo-800">
+                <Link v-if="isAdmin" href="/admin" class="font-medium text-indigo-600 hover:text-indigo-800">
                     Admin-Bereich
                 </Link>
                 <Link href="/logout" method="post" class="cursor-pointer font-medium text-red-600 hover:text-red-800">
