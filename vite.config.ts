@@ -10,6 +10,21 @@ export default defineConfig({
         reporters: 'verbose',
         environment: 'jsdom',
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: (id) => {
+                    // create a separate chunk for each node module
+                    if (id.includes('node_modules')) {
+                        const moduleName = id.toString().split('node_modules/')[1].split('/')[0];
+                        return `vendor/${moduleName}`;
+                    }
+
+                    return null;
+                },
+            },
+        },
+    },
     plugins: [
         laravel({
             input: ['resources/js/app.ts'],

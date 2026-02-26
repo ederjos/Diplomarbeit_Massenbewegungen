@@ -1,7 +1,14 @@
 <script setup lang="ts">
-import type { EChartsInitOpts, EChartsOption, LineSeriesOption } from 'echarts';
+import type { LineSeriesOption } from 'echarts/charts';
 import { LineChart } from 'echarts/charts';
-import { DataZoomComponent, GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
+import type {
+    LegendComponentOption,
+    GridComponentOption,
+    DataZoomComponentOption,
+    TooltipComponentOption,
+} from 'echarts/components';
+import { LegendComponent, GridComponent, DataZoomComponent, TooltipComponent } from 'echarts/components';
+import type { ComposeOption, EChartsInitOpts } from 'echarts/core';
 import { use } from 'echarts/core';
 import { SVGRenderer } from 'echarts/renderers';
 import { computed, ref } from 'vue';
@@ -18,6 +25,11 @@ const props = defineProps<{
 }>();
 
 use([LegendComponent, GridComponent, DataZoomComponent, TooltipComponent, LineChart, SVGRenderer]);
+
+// Generated using: https://vue-echarts.dev/#codegen
+type EChartsOption = ComposeOption<
+    LegendComponentOption | GridComponentOption | DataZoomComponentOption | TooltipComponentOption | LineSeriesOption
+>;
 
 const chartRef = ref<InstanceType<typeof VChart> | null>(null);
 
@@ -206,7 +218,7 @@ function restoreView() {
     "Please simplify the Tailwind Styling in ProjectTimeline.vue to reduce it's complexity. Also, make sure that ProjectTimeline.vue scales well and doesn't get too small or bigger than the browser window."
 -->
 <template>
-    <div class="flex h-[85vh] w-[75vw] flex-col rounded bg-white p-4 shadow">
+    <div class="flex h-[90vh] w-[75vw] flex-col rounded bg-white p-4 shadow">
         <div class="mb-4 flex flex-wrap items-center justify-between gap-4">
             <h2 class="text-lg font-bold">Verschiebungsverlauf</h2>
 
