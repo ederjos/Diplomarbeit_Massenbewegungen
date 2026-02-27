@@ -58,8 +58,7 @@ class ProjectController extends Controller
         return back();
     }
 
-    // Request to access the query string parameter 'comparison' for comparison measurement, e.g. /projects/1?comp=2
-    public function show(Request $request, Project $project): Response
+    public function show(Project $project): Response
     {
         // Apply scope to get first/last measurement dates
         $project = Project::query()
@@ -82,40 +81,6 @@ class ProjectController extends Controller
             'municipality',
             'type',
         ]);
-
-        // Compute reference and comparison measurement IDs
-
-        $measurementIds = $project->measurements->pluck('id');
-
-        $referenceParam = $request->query('reference');
-        if ($referenceParam && is_numeric($referenceParam) && $measurementIds->contains((int) $referenceParam)) {
-            // 1. If a reference query is provided, use it
-            $referenceId = (int) $referenceParam;
-        } else {
-            $refFromProject = $project->reference_measurement_id;
-            if ($refFromProject && $measurementIds->contains($refFromProject)) {
-                // 2. Otherwise, use configured reference measurement
-                $referenceId = $refFromProject;
-            } elseif ($project->measurements->count() > 0) {
-                // 3. Finally, fall back to first measurement
-                $referenceId = $project->measurements->first()->id;
-            } else {
-                // 4. If no measurements -> has to be null
-                $referenceId = null;
-            }
-        }
-
-        // Comparison epoch from query param, defaults to last measurement
-        $comparisonParam = $request->query('comparison');
-        if ($comparisonParam && is_numeric($comparisonParam) && $measurementIds->contains((int) $comparisonParam)) {
-            // id is valid, just convert it to int
-            $comparisonId = (int) $comparisonParam;
-        } else {
-            // if id invalid -> take last measurement as default
-            $comparisonId = $project->measurements->count() > 1
-                ? $project->measurements->last()->id
-                : null;
-        }
 
         // Only include visible points
         $visiblePoints = $project->points->filter(fn ($p) => $p->is_visible)->values();
@@ -149,63 +114,7 @@ class ProjectController extends Controller
             $point->preloadedLastMv = $lastMvs->get($point->id);
         }
 
-        /**
-         * Claude Opus 4.6, 2026-02-10
-         * "Please apply the attached projection calculations to the project controller [...]"
-         */
-        // Compute displacements between reference and comparison epoch
-        $displacements = [];
-        if ($referenceId && $comparisonId) {
-            // Bulk-load geom values for both epochs to avoid N+1 queries
-            // Returns a Collection
-            $refValues = MeasurementValue::where('measurement_id', $referenceId)
-                // only values whose point id is in the visible points
-                ->whereIn('point_id', $visiblePoints->pluck('id'))
-                ->select(['point_id', 'geom'])
-                // keyBy ->
-                ->get()->keyBy('point_id');
-
-            $compValues = MeasurementValue::where('measurement_id', $comparisonId)
-                ->whereIn('point_id', $visiblePoints->pluck('id'))
-                ->select(['point_id', 'geom'])
-                ->get()->keyBy('point_id');
-
-            foreach ($visiblePoints as $point) {
-                $refVal = $refValues->get($point->id);
-                $compVal = $compValues->get($point->id);
-
-                if (! $refVal || ! $compVal) {
-                    // Will not be displayed anyway, we have to skip it
-                    continue;
-                }
-
-                // differences in EPSG:31254 (meters)
-                // Step 1 - "head minus tail"
-                $dX = $compVal->geom->getX() - $refVal->geom->getX();
-                $dY = $compVal->geom->getY() - $refVal->geom->getY();
-                $dZ = $compVal->geom->getZ() - $refVal->geom->getZ();
-
-                // Steps 2a and 2c
-                $distance2d = sqrt($dX ** 2 + $dY ** 2);
-                $distance3d = sqrt($dX ** 2 + $dY ** 2 + $dZ ** 2);
-
-                // Step 2b 1
-                // Projection to user-defined axis (dot product)
-                $projectedDistance = null;
-                if ($point->projection) {
-                    // Make projection unsigned like 2D delta
-                    $projectedDistance = abs($dX * $point->projection->ax + $dY * $point->projection->ay);
-                }
-
-                $displacements[$point->id] = [
-                    // m -> cm
-                    'distance2d' => $distance2d * self::METERS_TO_CENTIMETERS,
-                    'distance3d' => $distance3d * self::METERS_TO_CENTIMETERS,
-                    'projectedDistance' => $projectedDistance !== null ? $projectedDistance * self::METERS_TO_CENTIMETERS : null,
-                    'deltaHeight' => $dZ * self::METERS_TO_CENTIMETERS,
-                ];
-            }
-        }
+        $displacements = $this->computeAllDisplacements($visiblePoints, $project->measurements);
 
         $contactPersons = $project->users()
             // not all users working on this project, only contact persons
@@ -219,10 +128,104 @@ class ProjectController extends Controller
             'project' => (new ProjectShowResource($project))->resolve(),
             'points' => PointResource::collection($visiblePoints)->resolve(),
             'measurements' => MeasurementResource::collection($project->measurements)->resolve(),
-            'referenceId' => $referenceId,
-            'comparisonId' => $comparisonId,
             'displacements' => $displacements,
             'contactPersons' => UserResource::collection($contactPersons)->resolve(),
         ]);
+    }
+
+    /**
+     * Claude Opus 4.6, 2026-02-10
+     * "Please apply the attached projection calculations to the project controller [...]"
+     */
+    /**
+     * Claude Opus 4.6, 2026-02-27
+     * "Aktualisiere die Berechnung der Verschiebungen im ProjectController, damit sie für alle Punkte und Messungen durchgeführt wird, ähnlich wie in DisplacementChart. Extrahiere die aktualisierte Berechnung in eine neue Methode."
+     * (Simon)
+     */
+    /**
+     * Compute displacements for every point × every measurement relative to the first measurement (Nullmessung).
+     * Structure: pointId => { measurementId => { distance2d, distance3d, projectedDistance, deltaHeight } }
+     */
+    private function computeAllDisplacements($visiblePoints, $measurements): array
+    {
+        if ($measurements->isEmpty() || $visiblePoints->isEmpty()) {
+            return [];
+        }
+
+        $pointIds = $visiblePoints->pluck('id');
+        $measurementIds = $measurements->pluck('id');
+
+        // Bulk-load all geom values for all visible points across all measurements
+        $allValues = MeasurementValue::whereIn('point_id', $pointIds)
+            ->whereIn('measurement_id', $measurementIds)
+            ->select(['point_id', 'measurement_id', 'geom'])
+            ->get()
+            // Group by point_id, then key each group by measurement_id
+            ->groupBy('point_id')
+            ->map(fn ($group) => $group->keyBy('measurement_id'));
+
+        // Index projections by point id for fast lookup
+        $projectionsByPoint = $visiblePoints
+            ->filter(fn ($p) => $p->projection !== null)
+            ->pluck('projection', 'id');
+
+        $displacements = [];
+
+        foreach ($visiblePoints as $point) {
+            $pointValues = $allValues->get($point->id);
+            if (! $pointValues) {
+                continue;
+            }
+
+            // Use the first available measurement for this point as reference (Nullmessung)
+            $refVal = null;
+            foreach ($measurements as $measurement) {
+                $val = $pointValues->get($measurement->id);
+                if ($val) {
+                    $refVal = $val;
+                    break;
+                }
+            }
+            if (! $refVal) {
+                continue;
+            }
+
+            $projection = $projectionsByPoint->get($point->id);
+            $pointDisplacements = [];
+
+            foreach ($measurements as $measurement) {
+                $compVal = $pointValues->get($measurement->id);
+                if (! $compVal) {
+                    continue;
+                }
+
+                // Differences in EPSG:31254 (meters)
+                $dX = $compVal->geom->getX() - $refVal->geom->getX();
+                $dY = $compVal->geom->getY() - $refVal->geom->getY();
+                $dZ = $compVal->geom->getZ() - $refVal->geom->getZ();
+
+                $distance2d = sqrt($dX ** 2 + $dY ** 2);
+                $distance3d = sqrt($dX ** 2 + $dY ** 2 + $dZ ** 2);
+
+                // Projection to user-defined axis (dot product)
+                $projectedDistance = null;
+                if ($projection) {
+                    $projectedDistance = abs($dX * $projection->ax + $dY * $projection->ay);
+                }
+
+                $pointDisplacements[$measurement->id] = [
+                    'distance2d' => $distance2d * self::METERS_TO_CENTIMETERS,
+                    'distance3d' => $distance3d * self::METERS_TO_CENTIMETERS,
+                    'projectedDistance' => $projectedDistance !== null ? $projectedDistance * self::METERS_TO_CENTIMETERS : null,
+                    'deltaHeight' => $dZ * self::METERS_TO_CENTIMETERS,
+                ];
+            }
+
+            if (! empty($pointDisplacements)) {
+                $displacements[$point->id] = $pointDisplacements;
+            }
+        }
+
+        return $displacements;
     }
 }

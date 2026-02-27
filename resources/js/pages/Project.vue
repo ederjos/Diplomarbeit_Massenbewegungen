@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import type { Measurement, Point, PointDisplacement } from '@/@types/measurement';
+import type { DisplacementsByPointAndMeasurement, Measurement, Point } from '@/@types/measurement';
 import type { ProjectDetails } from '@/@types/project';
 import type { User } from '@/@types/user';
 import DetailsTab from '@/components/project/DetailsTab.vue';
@@ -14,9 +14,7 @@ const props = defineProps<{
     project: ProjectDetails;
     points: Point[];
     measurements: Measurement[];
-    referenceId: number | null;
-    comparisonId: number | null;
-    displacements: Record<number, PointDisplacement>;
+    displacements: DisplacementsByPointAndMeasurement;
     contactPersons: User[];
 }>();
 
@@ -50,8 +48,6 @@ const pointColors = computed(() => {
                     :points="points"
                     :point-colors="pointColors"
                     :measurements="measurements"
-                    :reference-id="referenceId"
-                    :comparison-id="comparisonId"
                     :displacements="displacements"
                 />
                 <DetailsTab

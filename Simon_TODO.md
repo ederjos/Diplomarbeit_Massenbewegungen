@@ -4,9 +4,6 @@
 
 ---
 
-- DisplacementChart:
-    - Projektion verwenden
-
 - Formular für Add/Edit/Delete von Projekten & Messungen.
 
 - Admins sollten sich selbst zu einem Projekt hinzufügen können, um Zugriff auf dieses zu erhalten.

@@ -14,14 +14,14 @@ import { SVGRenderer } from 'echarts/renderers';
 import { computed, ref } from 'vue';
 import VChart from 'vue-echarts';
 import 'echarts/i18n/langDE';
-import type { Measurement, Point } from '@/@types/measurement';
+import type { BasePoint, DisplacementsByPointAndMeasurement, Measurement } from '@/@types/measurement';
 import { formatDate } from '@/utils/date';
-import { distanceTo } from '@/utils/geo';
 
 const props = defineProps<{
-    points: Point[];
+    points: BasePoint[];
     pointColors: Record<number, string>;
     measurements: Measurement[];
+    displacements: DisplacementsByPointAndMeasurement;
 }>();
 
 use([LegendComponent, GridComponent, DataZoomComponent, TooltipComponent, LineChart, SVGRenderer]);
@@ -59,33 +59,29 @@ const timestampToMeasurementName = new Map(props.measurements.map((m) => [new Da
 
 const chartOption = computed<EChartsOption>(() => {
     const series: LineSeriesOption[] = props.points.map((point) => {
-        const valueMap = new Map(point.measurementValues.map((mv) => [mv.measurementId, mv]));
-
-        const initialValue = point.measurementValues[0];
+        const pointDisplacements = props.displacements[point.id];
 
         const data: ([number, number] | null)[] = props.measurements.map((measurement) => {
-            const value = valueMap.get(measurement.id);
-            if (!initialValue || !value) {
+            const displacement = pointDisplacements?.[measurement.id];
+            if (!displacement) {
                 return null;
             }
 
-            const horizontalDist = distanceTo(initialValue.lat, initialValue.lon, value.lat, value.lon) * 100;
-            const verticalDist = (value.height - initialValue.height) * 100;
-
-            let displacement = 0;
+            let value = 0;
             switch (currentMode.value) {
                 case 'horizontal':
-                    displacement = horizontalDist;
+                    // Use projected distance when available
+                    value = displacement.projectedDistance ?? displacement.distance2d;
                     break;
                 case 'vertical':
-                    displacement = verticalDist;
+                    value = displacement.deltaHeight;
                     break;
                 case 'total':
                 default:
-                    displacement = Math.hypot(horizontalDist, verticalDist);
+                    value = displacement.distance3d;
             }
 
-            return [new Date(measurement.datetime).getTime(), displacement];
+            return [new Date(measurement.datetime).getTime(), value];
         });
 
         const color = props.pointColors[point.id] || '#000000';

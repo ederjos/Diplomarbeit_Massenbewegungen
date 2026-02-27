@@ -3,7 +3,7 @@
 /**
  * GPT-5 mini, 2026-02-03
  * "Please improve the colors array in Project.vue and add a comment next to each color with the name of the color."
- * Rem.: Asked by Simon
+ * (Simon)
  */
 export const colors: string[] = [
     '#1f77b4', // Blue

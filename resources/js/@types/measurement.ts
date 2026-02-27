@@ -7,9 +7,12 @@ export interface MeasurementValue {
     lon: number;
 }
 
-export interface Point {
+export interface BasePoint {
     id: number;
     name: string;
+}
+
+export interface Point extends BasePoint {
     measurementValues: MeasurementValue[];
     axis: ProjectionAxis | null;
 }
@@ -29,6 +32,10 @@ export interface PointDisplacement {
     projectedDistance: number | null;
     deltaHeight: number;
 }
+
+// Type of the displacements object returned by ProjectController.show()
+// Outer key: point id, inner key: measurement id
+export type DisplacementsByPointAndMeasurement = Record<number, Record<number, PointDisplacement>>;
 
 export interface DisplacementRow {
     pointId: number;
