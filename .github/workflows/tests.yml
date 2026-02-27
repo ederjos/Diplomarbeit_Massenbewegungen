@@ -13,6 +13,7 @@ jobs:
 
     env:
       DB_HOST: localhost
+      LARAVEL_BYPASS_ENV_CHECK: 1
 
     services:
       postgres:

@@ -30,8 +30,16 @@ jobs:
           composer install --no-interaction
           npm ci
 
-      - name: Run Pint
+      - id: pint
+        name: Run Pint
         run: composer run lint
+        continue-on-error: true
 
-      - name: Run ESLint
+      - id: eslint
+        name: Run ESLint
         run: npm run lint
+        continue-on-error: true
+
+      - name: Check linter results
+        if: steps.pint.outcome == 'failure' || steps.eslint.outcome == 'failure'
+        run: exit 1
