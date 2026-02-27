@@ -7,7 +7,7 @@ export default defineConfigWithVueTs(
     vue.configs['flat/essential'],
     vueTsConfigs.recommended,
     {
-        ignores: ['vendor', 'node_modules', 'public', 'bootstrap/ssr', 'tailwind.config.js', 'vite.config.ts'],
+        ignores: ['vendor', 'node_modules', 'public', 'bootstrap/ssr', 'vite.config.ts', 'vitest.config.ts'],
     },
     {
         plugins: {

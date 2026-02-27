@@ -2,12 +2,12 @@
 import type { LineSeriesOption } from 'echarts/charts';
 import { LineChart } from 'echarts/charts';
 import type {
-    LegendComponentOption,
-    GridComponentOption,
     DataZoomComponentOption,
+    GridComponentOption,
+    LegendComponentOption,
     TooltipComponentOption,
 } from 'echarts/components';
-import { LegendComponent, GridComponent, DataZoomComponent, TooltipComponent } from 'echarts/components';
+import { DataZoomComponent, GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
 import type { ComposeOption, EChartsInitOpts } from 'echarts/core';
 import { use } from 'echarts/core';
 import { SVGRenderer } from 'echarts/renderers';

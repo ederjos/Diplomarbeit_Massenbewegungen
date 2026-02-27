@@ -2,14 +2,10 @@ import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
+import webfontDownload from 'vite-plugin-webfont-dl';
 
 export default defineConfig({
-    test: {
-        // configure vitest
-        reporters: 'verbose',
-        environment: 'jsdom',
-    },
     build: {
         rollupOptions: {
             output: {
@@ -42,6 +38,10 @@ export default defineConfig({
                     includeAbsolute: false,
                 },
             },
+        }),
+        webfontDownload(['https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700'], {
+            assetsSubfolder: 'webfonts',
+            subsetsAllowed: ['latin'],
         }),
     ],
 });
