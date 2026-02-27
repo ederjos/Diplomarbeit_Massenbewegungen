@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ProjectOverview } from '@/@types/project';
-import { formatDate } from '@/utils/date';
 import { Link, router } from '@inertiajs/vue3';
-import AppTableWrapper from '../ui/AppTableWrapper.vue';
+import type { ProjectOverview } from '@/@types/project';
 // works thanks to laravel wayfinder, no hardcoded URL
 import { show } from '@/actions/App/Http/Controllers/ProjectController';
+import AppTableWrapper from '@/components/ui/AppTableWrapper.vue';
 import { toggleFavorite } from '@/routes/project';
+import { formatDate } from '@/utils/date';
 
 defineProps<{
     projects: ProjectOverview[];

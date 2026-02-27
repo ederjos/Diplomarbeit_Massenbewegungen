@@ -1,6 +1,6 @@
-import { DisplacementRow, Measurement } from '@/@types/measurement';
 import { mount } from '@vue/test-utils';
-import { test, expect } from 'vitest';
+import { expect, test } from 'vitest';
+import type { DisplacementRow, Measurement } from '@/@types/measurement';
 import DisplacementTable from './DisplacementTable.vue';
 
 const rows: DisplacementRow[] = [
@@ -13,7 +13,7 @@ test('the table renders all displacement rows', () => {
         props: {
             displacementRows: rows,
             sortColumn: null,
-            sortDirection: 'asc'
+            sortDirection: 'asc',
         },
     });
 
@@ -26,7 +26,7 @@ test('the table shows "no data" when there are no rows', () => {
         props: {
             displacementRows: [],
             sortColumn: null,
-            sortDirection: 'asc'
+            sortDirection: 'asc',
         },
     });
 
@@ -38,21 +38,19 @@ test('positive deltaHeights get a "+" sign', () => {
         props: {
             displacementRows: rows,
             sortColumn: null,
-            sortDirection: 'asc'
+            sortDirection: 'asc',
         },
     });
 
     expect(wrapper.text()).toContain('+1.2');
 });
 
-
-
 test('emits "select-point" when a row is clicked', async () => {
     const wrapper = mount(DisplacementTable, {
         props: {
             displacementRows: rows,
             sortColumn: null,
-            sortDirection: 'asc'
+            sortDirection: 'asc',
         },
     });
     // tr is a direct child of tbody (ignore thead)
@@ -68,7 +66,7 @@ test('emits "sort-by" when a header is clicked', async () => {
         props: {
             displacementRows: rows,
             sortColumn: null,
-            sortDirection: 'asc'
+            sortDirection: 'asc',
         },
     });
 
@@ -85,7 +83,7 @@ test('the correct row is highlighted', () => {
             displacementRows: rows,
             highlightedPointId: 200,
             sortColumn: null,
-            sortDirection: 'asc'
+            sortDirection: 'asc',
         },
     });
 

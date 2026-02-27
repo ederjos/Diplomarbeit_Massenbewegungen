@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { BaseMeasurement } from '@/@types/measurement';
+import { computed } from 'vue';
+import type { BaseMeasurement } from '@/@types/measurement';
 import { MAX_VECTOR_SCALE, MIN_VECTOR_SCALE } from '@/config/mapConstants';
 import { formatDate } from '@/utils/date';
-import { computed } from 'vue';
 
 const props = defineProps<{
     measurements: BaseMeasurement[];

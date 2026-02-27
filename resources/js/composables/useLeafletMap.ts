@@ -1,3 +1,5 @@
+import L from 'leaflet';
+import { onUnmounted, ref, type Ref } from 'vue';
 import type { Point } from '@/@types/measurement';
 import {
     DEFAULT_MAP_CENTER,
@@ -18,8 +20,6 @@ import {
     POLYLINE_MAIN_WEIGHT,
 } from '@/config/mapConstants';
 import { DEFAULT_WMS_OPTIONS, WMS_LAYERS } from '@/config/mapLayers';
-import L from 'leaflet';
-import { onUnmounted, ref, type Ref } from 'vue';
 
 /**
  * Clause Opus 4.6, 2026-02-14

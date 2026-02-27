@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import type { BasePoint, DisplacementsByPointAndMeasurement, Measurement, Point, PointDisplacement } from '@/@types/measurement';
+import type {
+    BasePoint,
+    DisplacementsByPointAndMeasurement,
+    Measurement,
+    Point,
+    PointDisplacement,
+} from '@/@types/measurement';
 import DisplacementChart from '@/components/chart/DisplacementChart.vue';
 import LeafletMap from '@/components/map/LeafletMap.vue';
 import CommentsList from '@/components/measurement/CommentsList.vue';
@@ -17,7 +23,7 @@ const props = defineProps<{
 const basePoints = computed(() => props.points as BasePoint[]);
 
 // temp. workaround until Josef updates LeafletMap
-const tempReferenceId = ref(0);
+const tempReferenceId = ref(1);
 const tempComparisonId = ref(28);
 const tempDisplacements = computed(() => {
     const displacements: Record<number, PointDisplacement> = {};

@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { BaseMeasurement, DisplacementRow, Measurement, Point, PointDisplacement } from '@/@types/measurement';
+import { router } from '@inertiajs/vue3';
+import { computed, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
+import type { BaseMeasurement, DisplacementRow, Measurement, Point, PointDisplacement } from '@/@types/measurement';
 import DisplacementTable from '@/components/map/DisplacementTable.vue';
 import MapToolbar from '@/components/map/MapToolbar.vue';
 import { useLeafletMap } from '@/composables/useLeafletMap';
 import { useSortableData } from '@/composables/useSortableData';
 import { DEFAULT_VECTOR_SCALE, HIGHLIGHT_DURATION_MS } from '@/config/mapConstants';
-import { router } from '@inertiajs/vue3';
-import { computed, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
 
 /** -- Use PHP Configs in Vue --
  * import { usePage } from '@inertiajs/vue3';
@@ -21,7 +21,7 @@ const props = defineProps<{
     // like hash map
     pointColors: Record<number, string>;
     measurements: Measurement[];
-    /** Selected reference measurement ID (or set per project by Admin/Editor) */
+    /** Selected reference measurement ID */
     referenceId: number | null;
     /** Selected comparison measurement ID */
     comparisonId: number | null;
@@ -32,8 +32,8 @@ const props = defineProps<{
 const mapContainer = ref<HTMLDivElement | null>(null);
 
 // former selectedMeasurement
-const selectedComparison = ref<number | null>(props.comparisonId);
 const selectedReference = ref<number | null>(props.referenceId);
+const selectedComparison = ref<number | null>(props.comparisonId);
 const vectorScale = ref<number>(DEFAULT_VECTOR_SCALE);
 const isGaitLine = ref<boolean>(false);
 const selectedPointId = ref<number | null>(null);

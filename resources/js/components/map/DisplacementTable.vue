@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { DisplacementRow } from '@/@types/measurement';
+import type { DisplacementRow } from '@/@types/measurement';
+import AppTableWrapper from '@/components/ui/AppTableWrapper.vue';
 import { DISPLACEMENT_TABLE_WIDTH } from '@/config/mapConstants';
-import AppTableWrapper from '../ui/AppTableWrapper.vue';
 
 const props = withDefaults(
     defineProps<{

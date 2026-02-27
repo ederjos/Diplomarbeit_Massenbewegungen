@@ -1,5 +1,5 @@
 import type { WMSOptions } from 'leaflet';
-import { MAX_MAP_ZOOM, MIN_MAP_ZOOM } from './mapConstants';
+import { MAX_MAP_ZOOM, MIN_MAP_ZOOM } from '@/config/mapConstants';
 
 // Base URLs for map services
 export const MAP_LAYERS = {

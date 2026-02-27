@@ -1,4 +1,5 @@
-import { computed, Ref, ref } from 'vue';
+import type { Ref } from 'vue';
+import { computed, ref } from 'vue';
 
 /**
  * Claude Sonnet 4.5, 2026-02-15
