@@ -1,40 +1,72 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
-import type {
-    BasePoint,
-    DisplacementsByPointAndMeasurement,
-    Measurement,
-    Point,
-    PointDisplacement,
-} from '@/@types/measurement';
+import { ref, watch } from 'vue';
+import type { ChartDisplacements, MapDisplacements, Measurement, Point } from '@/@types/measurement';
+import { displacementsForPair } from '@/actions/App/Http/Controllers/ProjectController';
 import DisplacementChart from '@/components/chart/DisplacementChart.vue';
 import LeafletMap from '@/components/map/LeafletMap.vue';
 import CommentsList from '@/components/measurement/CommentsList.vue';
 import ErrorBoundary from '@/components/ui/ErrorBoundary.vue';
 
 const props = defineProps<{
+    projectId: number;
     points: Point[];
     pointColors: Record<number, string>;
     measurements: Measurement[];
-    displacements: DisplacementsByPointAndMeasurement;
+    initialReferenceId: number | null;
+    initialComparisonId: number | null;
+    initialMapDisplacements: MapDisplacements;
+    chartDisplacements: ChartDisplacements;
 }>();
 
-// chart only needs base point info
-const basePoints = computed(() => props.points as BasePoint[]);
+const selectedReference = ref<number | null>(props.initialReferenceId);
+const selectedComparison = ref<number | null>(props.initialComparisonId);
+const mapDisplacements = ref<MapDisplacements>(props.initialMapDisplacements);
 
-// temp. workaround until Josef updates LeafletMap
-const tempReferenceId = ref(1);
-const tempComparisonId = ref(28);
-const tempDisplacements = computed(() => {
-    const displacements: Record<number, PointDisplacement> = {};
-    for (const point of props.points) {
-        const pointDisplacements = props.displacements[point.id]?.[tempComparisonId.value];
-        if (!pointDisplacements) {
-            continue;
-        }
-        displacements[point.id] = pointDisplacements;
+let fetchController: AbortController | null = null;
+
+/**
+ * Claude Sonnet 4.6, 2026-02-28
+ * "Wenn sich die Referenz- oder Vergleichsepoche ändert, dann sollen die URL-Parameter aktualisiert werden."
+ * (Simon)
+ */
+// When the selected epochs change, fetch new displacements and update the URL
+watch([selectedReference, selectedComparison], async ([refVal, compVal]) => {
+    // Update URL query params for shareability (without navigation)
+    const params = new URLSearchParams(window.location.search);
+
+    if (refVal != null) {
+        params.set('reference', String(refVal));
+    } else {
+        params.delete('reference');
     }
-    return displacements;
+
+    if (compVal != null) {
+        params.set('comparison', String(compVal));
+    } else {
+        params.delete('comparison');
+    }
+
+    history.replaceState(null, '', `${window.location.pathname}?${params}`);
+
+    // Fetch new displacements from the API
+    if (refVal != null && compVal != null) {
+        fetchController?.abort();
+        fetchController = new AbortController();
+
+        const url = displacementsForPair.url(props.projectId, {
+            query: { reference: refVal, comparison: compVal },
+        });
+
+        try {
+            const response = await fetch(url, { signal: fetchController.signal });
+            if (!response.ok) return;
+            mapDisplacements.value = await response.json();
+        } catch (error) {
+            // Ignore abort errors (expected when a newer request supersedes)
+            if (error instanceof DOMException && error.name === 'AbortError') return;
+            console.error('Failed to fetch map displacements:', error);
+        }
+    }
 });
 </script>
 
@@ -46,9 +78,11 @@ const tempDisplacements = computed(() => {
                     :points="points"
                     :point-colors="pointColors"
                     :measurements="measurements"
-                    :reference-id="tempReferenceId"
-                    :comparison-id="tempComparisonId"
-                    :displacements="tempDisplacements"
+                    :reference-id="selectedReference"
+                    :comparison-id="selectedComparison"
+                    :displacements="mapDisplacements"
+                    @update:reference-id="selectedReference = $event"
+                    @update:comparison-id="selectedComparison = $event"
                 />
             </ErrorBoundary>
         </section>
@@ -56,16 +90,16 @@ const tempDisplacements = computed(() => {
         <section class="flex justify-center">
             <ErrorBoundary component-name="Zeitachse">
                 <DisplacementChart
-                    :points="basePoints"
+                    :points="points"
                     :point-colors="pointColors"
                     :measurements="measurements"
-                    :displacements="displacements"
+                    :displacements="chartDisplacements"
                 />
             </ErrorBoundary>
         </section>
 
         <section class="rounded-lg bg-white p-6 shadow-md">
-            <CommentsList :measurements="measurements" :comparison-id="tempComparisonId" />
+            <CommentsList :measurements="measurements" :comparison-id="selectedComparison" />
         </section>
     </section>
 </template>

@@ -40,7 +40,12 @@ const safeVectorScale = computed({
                 class="rounded border p-1 disabled:text-gray-400"
                 id="reference-select"
             >
-                <option v-for="m in props.measurements" :key="m.id" :value="m.id">
+                <option
+                    v-for="m in props.measurements"
+                    :key="m.id"
+                    :value="m.id"
+                    :disabled="selectedComparison != null && m.id > selectedComparison"
+                >
                     {{ m.name }} ({{ formatDate(m.datetime) }})
                 </option>
             </select>
@@ -55,7 +60,12 @@ const safeVectorScale = computed({
                 class="rounded border p-1 disabled:text-gray-400"
                 id="comparison-select"
             >
-                <option v-for="m in props.measurements" :key="m.id" :value="m.id">
+                <option
+                    v-for="m in props.measurements"
+                    :key="m.id"
+                    :value="m.id"
+                    :disabled="selectedReference != null && m.id < selectedReference"
+                >
                     {{ m.name }} ({{ formatDate(m.datetime) }})
                 </option>
             </select>

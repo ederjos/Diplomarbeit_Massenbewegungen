@@ -28,14 +28,18 @@ export interface PointDisplacement {
     // all values in cm
     distance2d: number;
     distance3d: number;
+    deltaHeight: number;
     // null if no projection
     projectedDistance: number | null;
-    deltaHeight: number;
 }
 
-// Type of the displacements object returned by ProjectController.show()
+// Type of the mapDisplacements object returned by ProjectController::show()
+// Key: point id
+export type MapDisplacements = Record<number, PointDisplacement>;
+
+// Type of the chartDisplacements object returned by ProjectController::show()
 // Outer key: point id, inner key: measurement id
-export type DisplacementsByPointAndMeasurement = Record<number, Record<number, PointDisplacement>>;
+export type ChartDisplacements = Record<number, Record<number, PointDisplacement>>;
 
 export interface DisplacementRow {
     pointId: number;

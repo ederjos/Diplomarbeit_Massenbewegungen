@@ -97,14 +97,17 @@ test('project page exposes displacement values for the selected comparison epoch
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id);
 
-    $response->assertStatus(200)
+    $response->assertSuccessful()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Project')
             ->where('comparisonId', $comparisonMeasurement->id)
-            ->where("displacements.{$point->id}.distance2d", fn ($value) => abs($value - $expected2d) < 0.001)
-            ->where("displacements.{$point->id}.distance3d", fn ($value) => abs($value - $expected3d) < 0.001)
-            ->where("displacements.{$point->id}.projectedDistance", fn ($value) => abs($value - $expectedProjection) < 0.001)
-            ->where("displacements.{$point->id}.deltaHeight", fn ($value) => abs($value - $expectedDeltaHeight) < 0.001)
+            // mapDisplacements: pair-specific displacements for the initial map view
+            ->where("mapDisplacements.{$point->id}.distance2d", fn ($value) => abs($value - $expected2d) < 0.001)
+            ->where("mapDisplacements.{$point->id}.distance3d", fn ($value) => abs($value - $expected3d) < 0.001)
+            ->where("mapDisplacements.{$point->id}.projectedDistance", fn ($value) => abs($value - $expectedProjection) < 0.001)
+            ->where("mapDisplacements.{$point->id}.deltaHeight", fn ($value) => abs($value - $expectedDeltaHeight) < 0.001)
+            // chartDisplacements: all measurements relative to Nullmessung, keyed by point and measurement
+            ->where("chartDisplacements.{$point->id}.{$comparisonMeasurement->id}.distance2d", fn ($value) => abs($value - $expected2d) < 0.001)
         );
 });
 
@@ -169,11 +172,11 @@ test('displacement calculations skip points without comparison values', function
     $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id);
 
     $response->assertInertia(fn (Assert $page) => $page
-            // only the point with complete data should be included
-        ->has('displacements', 1)
-        ->where("displacements.{$pointWithData->id}.distance2d", fn ($value) => is_numeric($value))
-        ->missing("displacements.{$pointWithoutComparison->id}")
-        ->missing("displacements.{$pointWithoutReference->id}")
+        // mapDisplacements: only the point with data for BOTH reference and comparison
+        ->has('mapDisplacements', 1)
+        ->where("mapDisplacements.{$pointWithData->id}.distance2d", fn ($value) => is_numeric($value))
+        ->missing("mapDisplacements.{$pointWithoutComparison->id}")
+        ->missing("mapDisplacements.{$pointWithoutReference->id}")
     );
 });
 
@@ -215,6 +218,6 @@ test('points without projection have null projectedDistance', function () {
     $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id.'&reference='.$referenceMeasurement->id);
 
     $response->assertInertia(fn (Assert $page) => $page
-        ->where("displacements.{$pointWithoutProjection->id}.projectedDistance", null)
+        ->where("mapDisplacements.{$pointWithoutProjection->id}.projectedDistance", null)
     );
 });

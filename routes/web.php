@@ -17,10 +17,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware(EnsureProjectMember::class)->group(function () {
         Route::get('/projects/{project}', [ProjectController::class, 'show'])->name('project');
-        /**
-         * GET '/' is the home page — it reads a list. Reusing it as a POST endpoint for a mutation would mix two unrelated concerns on the same URL.
-         * /projects/{project}/favorite is scoped to a specific resource (one project), which is the standard RESTful convention.
-         */
+        Route::get('/projects/{project}/displacements', [ProjectController::class, 'displacementsForPair'])->name('project.displacements');
         Route::post('projects/{project}/favorite', [ProjectController::class, 'toggleFavorite'])->name('project.toggleFavorite');
     });
 

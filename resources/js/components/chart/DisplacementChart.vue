@@ -13,15 +13,15 @@ import { use } from 'echarts/core';
 import { SVGRenderer } from 'echarts/renderers';
 import { computed, ref } from 'vue';
 import VChart from 'vue-echarts';
-import 'echarts/i18n/langDE';
-import type { BasePoint, DisplacementsByPointAndMeasurement, Measurement } from '@/@types/measurement';
+import 'echarts/i18n/langDE.js';
+import type { BaseMeasurement, BasePoint, ChartDisplacements } from '@/@types/measurement';
 import { formatDate } from '@/utils/date';
 
 const props = defineProps<{
     points: BasePoint[];
     pointColors: Record<number, string>;
-    measurements: Measurement[];
-    displacements: DisplacementsByPointAndMeasurement;
+    measurements: BaseMeasurement[];
+    displacements: ChartDisplacements;
 }>();
 
 use([LegendComponent, GridComponent, DataZoomComponent, TooltipComponent, LineChart, SVGRenderer]);

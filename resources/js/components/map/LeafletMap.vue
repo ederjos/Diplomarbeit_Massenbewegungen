@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
 import { computed, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
-import type { BaseMeasurement, DisplacementRow, Measurement, Point, PointDisplacement } from '@/@types/measurement';
+import type { BaseMeasurement, DisplacementRow, MapDisplacements, Measurement, Point } from '@/@types/measurement';
 import DisplacementTable from '@/components/map/DisplacementTable.vue';
 import MapToolbar from '@/components/map/MapToolbar.vue';
 import { useLeafletMap } from '@/composables/useLeafletMap';
@@ -26,10 +25,15 @@ const props = defineProps<{
     /** Selected comparison measurement ID */
     comparisonId: number | null;
     /** Backend-computed displacement values. Key: point id */
-    displacements: Record<number, PointDisplacement>;
+    displacements: MapDisplacements;
 }>();
 
 const mapContainer = ref<HTMLDivElement | null>(null);
+
+const emit = defineEmits<{
+    'update:referenceId': [value: number | null];
+    'update:comparisonId': [value: number | null];
+}>();
 
 // former selectedMeasurement
 const selectedReference = ref<number | null>(props.referenceId);
@@ -99,24 +103,9 @@ const unsortedDisplacementRows = computed<DisplacementRow[]>(() => {
     );
 });
 
-/**
- * Claude Opus 4.6, 2026-02-11
- * "[...] Then, apply the projection changes to the LeafletComponent file, so that the user can select the display mode for the displacements (2D, projection, 3D) and the map updates accordingly."
- */
-
-// Trigger Inertia visit when reference or comparison epoch changes
-// Use Inertia to ensure SPA experience and preserve scroll/state, but still update the URL for shareability and back button support
-watch([selectedReference, selectedComparison], ([refVal, compVal]) => {
-    if (refVal === null && compVal === null) {
-        return;
-    }
-
-    const query: Record<string, any> = {};
-    if (refVal != null) query.reference = refVal;
-    if (compVal != null) query.comparison = compVal;
-
-    router.get(window.location.pathname, query, { preserveScroll: true, preserveState: true });
-});
+// Emit epoch changes to the parent, which handles fetching displacements and updating the URL
+watch(selectedReference, (val) => emit('update:referenceId', val));
+watch(selectedComparison, (val) => emit('update:comparisonId', val));
 
 // Use composable for sorting with custom comparison
 const { sortColumn, sortDirection, sorted: displacementRows, handleSort } = useSortableData(unsortedDisplacementRows);
