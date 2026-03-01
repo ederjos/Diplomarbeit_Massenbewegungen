@@ -90,7 +90,7 @@ test('the correct row is highlighted', () => {
     const tableRows = wrapper.findAll('tbody>tr');
 
     // The second row should be selected
-    expect(tableRows[1].classes()).toContain('leaflet-row-highlight');
+    expect(tableRows[1].classes()).toContain('animate-row-highlight');
     // The first row must not be selected
-    expect(tableRows[0].classes()).not.toContain('leaflet-row-highlight');
+    expect(tableRows[0].classes()).not.toContain('animate-row-highlight');
 });

@@ -4,12 +4,11 @@ import PasswordInput from './PasswordInput.vue';
 
 test('default input type is password', () => {
     const wrapper = mount(PasswordInput, {
-        props: {modelValue: 'secret' },
+        props: { modelValue: 'secret' },
     });
     const input = wrapper.find('input');
     expect(input.attributes('type')).toBe('password');
 });
-
 
 test('toggles to text input when eye button is clicked', async () => {
     const wrapper = mount(PasswordInput, {
