@@ -7,11 +7,16 @@ import AppTableWrapper from '@/components/ui/AppTableWrapper.vue';
 import { toggleFavorite } from '@/routes/project';
 import { formatDate } from '@/utils/date';
 
-defineProps<{
-    projects: ProjectOverview[];
-    sortColumn: keyof ProjectOverview | null;
-    sortDirection: 'asc' | 'desc';
-}>();
+withDefaults(
+    defineProps<{
+        projects: ProjectOverview[];
+        sortColumn: keyof ProjectOverview | null;
+        sortDirection?: 'asc' | 'desc';
+    }>(),
+    {
+        sortDirection: 'asc',
+    },
+);
 
 // https://vuejs.org/api/sfc-script-setup.html#defineprops-defineemits
 // Emit called sort-by with the column to sort by when a header is clicked
