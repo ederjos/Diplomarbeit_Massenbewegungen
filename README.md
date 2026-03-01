@@ -12,7 +12,7 @@ Auf Linux or via WSL:
 Zum Starten: `./start.sh` ausführen  
 Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
 
-## Nach dem Pushen
+## Nach dem Pullen
 
 Manchmal wird bei Commits die Datenbank bearbeitet. Danach einfach diesen Befehl ausführen:  
 `./vendor/bin/sail artisan migrate:fresh --seed`
@@ -29,8 +29,6 @@ Manchmal wird bei Commits die Datenbank bearbeitet. Danach einfach diesen Befehl
 * **Rollenbasierte Berechtigungen**: Viewer hat nur Leserechte, Editor kann hinzufügen/bearbeiten, Admin kann alles (Authorization Policies fehlen)
 
 * je Projekt: Foto anzeigen; wo: unter Orthofoto oder unter ProjectTimeline
-
-* Projektion: immer auf aktuelle Referenzepoche; auch in ProjectTimeline anwenden!
 
 ###  Refactor
 
