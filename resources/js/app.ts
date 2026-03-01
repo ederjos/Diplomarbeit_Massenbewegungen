@@ -18,4 +18,7 @@ createInertiaApp({
     progress: {
         color: '#4B5563',
     },
+}).then(() => {
+    // `data-page` is only required for the initial page load and is kinda ugly to keep in the root div
+    document.getElementById('app')?.removeAttribute('data-page');
 });

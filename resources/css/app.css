@@ -45,6 +45,8 @@
     --color-chart-3: var(--chart-3);
     --color-chart-4: var(--chart-4);
     --color-chart-5: var(--chart-5);
+
+    --animate-row-highlight: row-highlight 1s;
 }
 
 :root {
@@ -73,6 +75,22 @@
     --chart-4: hsl(43 74% 66%);
     --chart-5: hsl(27 87% 67%);
     --radius: 0.5rem;
+}
+
+@keyframes row-highlight {
+    0% {
+        background-color: transparent;
+        transform: none;
+    }
+    50%,
+    60% {
+        background-color: var(--color-yellow-200);
+        transform: scale(1.02);
+    }
+    100% {
+        background-color: transparent;
+        transform: none;
+    }
 }
 
 /* https://github.com/tailwindlabs/tailwindcss/pull/17831#:~:text=%40utility%20scrollbar%2Dstable */

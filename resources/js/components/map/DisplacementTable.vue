@@ -45,7 +45,7 @@ const emit = defineEmits<{
                 v-for="p in props.displacementRows"
                 :key="p.pointId"
                 class="cursor-pointer border-b bg-white transition-colors odd:bg-gray-50 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
-                :class="{ 'leaflet-row-highlight': p.pointId === props.highlightedPointId }"
+                :class="{ 'animate-row-highlight': p.pointId === props.highlightedPointId }"
                 @click="emit('select-point', p.pointId)"
             >
                 <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
@@ -61,25 +61,3 @@ const emit = defineEmits<{
         </AppTableWrapper>
     </div>
 </template>
-
-<style scoped>
-.leaflet-row-highlight {
-    animation: leaflet-highlight 1s both;
-}
-
-@keyframes leaflet-highlight {
-    0% {
-        transform: none;
-        background-color: transparent;
-    }
-    50%,
-    60% {
-        transform: scale(1.02);
-        background-color: rgba(254, 240, 138, 1);
-    }
-    100% {
-        transform: none;
-        background-color: transparent;
-    }
-}
-</style>

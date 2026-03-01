@@ -16,6 +16,11 @@ createServer(
             resolve: (name) =>
                 resolvePageComponent(`./pages/${name}.vue`, import.meta.glob<DefineComponent>('./pages/**/*.vue')),
             setup: ({ App, props, plugin }) => createSSRApp({ render: () => h(App, props) }).use(plugin),
+        }).then((app) => {
+            // `data-page` is only required for the initial page load and is kinda ugly to keep in the root div
+            const appRender = app;
+            appRender.body = appRender.body.replace(/data-page=("|').*?\1/, '');
+            return appRender;
         }),
     { cluster: true },
 );
