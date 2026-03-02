@@ -1,8 +1,5 @@
 <?php
 
-// Command to create pivot tables: `php artisan make:migration create_project_user_table --create=project_user`
-// pivot table = Kreuztabelle
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;

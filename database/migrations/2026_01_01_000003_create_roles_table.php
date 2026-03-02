@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('roles', function (Blueprint $table) {
-            $table->dropColumn(['can_add', 'can_edit']);
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
             $table->boolean('is_admin')->default(false);
             $table->boolean('can_manage_projects')->default(false);
             $table->boolean('can_manage_measurements')->default(false);
             $table->boolean('can_comment')->default(false);
+            $table->timestamps();
         });
     }
 
@@ -25,15 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('roles', function (Blueprint $table) {
-            $table->boolean('can_add')->default(false);
-            $table->boolean('can_edit')->default(false);
-            $table->dropColumn([
-                'is_admin',
-                'can_manage_projects',
-                'can_manage_measurements',
-                'can_comment',
-            ]);
-        });
+        Schema::dropIfExists('roles');
     }
 };

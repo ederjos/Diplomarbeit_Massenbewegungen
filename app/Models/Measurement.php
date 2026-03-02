@@ -9,6 +9,12 @@ class Measurement extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'measurement_datetime',
+        'project_id',
+    ];
+
     protected $casts = [
         'measurement_datetime' => 'datetime',
     ];

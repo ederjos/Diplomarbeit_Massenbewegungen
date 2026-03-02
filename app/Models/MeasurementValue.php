@@ -14,7 +14,15 @@ class MeasurementValue extends Model
     use HasFactory;
 
     // What attributes are mass-aissgnable
-    protected $fillable = ['x', 'y', 'z', 'point_id', 'measurement_id', 'addition_id'];
+    protected $fillable = [
+        'x',
+        'y',
+        'z',
+        'geom',
+        'point_id',
+        'measurement_id',
+        'addition_id',
+    ];
 
     // How to convert attributes when reading/writing
     protected $casts = [

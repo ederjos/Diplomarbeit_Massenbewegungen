@@ -17,7 +17,10 @@ class Projection extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['ax', 'ay'];
+    protected $fillable = [
+        'ax',
+        'ay',
+    ];
 
     public function point()
     {

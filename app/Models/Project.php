@@ -21,13 +21,13 @@ class Project extends Model
         'last_file_number',
         'period',
         'movement_magnitude',
+        'image',
+        'image_mime_type',
         'client_id',
         'clerk_id',
         'type_id',
         'municipality_id',
         'reference_measurement_id',
-        'image',
-        'image_mime_type',
     ];
 
     protected $casts = [

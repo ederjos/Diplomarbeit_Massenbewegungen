@@ -19,4 +19,8 @@ class RegistrationRequest extends Model
     protected $hidden = [
         'password',
     ];
+
+    protected $casts = [
+        'password' => 'hashed',
+    ];
 }

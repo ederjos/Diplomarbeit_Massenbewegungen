@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('roles', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->boolean('can_add')->default(false);
-            $table->boolean('can_edit')->default(false);
-            $table->timestamps();
+        Schema::table('projects', function (Blueprint $table) {
+            $table->foreign('reference_measurement_id')
+                ->references('id')
+                ->on('measurements')
+                ->nullOnDelete();
         });
     }
 
@@ -25,6 +24,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('roles');
+        Schema::table('projects', function (Blueprint $table) {
+            $table->dropForeign(['reference_measurement_id']);
+        });
     }
 };

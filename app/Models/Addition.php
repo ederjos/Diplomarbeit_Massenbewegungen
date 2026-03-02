@@ -16,7 +16,11 @@ class Addition extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['dx', 'dy', 'dz'];
+    protected $fillable = [
+        'dx',
+        'dy',
+        'dz',
+    ];
 
     protected static function booted()
     {

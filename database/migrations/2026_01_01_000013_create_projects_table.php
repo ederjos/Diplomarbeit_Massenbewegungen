@@ -17,15 +17,16 @@ return new class extends Migration
             $table->boolean('is_active');
             $table->text('comment')->default('');
             $table->integer('last_file_number');
-            // for pgsql native datatype
             $table->rawColumn('period', 'INTERVAL default \'6 months\'');
             $table->string('movement_magnitude')->default('');
-            // use automatically id for foreign key (table name is retrieved from local column name)
+            $table->binary('image')->nullable();
+            $table->string('image_mime_type', 50)->nullable();
             $table->foreignId('client_id')->constrained()->onDelete('restrict');
             $table->foreignId('clerk_id')->constrained()->onDelete('restrict');
             $table->foreignId('type_id')->constrained()->onDelete('restrict');
             $table->foreignId('municipality_id')->constrained()->onDelete('restrict');
-
+            // FK constraint added after measurements table is created
+            $table->unsignedBigInteger('reference_measurement_id')->nullable();
             $table->timestamps();
         });
     }

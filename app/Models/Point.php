@@ -12,6 +12,13 @@ class Point extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'is_visible',
+        'project_id',
+        'projection_id',
+    ];
+
     protected $casts = [
         // Sometimes boolean fields can be stored as integers (0/1) in the database
         'is_visible' => 'boolean',
