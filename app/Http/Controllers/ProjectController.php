@@ -14,6 +14,7 @@ use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response as HttpResponse;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -60,6 +61,18 @@ class ProjectController extends Controller
 
         // Create a new redirect response to the previous location
         return back();
+    }
+
+    // provide the project image as a separate endpoint, so it can be easily used in an <img> tag without needing to base64-encode it
+    public function image(Project $project): HttpResponse
+    {
+        if (! $project->image) {
+            abort(404);
+        }
+
+        return response($project->image, 200, [
+            'Content-Type' => $project->image_mime_type ?? 'image/jpeg',
+        ]);
     }
 
     public function show(Request $request, Project $project): Response

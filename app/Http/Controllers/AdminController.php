@@ -12,6 +12,7 @@ use Inertia\Response;
 
 class AdminController extends Controller
 {
+    // GET /admin
     public function index(): Response
     {
         return Inertia::render('Admin', [
@@ -24,6 +25,7 @@ class AdminController extends Controller
         ]);
     }
 
+    // POST /admin/registration-requests/{registrationRequest}
     public function approve(ApproveRegistrationRequest $request, RegistrationRequest $registrationRequest): RedirectResponse
     {
         User::create([
@@ -38,6 +40,7 @@ class AdminController extends Controller
         return redirect()->route('admin');
     }
 
+    // DELETE /admin/registration-requests/{registrationRequest}
     public function reject(RegistrationRequest $registrationRequest): RedirectResponse
     {
         $registrationRequest->delete();

@@ -16,14 +16,18 @@ class Project extends Model
 
     protected $fillable = [
         'name',
-        'description',
-        'period',
         'is_active',
-        'municipality_id',
+        'comment',
+        'last_file_number',
+        'period',
+        'movement_magnitude',
         'client_id',
-        'type_id',
         'clerk_id',
+        'type_id',
+        'municipality_id',
         'reference_measurement_id',
+        'image',
+        'image_mime_type',
     ];
 
     protected $casts = [

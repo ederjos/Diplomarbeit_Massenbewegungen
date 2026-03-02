@@ -21,7 +21,7 @@ const approve = () => {
         return;
     }
     approveForm.role_id = selectedRoleId.value;
-    approveForm.post(`/admin/registration-requests/${props.request.id}/approve`);
+    approveForm.post(`/admin/registration-requests/${props.request.id}`);
 };
 
 const rejectForm = useForm({});
