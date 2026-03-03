@@ -20,7 +20,7 @@ defineProps<{
     <AuthenticatedLayout>
         <div class="w-full max-w-6xl space-y-10">
             <section>
-                <h1 class="mb-4 text-2xl font-bold text-gray-900">Registrierungsanfragen</h1>
+                <h2 class="mb-4 text-2xl font-bold text-gray-900">Registrierungsanfragen</h2>
 
                 <div
                     v-if="registrationRequests.length === 0"
@@ -40,7 +40,7 @@ defineProps<{
             </section>
 
             <section>
-                <h1 class="mb-4 text-2xl font-bold text-gray-900">Benutzer & Rollen verwalten</h1>
+                <h2 class="mb-4 text-2xl font-bold text-gray-900">Benutzer & Rollen verwalten</h2>
                 <div class="rounded-md border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center text-gray-400">
                     <p class="text-lg font-medium">Noch nicht implementiert</p>
                     <p class="mt-1 text-sm">

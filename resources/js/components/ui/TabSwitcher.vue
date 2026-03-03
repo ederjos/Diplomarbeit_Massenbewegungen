@@ -5,11 +5,7 @@ const activeTab = defineModel<'results' | 'basics'>('activeTab');
 
 <template>
     <div class="relative right-0">
-        <ul
-            class="relative flex list-none flex-wrap rounded-md bg-slate-100 px-1.5 py-1.5"
-            data-tabs="tabs"
-            role="list"
-        >
+        <ul class="relative flex list-none flex-wrap rounded-md bg-slate-100 px-1.5 py-1.5" role="tablist">
             <!-- Moving white background indicator -->
             <span
                 class="absolute z-10 h-9 rounded-md bg-white transition-transform duration-300 ease-in-out"

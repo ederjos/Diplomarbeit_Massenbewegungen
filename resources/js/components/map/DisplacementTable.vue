@@ -47,6 +47,9 @@ const emit = defineEmits<{
                 class="cursor-pointer border-b bg-white transition-colors odd:bg-gray-50 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
                 :class="{ 'animate-row-highlight': p.pointId === props.highlightedPointId }"
                 @click="emit('select-point', p.pointId)"
+                @keydown.enter="emit('select-point', p.pointId)"
+                tabindex="0"
+                :aria-label="`Punkt ${p.name} auswählen`"
             >
                 <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
                 <td class="px-3 py-2 text-right tabular-nums">{{ p.distance2dOrProjection.toFixed(1) }}</td>

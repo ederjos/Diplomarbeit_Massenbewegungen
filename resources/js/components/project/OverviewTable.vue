@@ -64,7 +64,7 @@ function handleToggleFavorite(event: Event, projectId: number) {
         <Link
             v-for="project in projects"
             :key="project.id"
-            :href="show(project.id)"
+            :href="show.url(project.id)"
             :aria-label="`Projekt ${project.name} öffnen`"
             class="cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
             :class="project.isFavorite ? 'bg-amber-50 hover:bg-amber-100' : 'hover:bg-gray-50'"

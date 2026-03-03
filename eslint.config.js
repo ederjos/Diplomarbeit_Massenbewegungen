@@ -42,5 +42,12 @@ export default defineConfigWithVueTs(
             ],
         },
     },
+    // Pages use single-word names by convention (routes map 1:1 to page components)
+    {
+        files: ['resources/js/pages/**/*.vue'],
+        rules: {
+            'vue/multi-word-component-names': 'off',
+        },
+    },
     prettier,
 );

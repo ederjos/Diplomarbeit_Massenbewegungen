@@ -20,6 +20,7 @@ const hidden = ref(true);
             type="button"
             class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
             @click="hidden = !hidden"
+            :aria-label="hidden ? 'Passwort anzeigen' : 'Passwort verbergen'"
             tabindex="-1"
         >
             <Eye v-if="hidden" class="h-5 w-5" />

@@ -24,9 +24,9 @@ const submit = () => {
 <template>
     <Head title="Registrieren" />
 
-    <div class="flex min-h-screen items-center justify-center bg-gray-100 p-4">
+    <main class="flex min-h-screen items-center justify-center bg-gray-100 p-4">
         <div class="w-full max-w-md overflow-hidden rounded-lg bg-white p-6 shadow-md">
-            <h2 class="mb-6 text-center text-2xl font-bold text-gray-900">Registrierung anfragen</h2>
+            <h1 class="mb-6 text-center text-2xl font-bold text-gray-900">Registrierung anfragen</h1>
 
             <form @submit.prevent="submit" class="space-y-4">
                 <div>
@@ -39,8 +39,12 @@ const submit = () => {
                         required
                         autofocus
                         autocomplete="name"
+                        :aria-describedby="form.errors.name ? 'name-error' : undefined"
+                        :aria-invalid="form.errors.name ? true : false"
                     />
-                    <div v-if="form.errors.name" class="mt-1 text-sm text-red-600">{{ form.errors.name }}</div>
+                    <div v-if="form.errors.name" id="name-error" role="alert" class="mt-1 text-sm text-red-600">
+                        {{ form.errors.name }}
+                    </div>
                 </div>
 
                 <div>
@@ -52,8 +56,12 @@ const submit = () => {
                         v-model="form.email"
                         required
                         autocomplete="username"
+                        :aria-describedby="form.errors.email ? 'email-error' : undefined"
+                        :aria-invalid="form.errors.email ? true : false"
                     />
-                    <div v-if="form.errors.email" class="mt-1 text-sm text-red-600">{{ form.errors.email }}</div>
+                    <div v-if="form.errors.email" id="email-error" role="alert" class="mt-1 text-sm text-red-600">
+                        {{ form.errors.email }}
+                    </div>
                 </div>
 
                 <div>
@@ -64,8 +72,12 @@ const submit = () => {
                         v-model="form.password"
                         required
                         autocomplete="new-password"
+                        :aria-describedby="form.errors.password ? 'password-error' : undefined"
+                        :aria-invalid="form.errors.password ? true : false"
                     />
-                    <div v-if="form.errors.password" class="mt-1 text-sm text-red-600">{{ form.errors.password }}</div>
+                    <div v-if="form.errors.password" id="password-error" role="alert" class="mt-1 text-sm text-red-600">
+                        {{ form.errors.password }}
+                    </div>
                 </div>
 
                 <div>
@@ -78,8 +90,17 @@ const submit = () => {
                         v-model="form.password_confirmation"
                         required
                         autocomplete="new-password"
+                        :aria-describedby="
+                            form.errors.password_confirmation ? 'password-confirmation-error' : undefined
+                        "
+                        :aria-invalid="form.errors.password_confirmation ? true : false"
                     />
-                    <div v-if="form.errors.password_confirmation" class="mt-1 text-sm text-red-600">
+                    <div
+                        v-if="form.errors.password_confirmation"
+                        id="password-confirmation-error"
+                        role="alert"
+                        class="mt-1 text-sm text-red-600"
+                    >
                         {{ form.errors.password_confirmation }}
                     </div>
                 </div>
@@ -94,8 +115,12 @@ const submit = () => {
                         v-model="form.note"
                         rows="3"
                         placeholder="z.B. gewünschte Rolle, Grund der Registrierung ..."
+                        :aria-describedby="form.errors.note ? 'note-error' : undefined"
+                        :aria-invalid="form.errors.note ? true : false"
                     />
-                    <div v-if="form.errors.note" class="mt-1 text-sm text-red-600">{{ form.errors.note }}</div>
+                    <div v-if="form.errors.note" id="note-error" role="alert" class="mt-1 text-sm text-red-600">
+                        {{ form.errors.note }}
+                    </div>
                 </div>
 
                 <div class="flex items-center justify-between pt-2">
@@ -115,5 +140,5 @@ const submit = () => {
                 </div>
             </form>
         </div>
-    </div>
+    </main>
 </template>

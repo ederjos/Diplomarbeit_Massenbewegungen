@@ -1,10 +1,10 @@
 <?php
 
+use App\Models\Comment;
 use App\Models\Measurement;
 use App\Models\MeasurementValue;
 use App\Models\Point;
 use App\Models\Project;
-use App\Models\Comment;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
