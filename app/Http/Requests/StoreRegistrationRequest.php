@@ -16,14 +16,12 @@ class StoreRegistrationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        // anyone can make a registration request
+        // Authorization is handled by the middleware
         return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
@@ -39,6 +37,8 @@ class StoreRegistrationRequest extends FormRequest
             ],
             'password' => [
                 // long passwords are more secure than complex ones
+                // https://www.nist.gov/cybersecurity/how-do-i-create-good-password#what-is-nist%E2%80%99s-guidance-for-passwords
+                // https://xkcd.com/936/
                 Password::required()->min(16)->uncompromised(),
                 'confirmed',
             ],

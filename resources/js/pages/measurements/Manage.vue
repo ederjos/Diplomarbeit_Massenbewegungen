@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 </script>
 
 <template>
-    <Head :title="`Messung &quot;${measurement.name}&quot; bearbeiten - ${project.name}`" />
+    <Head :title="`Messungen verwalten - ${project.name}`" />
     <AuthenticatedLayout>
         <p>TODO</p>
     </AuthenticatedLayout>

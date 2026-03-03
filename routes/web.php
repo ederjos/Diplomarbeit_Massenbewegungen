@@ -34,15 +34,12 @@ Route::middleware('auth')->group(function () {
         Route::middleware(EnsureProjectManagementPermission::class)->group(function () {
             Route::get('/projects/{project}/edit', [ProjectManagementController::class, 'edit'])->name('project.edit');
             Route::put('/projects/{project}', [ProjectManagementController::class, 'update'])->name('project.update');
-            Route::delete('/projects/{project}', [ProjectManagementController::class, 'destroy'])->name('project.destroy');
+            Route::delete('/projects/{project}', [ProjectManagementController::class, 'delete'])->name('project.destroy');
         });
 
         Route::middleware(EnsureMeasurementManagementPermission::class)->group(function () {
-            Route::get('/projects/{project}/measurements/create', [MeasurementManagementController::class, 'create'])->name('project.measurement.create');
-            Route::post('/projects/{project}/measurements', [MeasurementManagementController::class, 'store'])->name('project.measurement.store');
-            Route::get('/projects/{project}/measurements/{measurement}/edit', [MeasurementManagementController::class, 'edit'])->name('project.measurement.edit');
-            Route::put('/projects/{project}/measurements/{measurement}', [MeasurementManagementController::class, 'update'])->name('project.measurement.update');
-            Route::delete('/projects/{project}/measurements/{measurement}', [MeasurementManagementController::class, 'destroy'])->name('project.measurement.destroy');
+            Route::get('/projects/{project}/measurements/manage', [MeasurementManagementController::class, 'manage'])->name('project.measurements.manage');
+            Route::put('/projects/{project}/measurements', [MeasurementManagementController::class, 'sync'])->name('project.measurements.sync');
         });
     });
 
