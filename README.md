@@ -23,12 +23,11 @@ Manchmal wird bei Commits die Datenbank bearbeitet. Danach einfach diesen Befehl
 
 * **Bezugsepoche GUI**: Admin/Editor soll Bezugsepoche pro Projekt setzen können (Settings-Seite)
 * **Punktesichtbarkeit**: Einzelne Messpunkte ein-/ausblenden (für Admin)
-* **Kommentare editierbar**: Admin/Editor sollen Kommentare zu Messepochen ändern können (CRUD-UI)
 * **Transformationen pro Punkt**: GUI zum Festlegen ob Addition, Projektion oder beides pro Punkt
 * **CSV-Import im Web-Interface**: Import von Messdaten
-* **Rollenbasierte Berechtigungen**: Viewer hat nur Leserechte, Editor kann hinzufügen/bearbeiten, Admin kann alles (Authorization Policies fehlen)
 
-* je Projekt: Foto anzeigen; wo: unter Orthofoto oder unter ProjectTimeline
+* **Kommentare** hinzufügen, bearbeiten
+* je Projekt: **Foto anzeigen**; wo: unter Orthofoto oder unter ProjectTimeline
 
 ###  Refactor
 
