@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Project;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class ProjectUserSeeder extends Seeder
 {
@@ -12,18 +12,9 @@ class ProjectUserSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('project_user')->insert([
-            'id' => 1,
+        Project::findOrFail(1)->users()->attach(1, [
             'is_contact_person' => true,
-            'project_id' => 1,
-            'user_id' => 1,
-            'created_at' => now(),
-            'updated_at' => now(),
+            'is_favorite' => false,
         ]);
-
-        // update autoincrement value (this doesn't happen automatically when inserting with an id)
-        if (DB::getDriverName() === 'pgsql') {
-            DB::statement('SELECT setval(\'project_user_id_seq\', (SELECT MAX(id) FROM project_user));');
-        }
     }
 }

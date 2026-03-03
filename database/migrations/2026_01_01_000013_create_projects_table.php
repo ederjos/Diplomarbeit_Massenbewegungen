@@ -28,6 +28,7 @@ return new class extends Migration
             // FK constraint added after measurements table is created
             $table->unsignedBigInteger('reference_measurement_id')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

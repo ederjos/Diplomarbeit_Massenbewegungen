@@ -72,7 +72,7 @@ class MeasurementValuesTableSeeder extends Seeder
                 } else {
                     // create new Point if it doesn't exist
                     // this means that a separate seeder for Points isn't necessary
-                    $pointId = Point::insertGetId([
+                    $pointId = Point::fillAndInsertGetId([
                         'name' => $pointName,
                         'project_id' => $projectId,
                     ]);

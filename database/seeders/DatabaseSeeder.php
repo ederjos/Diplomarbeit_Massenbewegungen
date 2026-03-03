@@ -20,20 +20,20 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // Order matters!
             // Returns class name as string (including its location)
-            MunicipalitiesTableSeeder::class,
-            ClientsTableSeeder::class,
-            TypesTableSeeder::class,
-            ClerksTableSeeder::class,
             RolesTableSeeder::class,
             UsersTableSeeder::class,
+            ClientsTableSeeder::class,
+            ClerksTableSeeder::class,
+            TypesTableSeeder::class,
+            MunicipalitiesTableSeeder::class,
             ProjectsTableSeeder::class,
             ProjectUserSeeder::class,
             // Points are now created dynamically in MeasurementValuesTableSeeder
             // PointsTableSeeder::class,
             MeasurementsTableSeeder::class,
-            AdditionsTableSeeder::class,
             MeasurementValuesTableSeeder::class,
             ProjectionsTableSeeder::class,
+            AdditionsTableSeeder::class,
             CommentsTableSeeder::class,
         ]);
     }

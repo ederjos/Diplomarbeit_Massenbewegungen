@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Type;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class TypesTableSeeder extends Seeder
 {
@@ -12,16 +12,8 @@ class TypesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('types')->insert([
-            'id' => 1,
+        Type::fillAndInsert([
             'name' => 'Hang',
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
-
-        // update autoincrement value (this doesn't happen automatically when inserting with an id)
-        if (DB::getDriverName() === 'pgsql') {
-            DB::statement('SELECT setval(\'types_id_seq\', (SELECT MAX(id) FROM types));');
-        }
     }
 }

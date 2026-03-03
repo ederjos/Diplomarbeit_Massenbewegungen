@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Client;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class ClientsTableSeeder extends Seeder
 {
@@ -12,16 +12,8 @@ class ClientsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('clients')->insert([
-            'id' => 1,
+        Client::fillAndInsert([
             'name' => 'Auftraggeber Kürzel',
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
-
-        // update autoincrement value (this doesn't happen automatically when inserting with an id)
-        if (DB::getDriverName() === 'pgsql') {
-            DB::statement('SELECT setval(\'clients_id_seq\', (SELECT MAX(id) FROM clients));');
-        }
     }
 }
