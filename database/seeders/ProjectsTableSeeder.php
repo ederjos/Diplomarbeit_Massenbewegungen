@@ -26,6 +26,13 @@ class ProjectsTableSeeder extends Seeder
             'municipality_id' => 1,
             'created_at' => now(),
             'updated_at' => now(),
+            /**
+             * Claude 4.6 Sonnet, 2026-03-03
+             * "Please fix the image insert in the seeder and the display in ProjectController."
+             */
+            // PostgreSQL requires binary data to be hex-encoded for raw insert into bytea
+            'image' => DB::raw("decode('".bin2hex(file_get_contents(public_path('apple-touch-icon.png')))."', 'hex')"),
+            'image_mime_type' => 'image/png',
         ]);
 
         // update autoincrement value (this doesn't happen automatically when inserting with an id)

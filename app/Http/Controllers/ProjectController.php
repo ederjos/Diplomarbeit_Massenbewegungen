@@ -70,7 +70,16 @@ class ProjectController extends Controller
             abort(404);
         }
 
-        return response($project->image, 200, [
+        /**
+         * Claude 4.6 Sonnet, 2026-03-03
+         * "Please fix the image insert in the seeder and the display in ProjectController."
+         */
+        // PostgreSQL returns bytea columns as a PHP stream resource
+        $imageData = is_resource($project->image)
+            ? stream_get_contents($project->image)
+            : $project->image;
+
+        return response($imageData, 200, [
             'Content-Type' => $project->image_mime_type ?? 'image/jpeg',
         ]);
     }
