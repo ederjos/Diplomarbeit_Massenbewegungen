@@ -38,7 +38,7 @@ test('projects in home calculate next measurement correctly', function () {
     $response = $this->actingAs($user)->get(route('home'));
 
     // Check the next measurement is calculated correctly (1 year later)
-    $response->assertStatus(200)
+    $response->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
                 ->component('Home')
@@ -66,7 +66,7 @@ test('inactive projects don\'t show next measurement', function () {
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('home'));
 
-    $response->assertStatus(200)
+    $response->assertOk()
         ->assertInertia(
             // Same syntax as in docs
             fn (Assert $page) => $page
@@ -88,7 +88,7 @@ test('projects without any measurements show no measurement dates at all', funct
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('home'));
 
-    $response->assertStatus(200)
+    $response->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
                 ->component('Home')

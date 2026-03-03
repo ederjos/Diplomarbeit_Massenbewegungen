@@ -4,6 +4,7 @@ use App\Models\Measurement;
 use App\Models\MeasurementValue;
 use App\Models\Point;
 use App\Models\Project;
+use App\Models\Comment;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -32,7 +33,7 @@ test('measurements on project page are loaded chronologically', function () {
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project));
 
-    $response->assertStatus(200)
+    $response->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
                 ->component('Project')
@@ -94,7 +95,7 @@ test('returns error 404 if project doesn\'t exist', function () {
     $user = User::factory()->createOne();
     $response = $this->actingAs($user)->get(route('project', ['project' => '12345']));
 
-    $response->assertStatus(404);
+    $response->assertNotFound();
 });
 
 test('fallback to earliest and latest measurements for reference and comparison measurements', function () {
@@ -124,7 +125,7 @@ test('fallback to earliest and latest measurements for reference and comparison 
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project));
 
-    $response->assertStatus(200)
+    $response->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
                 ->component('Project')
@@ -160,7 +161,7 @@ test('comparison parameter defaults to latest measurement when invalid', functio
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project).'?comparison=not-a-number');
 
-    $response->assertStatus(200)
+    $response->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
                 ->component('Project')
@@ -178,7 +179,7 @@ test('project page works with zero measurements', function () {
     $response = $this->actingAs($user)->get(route('project', $project));
 
     // Mainly done with Copilot autocomplete
-    $response->assertStatus(200)
+    $response->assertOk()
         ->assertInertia(
             fn (Assert $page) => $page
                 ->component('Project')
@@ -200,5 +201,29 @@ test('non-member cannot access project', function () {
     // User is NOT attached to the project
     $response = $this->actingAs($user)->get(route('project', $project));
 
-    $response->assertStatus(403);
+    $response->assertForbidden();
+});
+
+test('project page includes comments for measurements', function () {
+    /** @var \Tests\TestCase $this */
+    $project = Project::factory()->createOne();
+
+    $measurement = Measurement::factory()->createOne(['project_id' => $project->id]);
+
+    /** @var \App\Models\User $user */
+    $user = User::factory()->createOne();
+    $project->users()->attach($user->id);
+
+    $comment = Comment::factory()->createOne(['measurement_id' => $measurement->id, 'user_id' => $user->id]);
+
+    $response = $this->actingAs($user)->get(route('project', $project));
+
+    $response->assertOk()
+        ->assertInertia(
+            fn (Assert $page) => $page
+                ->component('Project')
+                ->where('measurements.0.comments.0.id', $comment->id)
+                ->where('measurements.0.comments.0.content', $comment->content)
+                ->where('measurements.0.comments.0.user.name', $user->name)
+        );
 });
