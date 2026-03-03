@@ -16,7 +16,8 @@ class UsersTableSeeder extends Seeder
         User::fillAndInsert([
             'name' => 'Josef Eder',
             'email' => 'josef.eder@student.htl-rankweil.at',
-            'password' => Hash::make('correct-horse-battery-staple'),
+            // A long password like "correct-horse-battery-staple" would be better, but this is just for testing
+            'password' => Hash::make('secret'),
             'role_id' => 1,
         ]);
     }

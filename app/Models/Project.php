@@ -14,7 +14,6 @@ class Project extends Model
 {
     // Enough bc Factories keep to naming conventions
     use HasFactory;
-
     use SoftDeletes;
 
     protected $fillable = [
