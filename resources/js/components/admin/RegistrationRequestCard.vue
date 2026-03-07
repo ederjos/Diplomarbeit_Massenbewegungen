@@ -3,6 +3,7 @@ import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import type { RegistrationRequest } from '@/@types/registrationRequest';
 import type { Role } from '@/@types/user';
+import { approve, reject } from '@/actions/App/Http/Controllers/AdminController';
 import { formatDate } from '@/utils/date';
 
 const props = defineProps<{
@@ -16,21 +17,21 @@ const approveForm = useForm({
     role_id: null as number | null,
 });
 
-const approve = () => {
+const approveRequest = () => {
     if (!selectedRoleId.value) {
         return;
     }
     approveForm.role_id = selectedRoleId.value;
-    approveForm.post(`/admin/registration-requests/${props.request.id}`);
+    approveForm.submit(approve(props.request.id));
 };
 
 const rejectForm = useForm({});
 
-const reject = () => {
+const rejectRequest = () => {
     if (!confirm(`Registrierungsanfrage von "${props.request.name}" wirklich ablehnen?`)) {
         return;
     }
-    rejectForm.delete(`/admin/registration-requests/${props.request.id}`);
+    rejectForm.submit(reject(props.request.id));
 };
 </script>
 
@@ -67,14 +68,14 @@ const reject = () => {
 
                 <div class="flex gap-2">
                     <button
-                        @click="approve()"
+                        @click="approveRequest()"
                         :disabled="!selectedRoleId || approveForm.processing"
                         class="inline-flex items-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
                     >
                         Genehmigen
                     </button>
                     <button
-                        @click="reject()"
+                        @click="rejectRequest()"
                         :disabled="rejectForm.processing"
                         class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
                     >

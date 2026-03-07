@@ -78,11 +78,9 @@ watch([selectedReference, selectedComparison], async ([refVal, compVal]) => {
                     :points="points"
                     :point-colors="pointColors"
                     :measurements="measurements"
-                    :reference-id="selectedReference"
-                    :comparison-id="selectedComparison"
+                    v-model:reference-id="selectedReference"
+                    v-model:comparison-id="selectedComparison"
                     :displacements="mapDisplacements"
-                    @update:reference-id="selectedReference = $event"
-                    @update:comparison-id="selectedComparison = $event"
                 />
             </ErrorBoundary>
         </section>

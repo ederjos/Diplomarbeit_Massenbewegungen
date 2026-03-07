@@ -20,24 +20,17 @@ const props = defineProps<{
     // like hash map
     pointColors: Record<number, string>;
     measurements: Measurement[];
-    /** Selected reference measurement ID */
-    referenceId: number | null;
-    /** Selected comparison measurement ID */
-    comparisonId: number | null;
     /** Backend-computed displacement values. Key: point id */
     displacements: MapDisplacements;
 }>();
 
+// Selected reference measurement ID
+const selectedReference = defineModel<number | null>('referenceId', { default: null });
+// Selected comparison measurement ID
+const selectedComparison = defineModel<number | null>('comparisonId', { default: null });
+
 const mapContainer = ref<HTMLDivElement | null>(null);
 
-const emit = defineEmits<{
-    'update:referenceId': [value: number | null];
-    'update:comparisonId': [value: number | null];
-}>();
-
-// former selectedMeasurement
-const selectedReference = ref<number | null>(props.referenceId);
-const selectedComparison = ref<number | null>(props.comparisonId);
 const vectorScale = ref<number>(DEFAULT_VECTOR_SCALE);
 const isGaitLine = ref<boolean>(false);
 const selectedPointId = ref<number | null>(null);
@@ -102,10 +95,6 @@ const unsortedDisplacementRows = computed<DisplacementRow[]>(() => {
             .filter((row): row is DisplacementRow => row !== null)
     );
 });
-
-// Emit epoch changes to the parent, which handles fetching displacements and updating the URL
-watch(selectedReference, (val) => emit('update:referenceId', val));
-watch(selectedComparison, (val) => emit('update:comparisonId', val));
 
 // Use composable for sorting with custom comparison
 const { sortColumn, sortDirection, sorted: displacementRows, handleSort } = useSortableData(unsortedDisplacementRows);

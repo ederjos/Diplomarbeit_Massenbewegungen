@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { store as register } from '@/actions/App/Http/Controllers/RegistrationRequestController';
+import { create as login } from '@/actions/Laravel/Fortify/Http/Controllers/AuthenticatedSessionController';
 import PasswordInput from '@/components/auth/PasswordInput.vue';
 
 const form = useForm({
@@ -11,7 +13,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post('/register', {
+    form.submit(register(), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 };
@@ -125,7 +127,7 @@ const submit = () => {
 
                 <div class="flex items-center justify-between pt-2">
                     <Link
-                        href="/login"
+                        :href="login()"
                         class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                     >
                         Bereits registriert?

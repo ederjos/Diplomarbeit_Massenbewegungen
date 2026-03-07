@@ -114,9 +114,7 @@ return [
     |
     */
 
-    'limiters' => [
-        'login' => 'login',
-    ],
+    'limiters' => [],
 
     /*
     |--------------------------------------------------------------------------
@@ -142,9 +140,6 @@ return [
     |
     */
 
-    'features' => [
-        // Fortify's built-in registration is no longer used
-        // Features::registration(),
-    ],
+    'features' => [],
 
 ];
