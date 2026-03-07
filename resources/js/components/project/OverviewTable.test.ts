@@ -11,10 +11,7 @@ vi.mock('@inertiajs/vue3', () => ({
 }));
 
 vi.mock('@/actions/App/Http/Controllers/ProjectController', () => ({
-    show: { url: (id: number) => `/projects/${id}` },
-}));
-
-vi.mock('@/routes/project', () => ({
+    show: (id: number) => `/projects/${id}`,
     toggleFavorite: (id: number) => `/projects/${id}/favorite`,
 }));
 
