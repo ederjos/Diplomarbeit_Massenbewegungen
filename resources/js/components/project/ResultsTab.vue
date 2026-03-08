@@ -97,11 +97,7 @@ watch([selectedReference, selectedComparison], async ([refVal, compVal]) => {
         </section>
         <section class="rounded-lg bg-white p-6 shadow-md">
             <h3 class="mb-4 text-2xl font-bold text-slate-700">Foto</h3>
-            <img
-                :src="image.url(projectId)"
-                alt="Projektfoto"
-                class="max-h-96 w-full rounded-lg object-contain"
-            />
+            <img :src="image.url(projectId)" alt="Projektfoto" class="max-h-96 w-full rounded-lg object-contain" />
         </section>
         <section class="rounded-lg bg-white p-6 shadow-md">
             <CommentsList :measurements="measurements" :comparison-id="selectedComparison" />
