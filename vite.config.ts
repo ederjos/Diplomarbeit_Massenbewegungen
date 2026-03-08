@@ -7,16 +7,28 @@ import webfontDownload from 'vite-plugin-webfont-dl';
 
 export default defineConfig({
     build: {
-        rollupOptions: {
+        rolldownOptions: {
             output: {
-                manualChunks: (id) => {
-                    // create a separate chunk for each node module
-                    if (id.includes('node_modules')) {
-                        const moduleName = id.toString().split('node_modules/')[1].split('/')[0];
-                        return `vendor/${moduleName}`;
-                    }
-
-                    return null;
+                advancedChunks /* renamed to `codeSplitting` in Vite 8 */: {
+                    groups: [
+                        {
+                            // transitive dependency of echarts, but large enough to deserve its own chunk
+                            test: /node_modules[\\/]zrender/,
+                            name: 'zrender',
+                        },
+                        {
+                            test: /node_modules[\\/]echarts/,
+                            name: 'echarts',
+                        },
+                        {
+                            test: /node_modules[\\/]leaflet/,
+                            name: 'leaflet',
+                        },
+                        {
+                            test: /node_modules/,
+                            name: 'vendor',
+                        },
+                    ],
                 },
             },
         },
