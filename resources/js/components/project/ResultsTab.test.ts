@@ -16,6 +16,7 @@ vi.mock('@/components/measurement/CommentsList.vue', () => ({
 
 vi.mock('@/actions/App/Http/Controllers/ProjectController', () => ({
     displacementsForPair: { url: () => 'projects/1/displacements' },
+    image: { url: (id: number) => `projects/${id}/image` },
 }));
 
 const defaultProps = {
@@ -49,4 +50,11 @@ test('renders without errors when no measurements are provided', () => {
     expect(wrapper.find('.leafletMapMock').exists()).toBe(true);
     expect(wrapper.find('.displacementChartMock').exists()).toBe(true);
     expect(wrapper.find('.commentsListMock').exists()).toBe(true);
+});
+
+test('renders project image with correct src', () => {
+    const wrapper = mount(ResultsTab, { props: defaultProps });
+    const img = wrapper.find('img');
+    expect(img.exists()).toBe(true);
+    expect(img.attributes('src')).toBe('projects/1/image');
 });
