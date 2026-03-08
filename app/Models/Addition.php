@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * An Addition represents a point relocation offset (dx, dy, dz).
@@ -22,7 +23,7 @@ class Addition extends Model
         'dz',
     ];
 
-    protected static function booted()
+    protected static function booted(): void
     {
         // Listens to saved event -> after addition is written
         static::saved(function (Addition $addition) {
@@ -37,7 +38,7 @@ class Addition extends Model
         });
     }
 
-    public function measurementValues()
+    public function measurementValues(): HasMany
     {
         return $this->hasMany(MeasurementValue::class);
     }

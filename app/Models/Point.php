@@ -6,6 +6,8 @@ use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 use Clickbar\Magellan\Database\PostgisFunctions\ST;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 
 class Point extends Model
@@ -24,17 +26,17 @@ class Point extends Model
         'is_visible' => 'boolean',
     ];
 
-    public function measurementValues()
+    public function measurementValues(): HasMany
     {
         return $this->hasMany(MeasurementValue::class);
     }
 
-    public function project()
+    public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
-    public function projection()
+    public function projection(): BelongsTo
     {
         return $this->belongsTo(Projection::class);
     }

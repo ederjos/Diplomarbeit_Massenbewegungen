@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * A Projection defines a normalized axis (ax, ay) for projecting
@@ -22,7 +23,7 @@ class Projection extends Model
         'ay',
     ];
 
-    public function point()
+    public function point(): HasOne
     {
         return $this->hasOne(Point::class);
     }

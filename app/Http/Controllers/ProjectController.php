@@ -7,7 +7,6 @@ use App\Http\Resources\PointResource;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\ProjectShowResource;
 use App\Http\Resources\UserResource;
-use App\Models\MeasurementValue;
 use App\Models\Project;
 use App\Services\DisplacementCalculationService;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +18,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ProjectController extends Controller
 {
-
     // https://laravel.com/docs/12.x/container
     public function __construct(
         protected DisplacementCalculationService $displacementService
@@ -97,11 +95,11 @@ class ProjectController extends Controller
         // One project
         // Eager load everything: makes sure relations are loaded and ensures faster access
         $project->load([
-            'points' => fn($q) => $q->orderBy('id'),
+            'points' => fn ($q) => $q->orderBy('id'),
             'points.projection',
-            'points.measurementValues' => fn($q) => $q->withLatLonAndOrderedByDate(),
-            'measurements' => fn($q) => $q->orderBy('measurement_datetime'),
-            'measurements.comments' => fn($q) => $q->orderBy('created_at'),
+            'points.measurementValues' => fn ($q) => $q->withLatLonAndOrderedByDate(),
+            'measurements' => fn ($q) => $q->orderBy('measurement_datetime'),
+            'measurements.comments' => fn ($q) => $q->orderBy('created_at'),
             'measurements.comments.user',
             'measurements.comments.user.role',
             'clerk',
@@ -111,7 +109,7 @@ class ProjectController extends Controller
         ]);
 
         // Only include visible points
-        $visiblePoints = $project->points->filter(fn($p) => $p->is_visible)->values();
+        $visiblePoints = $project->points->filter(fn ($p) => $p->is_visible)->values();
 
         $this->displacementService->preloadMeasurementValues($visiblePoints);
 
@@ -148,7 +146,7 @@ class ProjectController extends Controller
     private function resolveMeasurements(Request $request, Project $project): array
     {
         // Gets the measurement ids from the query string
-        
+
         // Compute reference and comparison measurement IDs
         $measurementIds = $project->measurements->pluck('id');
 

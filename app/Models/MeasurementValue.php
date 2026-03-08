@@ -7,6 +7,7 @@ use Clickbar\Magellan\Database\PostgisFunctions\ST;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MeasurementValue extends Model
 {
@@ -49,7 +50,7 @@ class MeasurementValue extends Model
      * "When removing the triggers by magellan, what code will make the geom field?"
      */
     // Runs when the Model is booted
-    protected static function booted()
+    protected static function booted(): void
     {
         // Listens to saving event (on class-level -> static)
         static::saving(function (MeasurementValue $measurementValue) {
@@ -77,17 +78,17 @@ class MeasurementValue extends Model
         return MagellanPoint::make($geomX, $geomY, $geomZ, srid: config('spatial.srids.default'));
     }
 
-    public function point()
+    public function point(): BelongsTo
     {
         return $this->belongsTo(Point::class);
     }
 
-    public function measurement()
+    public function measurement(): BelongsTo
     {
         return $this->belongsTo(Measurement::class);
     }
 
-    public function addition()
+    public function addition(): BelongsTo
     {
         return $this->belongsTo(Addition::class);
     }
