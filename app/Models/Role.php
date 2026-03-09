@@ -18,12 +18,15 @@ class Role extends Model
     ];
 
     // ensure that bools are correctly interpreted (some dbs store them as 0/1)
-    protected $casts = [
-        'is_admin' => 'boolean',
-        'can_manage_projects' => 'boolean',
-        'can_manage_measurements' => 'boolean',
-        'can_comment' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_admin' => 'boolean',
+            'can_manage_projects' => 'boolean',
+            'can_manage_measurements' => 'boolean',
+            'can_comment' => 'boolean',
+        ];
+    }
 
     public function users()
     {

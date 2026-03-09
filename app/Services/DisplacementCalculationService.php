@@ -5,8 +5,10 @@ namespace App\Services;
 use App\Models\MeasurementValue;
 use App\Models\Projection;
 use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
+use Clickbar\Magellan\Database\PostgisFunctions\ST;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Facades\DB;
 
 class DisplacementCalculationService
 {
@@ -126,17 +128,13 @@ class DisplacementCalculationService
         $distance2d = sqrt($dX ** 2 + $dY ** 2);
         $distance3d = sqrt($dX ** 2 + $dY ** 2 + $dZ ** 2);
 
-        // Projection onto user-defined axis via scalar dot product
-        $projectedDistance = null;
-        if ($projection) {
-            $projectedDistance = abs($dX * $projection->ax + $dY * $projection->ay);
-        }
+        // Projection onto user-defined axis via scalar dot product done in Projection Model
 
         return [
             'distance2d' => $distance2d * self::METERS_TO_CENTIMETERS,
             'distance3d' => $distance3d * self::METERS_TO_CENTIMETERS,
             'deltaHeight' => $dZ * self::METERS_TO_CENTIMETERS,
-            'projectedDistance' => $projectedDistance ? $projectedDistance * self::METERS_TO_CENTIMETERS : null,
+            'projectedDistance' => $projection ? abs($projection->projectDisplacement($dX, $dY)) * self::METERS_TO_CENTIMETERS : null,
         ];
     }
 
@@ -151,27 +149,81 @@ class DisplacementCalculationService
         // this avoids N+1 queries in the PointResource
         $pointIds = $visiblePoints->pluck('id');
 
-        $firstMvs = MeasurementValue::whereIn('point_id', $pointIds)
+        $allMvs = MeasurementValue::whereIn('point_id', $pointIds)
             ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
             ->orderBy('measurements.measurement_datetime')
             ->select('measurement_values.point_id', 'measurement_values.geom')
             ->get()
-            // unique only after querying
-            ->unique('point_id')
-            ->keyBy('point_id');
-
-        $lastMvs = MeasurementValue::whereIn('point_id', $pointIds)
-            ->join('measurements', 'measurement_values.measurement_id', '=', 'measurements.id')
-            ->orderByDesc('measurements.measurement_datetime')
-            ->select('measurement_values.point_id', 'measurement_values.geom')
-            ->get()
-            ->unique('point_id')
-            ->keyBy('point_id');
+            // group by the point ids -> for every point id we want to access first and last measurement values
+            ->groupBy('point_id');
 
         // Attach to each point so the resource can use them
         foreach ($visiblePoints as $point) {
-            $point->preloadedFirstMv = $firstMvs->get($point->id);
-            $point->preloadedLastMv = $lastMvs->get($point->id);
+            $mvs = $allMvs->get($point->id);
+            // Not really less efficient than doing unique after getting
+            $point->preloadedFirstMv = $mvs->first();
+            $point->preloadedLastMv = $mvs->last();
+        }
+    }
+
+    /**
+     * Compute the projected axis vector for every visible point using their preloaded
+     * first/last MeasurementValues. Stamps `preloadedAxis` onto each Point model.
+     *
+     * Must be called after preloadMeasurementValues().
+     */
+    public function computeAxisVectors(Collection $visiblePoints): void
+    {
+        foreach ($visiblePoints as $point) {
+            $firstMv = $point->preloadedFirstMv ?? null;
+            $lastMv = $point->preloadedLastMv ?? null;
+            $projection = $point->projection;
+
+            if (! $projection || ! $firstMv?->geom || ! $lastMv?->geom) {
+                $point->preloadedAxis = null;
+
+                continue;
+            }
+
+            // Calculate the total displacement from first to last measurement (in EPSG:31254)
+            $dX = $lastMv->geom->getX() - $firstMv->geom->getX();
+            $dY = $lastMv->geom->getY() - $firstMv->geom->getY();
+
+            // Project the displacement onto the axis
+            // Step 1 - dot product
+            $projectedDistance = $projection->projectDisplacement($dX, $dY);
+
+            // Create end point by moving along the axis direction by the projected distance
+            // Step 2 - multiply axis with dot product & Step 3 - add to first point coordinates (virtual coordinates)
+            $endX = $firstMv->geom->getX() + $projection->ax * $projectedDistance;
+            $endY = $firstMv->geom->getY() + $projection->ay * $projectedDistance;
+
+            // Create end point geometry with default SRID
+            $endPoint = MagellanPoint::make($endX, $endY, null, null, config('spatial.srids.default'));
+
+            // Transform both points to EPSG:4326 (WGS84 for Leaflet)
+            // Needs POSTGIS, therefore DB::query
+
+            /**
+             * Gemini 2.5 Pro, 2026-02-13
+             * "So, I'd rather have geodetic correctness. Transform the coordinates to lat, lon upon selecting them from the db. [...]"
+             * Rem.: This comment was copied from the (now deleted) method yearlyMovementInCm() as this code was inspired by the distance calculation there.
+             */
+            $result = DB::query()
+                ->select([
+                    ST::x(ST::transform($firstMv->geom, config('spatial.srids.wgs84')))->as('start_lon'),
+                    ST::y(ST::transform($firstMv->geom, config('spatial.srids.wgs84')))->as('start_lat'),
+                    ST::x(ST::transform($endPoint, config('spatial.srids.wgs84')))->as('end_lon'),
+                    ST::y(ST::transform($endPoint, config('spatial.srids.wgs84')))->as('end_lat'),
+                ])
+                ->first();
+
+            $point->preloadedAxis = $result ? [
+                'startLat' => $result->start_lat,
+                'startLon' => $result->start_lon,
+                'vectorLat' => $result->end_lat - $result->start_lat,
+                'vectorLon' => $result->end_lon - $result->start_lon,
+            ] : null;
         }
     }
 

@@ -20,7 +20,10 @@ class RegistrationRequest extends Model
         'password',
     ];
 
-    protected $casts = [
-        'password' => 'hashed',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
+    }
 }

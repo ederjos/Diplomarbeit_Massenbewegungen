@@ -25,9 +25,12 @@ class User extends Authenticatable
         'password',
     ];
 
-    protected $casts = [
-        'password' => 'hashed',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'password' => 'hashed',
+        ];
+    }
 
     public function isMemberOfProject(int $projectId): bool
     {

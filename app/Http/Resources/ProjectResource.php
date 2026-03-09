@@ -7,8 +7,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ProjectResource extends JsonResource
 {
-    public static array $favoriteProjectIds = [];
-
     /**
      * Transform the resource into an array.
      *
@@ -25,7 +23,7 @@ class ProjectResource extends JsonResource
             'lastMeasurement' => $this->last_measurement,
             'nextMeasurement' => $this->is_active ? $this->next_measurement : null,
             // check if the project id is in the list of favorite projects
-            'isFavorite' => in_array($this->id, self::$favoriteProjectIds),
+            'isFavorite' => (bool) $this->pivot->is_favorite,
         ];
     }
 }

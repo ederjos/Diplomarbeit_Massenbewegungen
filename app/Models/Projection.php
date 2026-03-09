@@ -27,4 +27,10 @@ class Projection extends Model
     {
         return $this->hasOne(Point::class);
     }
+
+    public function projectDisplacement(float $dX, float $dY): float
+    {
+        // Don't duplicate the dot product calculation
+        return $dX * $this->ax + $dY * $this->ay;
+    }
 }

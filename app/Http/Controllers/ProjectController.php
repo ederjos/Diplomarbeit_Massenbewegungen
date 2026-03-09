@@ -23,26 +23,20 @@ class ProjectController extends Controller
         protected DisplacementCalculationService $displacementService
     ) {}
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
         /**
          * Gemini 3 Pro, 2026-01-01
          * "What comes into ProjectController.php to get all projects with their last measurement date and next measurement date based on period?"
          * "Update the controller of index to correctly and simply return the requested data. no errors should appear when working with timezones +2 or +1. just return the date in the same form as you get it from measurement_datetime without timezone: 2025-06-04 00:00:00"
          */
-        $user = request()->user();
+        $user = $request->user();
 
         $projects = $user->projects()
             // Only select necessary columns
             ->select(['projects.id', 'projects.name', 'projects.is_active', 'projects.period'])
             ->withLastAndNextMeasurementDate()
             ->get();
-
-        $favoriteProjectIds = $user ?
-            $user->projects()->wherePivot('is_favorite', true)->pluck('projects.id')->toArray()
-            : [];
-        // Set the static property in the Resource (help provided by Claude Opus 4.6)
-        ProjectResource::$favoriteProjectIds = $favoriteProjectIds;
 
         return Inertia::render('Home', [
             // ->resolve() removes the 'data' wrapper that strictly JsonResource adds
@@ -86,11 +80,11 @@ class ProjectController extends Controller
 
     public function show(Request $request, Project $project): Response
     {
-        // Apply scope to get first/last measurement dates
+        // Apply scope to get first/last measurement dates before querying
         $project = Project::query()
-            ->where('id', $project->id)
             ->withFirstAndLastMeasurementDate()
-            ->firstOrFail();
+            // findOrFail: find a model by its primary key
+            ->findOrFail($project->id);
 
         // One project
         // Eager load everything: makes sure relations are loaded and ensures faster access
@@ -112,6 +106,8 @@ class ProjectController extends Controller
         $visiblePoints = $project->points->filter(fn ($p) => $p->is_visible)->values();
 
         $this->displacementService->preloadMeasurementValues($visiblePoints);
+        // Replaces the function call in PointResource
+        $this->displacementService->computeAxisVectors($visiblePoints);
 
         [$referenceId, $comparisonId] = $this->resolveMeasurements($request, $project);
 

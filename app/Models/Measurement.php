@@ -17,9 +17,12 @@ class Measurement extends Model
         'project_id',
     ];
 
-    protected $casts = [
-        'measurement_datetime' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'measurement_datetime' => 'datetime',
+        ];
+    }
 
     public function project(): BelongsTo
     {

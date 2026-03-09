@@ -32,10 +32,13 @@ class Project extends Model
         'reference_measurement_id',
     ];
 
-    protected $casts = [
-        // always boolean (not 0/1)
-        'is_active' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            // always boolean (not 0/1)
+            'is_active' => 'boolean',
+        ];
+    }
 
     public function scopeWithLastAndNextMeasurementDate(Builder $query): void
     {

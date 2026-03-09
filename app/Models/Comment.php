@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Comment extends Model
 {
@@ -15,12 +16,12 @@ class Comment extends Model
         'user_id',
     ];
 
-    public function measurement()
+    public function measurement(): BelongsTo
     {
         return $this->belongsTo(Measurement::class);
     }
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

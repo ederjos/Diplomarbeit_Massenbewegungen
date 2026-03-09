@@ -26,9 +26,12 @@ class MeasurementValue extends Model
     ];
 
     // How to convert attributes when reading/writing
-    protected $casts = [
-        'geom' => MagellanPoint::class,
-    ];
+    protected function casts(): array
+    {
+        return [
+            'geom' => MagellanPoint::class,
+        ];
+    }
 
     // Usable as query scope
     public function scopeWithLatLonAndOrderedByDate(Builder $query): void
