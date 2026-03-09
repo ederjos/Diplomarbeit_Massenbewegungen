@@ -14,7 +14,7 @@ class MeasurementValue extends Model
     // Adds the trait for model factories -> factory-related features
     use HasFactory;
 
-    // What attributes are mass-aissgnable
+    // What attributes are mass-assignable
     protected $fillable = [
         'x',
         'y',

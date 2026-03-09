@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Point extends Model
 {
     use HasFactory;
+    // data inserted before being passed to Resource.
+    // https://www.php.net/releases/8.2/en.php#deprecate_dynamic_properties
+    public ?object $preloadedFirstMv = null;
+    public ?object $preloadedLastMv = null;
+    public ?array $preloadedAxis = null;
 
     protected $fillable = [
         'name',

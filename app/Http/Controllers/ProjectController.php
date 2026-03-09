@@ -139,41 +139,37 @@ class ProjectController extends Controller
         ]);
     }
 
+    /**
+     * Resolve the reference and comparison measurement IDs from the request query string.
+     * Falls back gracefully: project default → first/last measurement.
+     * Returns [referenceId|null, comparisonId|null].
+     */
     private function resolveMeasurements(Request $request, Project $project): array
     {
-        // Gets the measurement ids from the query string
+        $validated = $request->validate([
+            'reference' => ['nullable', 'integer'],
+            'comparison' => ['nullable', 'integer'],
+        ]);
 
         // Compute reference and comparison measurement IDs
         $measurementIds = $project->measurements->pluck('id');
 
-        $referenceParam = $request->query('reference');
-        if ($referenceParam && is_numeric($referenceParam) && $measurementIds->contains((int) $referenceParam)) {
-            // 1. If a reference query is provided, use it
-            $referenceId = (int) $referenceParam;
+        // Reference: query param → project default → first measurement
+        $referenceParam = isset($validated['reference']) ? (int) $validated['reference'] : null;
+        if ($referenceParam && $measurementIds->contains($referenceParam)) {
+            $referenceId = $referenceParam;
+        } elseif ($project->reference_measurement_id && $measurementIds->contains($project->reference_measurement_id)) {
+            $referenceId = $project->reference_measurement_id;
         } else {
-            $refFromProject = $project->reference_measurement_id;
-            if ($refFromProject && $measurementIds->contains($refFromProject)) {
-                // 2. Otherwise, use configured reference measurement
-                $referenceId = $refFromProject;
-            } elseif ($project->measurements->count() > 0) {
-                // 3. Finally, fall back to first measurement
-                $referenceId = $project->measurements->first()->id;
-            } else {
-                // 4. If no measurements -> has to be null
-                $referenceId = null;
-            }
+            $referenceId = $measurementIds->first();
         }
 
-        // Comparison epoch from query param, defaults to last measurement
-        $comparisonParam = $request->query('comparison');
-        if ($comparisonParam && is_numeric($comparisonParam) && $measurementIds->contains((int) $comparisonParam)) {
-            // id is valid, just convert it to int
-            $comparisonId = (int) $comparisonParam;
+        // Comparison: query param → last measurement
+        $comparisonParam = isset($validated['comparison']) ? (int) $validated['comparison'] : null;
+        if ($comparisonParam && $measurementIds->contains($comparisonParam)) {
+            $comparisonId = $comparisonParam;
         } else {
-            // if id invalid -> take last measurement as default
-            $comparisonId = $project->measurements->count() > 1
-                ? $project->measurements->last()->id
-                : null;
+            $comparisonId = $measurementIds->count() > 1 ? $measurementIds->last() : null;
         }
 
         return [$referenceId, $comparisonId];
@@ -189,10 +185,16 @@ class ProjectController extends Controller
      */
     public function displacementsForPair(Request $request, Project $project): JsonResponse
     {
-        $referenceId = (int) $request->query('reference');
-        $comparisonId = (int) $request->query('comparison');
+        // just (int) $request->query() would result in `0` for missing param
+        $validated = $request->validate([
+            'reference' => ['required', 'integer'],
+            'comparison' => ['required', 'integer'],
+        ]);
 
-        // Validate that both measurements belong to this project
+        $referenceId = (int) $validated['reference'];
+        $comparisonId = (int) $validated['comparison'];
+
+        // Ensure both measurements belong to this project
         $projectMeasurementIds = $project->measurements()->pluck('id');
         if (! $projectMeasurementIds->contains($referenceId) || ! $projectMeasurementIds->contains($comparisonId)) {
             abort(404);
