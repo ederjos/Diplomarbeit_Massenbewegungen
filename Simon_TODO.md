@@ -21,9 +21,6 @@
 
 ---
 
-- Sail Config publishen
-- App Config (Name, Beschreibung, Sprache, etc.)!
-
 - Upgrades:
     - Laravel 13
 
