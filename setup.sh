@@ -6,11 +6,12 @@ set -e
 #   "Please update setup.sh to remove the dependencies on PHP and Composer."
 #
 
-RESET="\033[0m"
-BOLD="\033[1m"
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
+# https://en.wikipedia.org/wiki/ANSI_escape_code
+RESET="\e[0m"
+BOLD="\e[1m"
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
 
 check_docker_installed() {
     if ! command -v docker &>/dev/null; then
@@ -31,15 +32,17 @@ check_docker_installed() {
 
 check_docker_installed
 
+# usually set by sail, but since the container is built manually, these need to be set here
+# https://github.com/laravel/sail/blob/2295ec1403727adbdb29a5c28e7dc347c950d011/bin/sail#L146
+export WWWUSER="${WWWUSER:-$UID}"
+export WWWGROUP="${WWWGROUP:-$(id -g)}"
+
 echo -e "${YELLOW}${BOLD}Starting setup...${RESET}\n"
 
 cp --update=none .env.example .env
 
-docker compose pull pgsql &
-PULL_PID=$!
-docker compose build --no-cache &
-BUILD_PID=$!
-wait $PULL_PID && wait $BUILD_PID
+docker compose pull pgsql
+docker compose build --no-cache
 
 docker compose up -d --wait pgsql
 
@@ -50,5 +53,7 @@ docker compose run --rm laravel.test bash -c "
     npm run build &&
     php artisan migrate:fresh --force --seed
 "
+
+docker compose down
 
 echo -e "\n${GREEN}${BOLD}Setup complete! You can now start the environment with ./start.sh${RESET}"
