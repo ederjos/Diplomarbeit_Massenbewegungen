@@ -1,13 +1,14 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "ederjos/diplomarbeit-massenbewegungen",
-    "description": "Diplomarbeit Massenbewegungen - Web-Plattform zur Visualisierung von Massenbewegungen.",
+    "name": "ederjos/mass-defo",
+    "description": "Mass Defo - Webplattform zur Visualisierung von Massenbewegungen",
     "type": "project",
     "homepage": "https://github.com/ederjos/Diplomarbeit_Massenbewegungen",
     "license": "MIT",
     "authors": [
         {
-            "name": "Josef Eder"
+            "name": "Josef Eder",
+            "email": "josef@josefeder.de"
         },
         {
             "name": "Simon Pointner"
