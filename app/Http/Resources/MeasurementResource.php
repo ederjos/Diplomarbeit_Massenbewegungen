@@ -18,6 +18,8 @@ class MeasurementResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'datetime' => $this->measurement_datetime,
+            // whenLoaded is not needed when eager loading in controller
+            // However, it's a good practice in case the Resource is reused
             'comments' => $this->whenLoaded('comments', fn () => CommentResource::collection($this->comments)->resolve(), []),
         ];
     }

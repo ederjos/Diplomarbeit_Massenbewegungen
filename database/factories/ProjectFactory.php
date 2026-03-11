@@ -2,10 +2,6 @@
 
 namespace Database\Factories;
 
-use App\Models\Clerk;
-use App\Models\Client;
-use App\Models\Municipality;
-use App\Models\Type;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -26,10 +22,10 @@ class ProjectFactory extends Factory
             'comment' => fake()->sentence(),
             'last_file_number' => fake()->randomNumber(4),
             // -> postgre intervals are not supported by faker, just use default
-            'client_id' => Client::factory(),
-            'clerk_id' => Clerk::factory(),
-            'type_id' => Type::factory(),
-            'municipality_id' => Municipality::factory(),
+            'client' => fake()->company(),
+            'clerk' => fake()->name(),
+            'type' => fake()->word(),
+            'municipality' => fake()->city(),
         ];
     }
 }

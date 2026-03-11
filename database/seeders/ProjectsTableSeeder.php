@@ -27,10 +27,10 @@ class ProjectsTableSeeder extends Seeder
             // PostgreSQL requires binary data to be hex-encoded for raw insert into bytea
             'image' => DB::raw("decode('".bin2hex(file_get_contents(public_path('apple-touch-icon.png')))."', 'hex')"),
             'image_mime_type' => 'image/png',
-            'client_id' => 1,
-            'clerk_id' => 1,
-            'type_id' => 1,
-            'municipality_id' => 1,
+            'client' => 'Auftraggeber Kürzel',
+            'clerk' => 'Sachbearbeiter Kürzel',
+            'type' => 'Hang',
+            'municipality' => 'St. Gallenkirch',
         ]);
     }
 }

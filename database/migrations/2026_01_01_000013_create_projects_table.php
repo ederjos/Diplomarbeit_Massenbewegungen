@@ -21,10 +21,11 @@ return new class extends Migration
             $table->string('movement_magnitude')->default('');
             $table->binary('image')->nullable();
             $table->string('image_mime_type', 50)->nullable();
-            $table->foreignId('client_id')->constrained()->onDelete('restrict');
-            $table->foreignId('clerk_id')->constrained()->onDelete('restrict');
-            $table->foreignId('type_id')->constrained()->onDelete('restrict');
-            $table->foreignId('municipality_id')->constrained()->onDelete('restrict');
+            // former fk
+            $table->string('client');
+            $table->string('clerk');
+            $table->string('type');
+            $table->string('municipality');
             // FK constraint added after measurements table is created
             $table->unsignedBigInteger('reference_measurement_id')->nullable();
             $table->timestamps();

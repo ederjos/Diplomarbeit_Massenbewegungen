@@ -21,12 +21,10 @@ class ProjectShowResource extends JsonResource
             'lastFileNumber' => $this->last_file_number,
             'isActive' => $this->is_active,
             'period' => $this->period,
-            // whenLoaded is not needed because of eager loading in controller
-            // However, it's a good practice in case the Resource is reused
-            'client' => $this->whenLoaded('client', fn () => $this->client->name),
-            'clerk' => $this->whenLoaded('clerk', fn () => $this->clerk->name),
-            'municipality' => $this->whenLoaded('municipality', fn () => $this->municipality->name),
-            'type' => $this->whenLoaded('type', fn () => $this->type->name),
+            'client' => $this->client,
+            'clerk' => $this->clerk,
+            'municipality' => $this->municipality,
+            'type' => $this->type,
             'movementMagnitude' => $this->movement_magnitude,
             'firstMeasurement' => $this->first_measurement,
             'lastMeasurement' => $this->last_measurement,

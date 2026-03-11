@@ -22,10 +22,6 @@ class DatabaseSeeder extends Seeder
             // Returns class name as string (including its location)
             RolesTableSeeder::class,
             UsersTableSeeder::class,
-            ClientsTableSeeder::class,
-            ClerksTableSeeder::class,
-            TypesTableSeeder::class,
-            MunicipalitiesTableSeeder::class,
             ProjectsTableSeeder::class,
             ProjectUserSeeder::class,
             // Points are now created dynamically in MeasurementValuesTableSeeder

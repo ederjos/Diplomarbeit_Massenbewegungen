@@ -25,10 +25,10 @@ class Project extends Model
         'movement_magnitude',
         'image',
         'image_mime_type',
-        'client_id',
-        'clerk_id',
-        'type_id',
-        'municipality_id',
+        'client',
+        'clerk',
+        'type',
+        'municipality',
         'reference_measurement_id',
     ];
 
@@ -91,26 +91,6 @@ class Project extends Model
     public function measurements(): HasMany
     {
         return $this->hasMany(Measurement::class);
-    }
-
-    public function municipality(): BelongsTo
-    {
-        return $this->belongsTo(Municipality::class);
-    }
-
-    public function client(): BelongsTo
-    {
-        return $this->belongsTo(Client::class);
-    }
-
-    public function type(): BelongsTo
-    {
-        return $this->belongsTo(Type::class);
-    }
-
-    public function clerk(): BelongsTo
-    {
-        return $this->belongsTo(Clerk::class);
     }
 
     public function referenceMeasurement(): BelongsTo
