@@ -15,6 +15,7 @@ vi.mock('@/components/measurement/CommentsList.vue', () => ({
 }));
 
 vi.mock('@/actions/App/Http/Controllers/ProjectController', () => ({
+    index: Object.assign(() => '/projects', { definition: { url: '/projects' } }),
     displacementsForPair: { url: () => 'projects/1/displacements' },
     image: { url: (id: number) => `projects/${id}/image` },
 }));
