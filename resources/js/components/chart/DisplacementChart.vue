@@ -7,7 +7,13 @@ import type {
     LegendComponentOption,
     TooltipComponentOption,
 } from 'echarts/components';
-import { DataZoomComponent, GridComponent, LegendComponent, TooltipComponent } from 'echarts/components';
+import {
+    DataZoomComponent,
+    GridComponent,
+    LegendComponent,
+    ToolboxComponent, // required for restore action
+    TooltipComponent,
+} from 'echarts/components';
 import type { ComposeOption, EChartsInitOpts } from 'echarts/core';
 import { use } from 'echarts/core';
 import { SVGRenderer } from 'echarts/renderers';
@@ -24,7 +30,7 @@ const props = defineProps<{
     displacements: ChartDisplacements;
 }>();
 
-use([LegendComponent, GridComponent, DataZoomComponent, TooltipComponent, LineChart, SVGRenderer]);
+use([LegendComponent, GridComponent, DataZoomComponent, TooltipComponent, ToolboxComponent, LineChart, SVGRenderer]);
 
 // Generated using: https://vue-echarts.dev/#codegen
 type EChartsOption = ComposeOption<
