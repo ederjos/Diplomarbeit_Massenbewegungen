@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 </script>
 
 <template>
-    <Head :title="`Projekt &quot;${project.name}&quot; bearbeiten`" />
+    <Head :title="`Projekt &quot;\${project.name}&quot; bearbeiten`" />
     <AuthenticatedLayout>
         <p>TODO</p>
     </AuthenticatedLayout>

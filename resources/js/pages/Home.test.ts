@@ -11,7 +11,6 @@ vi.mock('@inertiajs/vue3', () => ({
         props: {
             auth: {
                 user: {
-                    id: 1,
                     name: 'Test User',
                     permissions: {
                         isAdmin: false,

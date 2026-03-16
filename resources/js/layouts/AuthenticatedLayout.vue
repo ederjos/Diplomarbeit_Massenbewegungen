@@ -1,16 +1,15 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import type { AuthUser } from '@/@types/user';
 import { index as admin } from '@/actions/App/Http/Controllers/AdminController';
 import { index as home } from '@/actions/App/Http/Controllers/ProjectController';
 import { destroy as logout } from '@/actions/Laravel/Fortify/Http/Controllers/AuthenticatedSessionController';
 
 const page = usePage();
-const user = computed(() => (page.props.auth as { user: AuthUser | null }).user);
+const user = computed(() => page.props.auth.user!);
 
-const isHome = computed(() => page.url === '/');
-const isAdmin = computed(() => user.value?.permissions.isAdmin === true);
+const isHome = computed(() => page.url === home.definition.url);
+const isAdmin = computed(() => user.value.permissions.isAdmin);
 </script>
 
 <!--
@@ -27,7 +26,7 @@ const isAdmin = computed(() => user.value?.permissions.isAdmin === true);
             </div>
 
             <div class="flex items-center gap-4">
-                <span v-if="user" class="text-sm text-gray-700"> Eingeloggt als {{ user.name }} </span>
+                <span class="text-sm text-gray-700"> Eingeloggt als {{ user.name }} </span>
                 <Link v-if="isAdmin" :href="admin()" class="font-medium text-indigo-600 hover:text-indigo-800">
                     Admin-Bereich
                 </Link>

@@ -43,13 +43,12 @@ class HandleInertiaRequests extends Middleware
             'name' => config('app.name'),
             'auth' => [
                 'user' => $user ? [
-                    'id' => $user->id,
                     'name' => $user->name,
                     'permissions' => [
-                        'isAdmin' => $userRole?->is_admin === true,
-                        'canManageProjects' => $userRole?->can_manage_projects === true,
-                        'canManageMeasurements' => $userRole?->can_manage_measurements === true,
-                        'canComment' => $userRole?->can_comment === true,
+                        'isAdmin' => $userRole->is_admin,
+                        'canManageProjects' => $userRole->can_manage_projects,
+                        'canManageMeasurements' => $userRole->can_manage_measurements,
+                        'canComment' => $userRole->can_comment,
                     ],
                 ] : null,
             ],

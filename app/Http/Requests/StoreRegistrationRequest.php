@@ -27,20 +27,17 @@ class StoreRegistrationRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required',
-                Email::default()->rfcCompliant()->preventSpoofing()->rules([
+            'email' => ['required', 'max:255',
+                Email::default()->rfcCompliant()->rules([
                     Rule::unique(User::class, 'email'),
                     Rule::unique(RegistrationRequest::class, 'email'),
                 ]),
-                'max:255',
             ],
-            'password' => [
+            'password' => ['confirmed',
                 // long passwords are more secure than complex ones
-                // https://www.nist.gov/cybersecurity/how-do-i-create-good-password#what-is-nist%E2%80%99s-guidance-for-passwords
+                // https://pages.nist.gov/800-63-3/sp800-63b.html#appA
                 // https://xkcd.com/936/
-                Password::required()->min(16)->uncompromised(),
-                'confirmed',
+                Password::required()->min(16)->max(128)->uncompromised(),
             ],
             'note' => ['nullable', 'string', 'max:1000'],
         ];

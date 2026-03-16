@@ -1,6 +1,5 @@
 // the user model with permissions for the page.props.auth.user object
 export interface AuthUser {
-    id: number;
     name: string;
     permissions: Permissions;
 }
