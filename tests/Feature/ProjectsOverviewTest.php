@@ -4,6 +4,7 @@ use App\Models\Measurement;
 use App\Models\Project;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 /**
  * pest()->use(RefreshDatabase::class);
@@ -15,7 +16,7 @@ use Inertia\Testing\AssertableInertia as Assert;
  * -> Defined globally in Pest.php
  */
 test('projects in home calculate next measurement correctly', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     // For intelephense autocomplete
 
     // Create a fake project
@@ -31,7 +32,7 @@ test('projects in home calculate next measurement correctly', function () {
         'measurement_datetime' => '2000-01-01 10:00:00',
     ]);
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     $project->users()->attach($user->id);
     // the names from web.php
@@ -50,7 +51,7 @@ test('projects in home calculate next measurement correctly', function () {
 });
 
 test('inactive projects don\'t show next measurement', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne([
         'period' => '1 year',
         'is_active' => false,
@@ -61,7 +62,7 @@ test('inactive projects don\'t show next measurement', function () {
         'measurement_datetime' => '2000-01-01 10:00:00',
     ]);
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('home'));
@@ -78,12 +79,12 @@ test('inactive projects don\'t show next measurement', function () {
 });
 
 test('projects without any measurements show no measurement dates at all', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne([
         'is_active' => false,
     ]);
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('home'));

@@ -4,9 +4,10 @@ use App\Models\RegistrationRequest;
 use App\Models\Role;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 test('admin can access admin dashboard', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     /** @var Role $role */
     $role = Role::factory()->createOne(['is_admin' => true]);
     /** @var User $admin */
@@ -21,7 +22,7 @@ test('admin can access admin dashboard', function () {
 });
 
 test('non-admin cannot access admin dashboard', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     /** @var Role $role */
     $role = Role::factory()->createOne(['is_admin' => false]);
     /** @var User $user */
@@ -34,7 +35,7 @@ test('non-admin cannot access admin dashboard', function () {
 });
 
 test('unauthenticated user cannot access admin dashboard', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $response = $this->get(route('admin'));
 
     // Redirect to login
@@ -42,7 +43,7 @@ test('unauthenticated user cannot access admin dashboard', function () {
 });
 
 test('admin can approve registration request', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     /** @var Role $role */
     $role = Role::factory()->createOne(['is_admin' => true]);
     /** @var User $admin */
@@ -69,7 +70,7 @@ test('admin can approve registration request', function () {
 });
 
 test('admin can reject registration request', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     /** @var Role $role */
     $role = Role::factory()->createOne(['is_admin' => true]);
     /** @var User $admin */

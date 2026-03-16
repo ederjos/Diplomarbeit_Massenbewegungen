@@ -7,9 +7,10 @@ use App\Models\Project;
 use App\Models\Projection;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 test('project page exposes displacement values for the selected comparison epoch', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $firstMeasurement = Measurement::factory()->createOne([
@@ -112,7 +113,7 @@ test('project page exposes displacement values for the selected comparison epoch
 });
 
 test('displacement calculations skip points without comparison values', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $referenceMeasurement = Measurement::factory()->createOne([
@@ -181,7 +182,7 @@ test('displacement calculations skip points without comparison values', function
 });
 
 test('points without projection have null projectedDistance', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $referenceMeasurement = Measurement::factory()->createOne([

@@ -7,9 +7,10 @@ use App\Models\Point;
 use App\Models\Project;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 test('measurements on project page are loaded chronologically', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     // Create Measurements *out of order*
@@ -28,7 +29,7 @@ test('measurements on project page are loaded chronologically', function () {
     // Assert that measurement values were created
     $this->assertDatabaseCount('measurement_values', 3);
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project));
@@ -49,7 +50,7 @@ test('measurements on project page are loaded chronologically', function () {
 });
 
 test('project details include valid coordinates converted to lat/lon', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $point = Point::factory()->createOne(['project_id' => $project->id]);
@@ -74,7 +75,7 @@ test('project details include valid coordinates converted to lat/lon', function 
         'addition_id' => null,
     ]);
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project));
@@ -89,9 +90,9 @@ test('project details include valid coordinates converted to lat/lon', function 
 });
 
 test('returns error 404 if project doesn\'t exist', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     $response = $this->actingAs($user)->get(route('project', ['project' => '12345']));
 
@@ -99,7 +100,7 @@ test('returns error 404 if project doesn\'t exist', function () {
 });
 
 test('fallback to earliest and latest measurements for reference and comparison measurements', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     // Latest measurement
@@ -120,7 +121,7 @@ test('fallback to earliest and latest measurements for reference and comparison 
         'measurement_datetime' => '2026-01-01 00:00:00',
     ]);
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project));
@@ -135,7 +136,7 @@ test('fallback to earliest and latest measurements for reference and comparison 
 });
 
 test('comparison parameter defaults to latest measurement when invalid', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     // Latest measurement, automatically comparsion if invalid or not provided
@@ -156,7 +157,7 @@ test('comparison parameter defaults to latest measurement when invalid', functio
         'measurement_datetime' => '2026-01-01 00:00:00',
     ]);
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project).'?comparison=not-a-number');
@@ -170,10 +171,10 @@ test('comparison parameter defaults to latest measurement when invalid', functio
 });
 
 test('project page works with zero measurements', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     $project->users()->attach($user->id);
     $response = $this->actingAs($user)->get(route('project', $project));
@@ -193,10 +194,10 @@ test('project page works with zero measurements', function () {
  * "Add a test to verify that users can't access projects they are not a member of."
  */
 test('non-member cannot access project', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     // User is NOT attached to the project
     $response = $this->actingAs($user)->get(route('project', $project));
@@ -205,12 +206,12 @@ test('non-member cannot access project', function () {
 });
 
 test('project page includes comments for measurements', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $measurement = Measurement::factory()->createOne(['project_id' => $project->id]);
 
-    /** @var \App\Models\User $user */
+    /** @var User $user */
     $user = User::factory()->createOne();
     $project->users()->attach($user->id);
 

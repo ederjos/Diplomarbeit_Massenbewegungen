@@ -4,12 +4,13 @@ namespace Database\Factories;
 
 use App\Models\Addition;
 use App\Models\Measurement;
+use App\Models\MeasurementValue;
 use App\Models\Point;
 use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\MeasurementValue>
+ * @extends Factory<MeasurementValue>
  */
 class MeasurementValueFactory extends Factory
 {

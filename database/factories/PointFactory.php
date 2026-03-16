@@ -2,12 +2,13 @@
 
 namespace Database\Factories;
 
+use App\Models\Point;
 use App\Models\Project;
 use App\Models\Projection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Point>
+ * @extends Factory<Point>
  */
 class PointFactory extends Factory
 {

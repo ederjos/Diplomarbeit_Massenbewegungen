@@ -6,9 +6,10 @@ use App\Models\Point;
 use App\Models\Project;
 use App\Models\Projection;
 use App\Models\User;
+use Tests\TestCase;
 
 test('unauthenticated user cannot access displacements api', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $response = $this->getJson(route('project.displacements', $project));
@@ -17,7 +18,7 @@ test('unauthenticated user cannot access displacements api', function () {
 });
 
 test('non-member cannot access displacements api', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $referenceMeasurement = Measurement::factory()->createOne([
@@ -46,7 +47,7 @@ test('non-member cannot access displacements api', function () {
 });
 
 test('returns 404 when reference measurement does not belong to project', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
     $otherProject = Project::factory()->createOne();
 
@@ -72,7 +73,7 @@ test('returns 404 when reference measurement does not belong to project', functi
 });
 
 test('returns 404 when comparison measurement does not belong to project', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
     $otherProject = Project::factory()->createOne();
 
@@ -98,7 +99,7 @@ test('returns 404 when comparison measurement does not belong to project', funct
 });
 
 test('returns correct displacement values for a pair', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $referenceMeasurement = Measurement::factory()->createOne([
@@ -179,7 +180,7 @@ test('returns correct displacement values for a pair', function () {
 });
 
 test('returns empty json when points have no values for the selected pair', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $referenceMeasurement = Measurement::factory()->createOne([
@@ -211,7 +212,7 @@ test('returns empty json when points have no values for the selected pair', func
 });
 
 test('hidden points are excluded from displacement results', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $referenceMeasurement = Measurement::factory()->createOne([
@@ -265,7 +266,7 @@ test('hidden points are excluded from displacement results', function () {
 });
 
 test('points without projection return null for projectedDistance', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $project = Project::factory()->createOne();
 
     $referenceMeasurement = Measurement::factory()->createOne([

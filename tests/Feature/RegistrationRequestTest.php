@@ -1,7 +1,9 @@
 <?php
 
+use Tests\TestCase;
+
 test('guest can submit a registration request', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $this->post(route('register.store'), [
         'name' => 'Test User',
         'email' => 'test@example.com',
@@ -14,7 +16,7 @@ test('guest can submit a registration request', function () {
 });
 
 test('registration request requires name, valid email, strong password and not too long note', function () {
-    /** @var \Tests\TestCase $this */
+    /** @var TestCase $this */
     $this->post(route('register.store'), [
         'name' => '',
         'email' => 'not-an-email',
