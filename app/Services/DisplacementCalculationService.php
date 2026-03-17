@@ -39,12 +39,8 @@ class DisplacementCalculationService
 
         foreach ($visiblePoints as $point) {
             $pointValues = $allValues->get($point->id);
-            if (! $pointValues) {
-                continue;
-            }
-
-            $refVal = $pointValues->get($referenceId);
-            $compVal = $pointValues->get($comparisonId);
+            $refVal = $pointValues?->get($referenceId);
+            $compVal = $pointValues?->get($comparisonId);
             if (! $refVal || ! $compVal) {
                 continue;
             }
@@ -227,7 +223,11 @@ class DisplacementCalculationService
         }
     }
 
-    // Helper functions to reduce redundant code
+    /*
+    Helper function that bulk-loads the reference and
+    comparison measurement values of each visible point
+    in a single database query
+    */
     private function loadValues(Collection $visiblePoints, array $measurementIds): SupportCollection
     {
         return MeasurementValue::whereIn('point_id', $visiblePoints->pluck('id'))

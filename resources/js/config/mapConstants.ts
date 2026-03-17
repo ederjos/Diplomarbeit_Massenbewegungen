@@ -62,6 +62,9 @@ export const POLYLINE_FRAME_COLOR = 'white';
 /** Color for main polyline */
 export const POLYLINE_MAIN_COLOR = 'black';
 
+/** Color for projection line */
+export const PROJECTION_LINE_COLOR = '#FF6B6B'; // Use color from LVG design
+
 /** Color for circle marker border */
 export const MARKER_BORDER_COLOR = 'gray';
 

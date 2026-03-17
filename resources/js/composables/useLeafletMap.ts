@@ -18,6 +18,7 @@ import {
     POLYLINE_FRAME_WEIGHT,
     POLYLINE_MAIN_COLOR,
     POLYLINE_MAIN_WEIGHT,
+    PROJECTION_LINE_COLOR,
 } from '@/config/mapConstants';
 import { DEFAULT_WMS_OPTIONS, WMS_LAYERS } from '@/config/mapLayers';
 
@@ -40,7 +41,6 @@ export function useLeafletMap(
     let markersLayer: L.LayerGroup | null = null;
 
     function initMap(container: HTMLElement) {
-        // Set to Bregenz as default view, will be changed to actual points later
         const leafletMap = L.map(container).setView(DEFAULT_MAP_CENTER, DEFAULT_ZOOM_LEVEL);
         map.value = leafletMap;
         markersLayer = new L.LayerGroup();
@@ -120,7 +120,7 @@ export function useLeafletMap(
         // Clear existing layers before redrawing
         markersLayer.clearLayers();
 
-        // Get a scale from 1 to 100000, set it to 1 if invalid
+        // Get a scale from 1 to 100000, set to 1 if invalid
         const scale = vectorScale.value;
 
         points.value.forEach((point) => {
@@ -139,6 +139,42 @@ export function useLeafletMap(
         });
     }
 
+    function scaleDisplacement(
+        originLat: number,
+        originLon: number,
+        targetLat: number,
+        targetLon: number,
+        scale: number,
+    ): [number, number] {
+        /**
+         * Based on the sinusoidal projection.
+         * Longitudinal distances are scaled by cos(latitude)
+         * to compensate for converging meridians.
+         */
+        /**
+         * GPT-5.3, 2026-03-16
+         * "I applied the formula of the sinusoidal projection to make the scaled positions more precise. However, there is still a bug. Please fix it."
+         */
+        const targetLatRad = (targetLat * Math.PI) / 180;
+
+        // Convert longitudinal delta to a local east-west component before scaling.
+        const dEast = (targetLon - originLon) * Math.cos(targetLatRad);
+        const dNorth = targetLat - originLat;
+
+        // Scale the vector in projected space
+        const newEast = dEast * scale;
+        const newNorth = dNorth * scale;
+
+        // New latitude after scaling
+        const newLat = originLat + newNorth;
+        const newLatRad = (newLat * Math.PI) / 180;
+
+        // Inverse projection (avoid division by 0)
+        const newLon = originLon + newEast / Math.max(Math.cos(newLatRad), Number.MIN_VALUE);
+
+        return [newLat, newLon];
+    }
+
     function computeLatLngs(point: Point, scale: number): [number, number][] {
         // If both reference and comparison are selected, calculate scaled vector
         if (referenceId.value && selectedComparison.value && !isGaitLine.value) {
@@ -146,30 +182,11 @@ export function useLeafletMap(
             const refM = point.measurementValues.find((m) => m.measurementId === referenceId.value);
             const compM = point.measurementValues.find((m) => m.measurementId === selectedComparison.value);
 
-            /**
-             * GEODETIC NOTE: Vectors are calculated via linear interpolation in WGS84 space.
-             * While this introduces a slight scale distortion (Mercator) and ignores
-             * the convergence of meridians, it is numerically stable and visually
-             * consistent for local-scale monitoring (e.g., within 10-20km).
-             */
             if (!refM || !compM) {
                 return [];
             }
 
-            // vectors
-            const p1 = L.latLng(refM.lat, refM.lon);
-            const p2 = L.latLng(compM.lat, compM.lon);
-            // Note: Leaflet's latLng uses (lat, lng) but dx is in x direction (longitude)
-            const dLon = p2.lng - p1.lng;
-            // and dy is in y direction (latitude)
-            const dLat = p2.lat - p1.lat;
-
-            const dLonScaled = dLon * scale;
-            const dLatScaled = dLat * scale;
-
-            // Calculate new position
-            const newLon = refM.lon + dLonScaled;
-            const newLat = refM.lat + dLatScaled;
+            const [newLat, newLon] = scaleDisplacement(refM.lat, refM.lon, compM.lat, compM.lon, scale);
 
             return [
                 [refM.lat, refM.lon],
@@ -187,14 +204,7 @@ export function useLeafletMap(
         const origin = measurements[0];
 
         return measurements.map((m) => {
-            const dLon = m.lon - origin.lon;
-            const dLat = m.lat - origin.lat;
-
-            const dLonScaled = dLon * scale;
-            const dLatScaled = dLat * scale;
-
-            const newLon = origin.lon + dLonScaled;
-            const newLat = origin.lat + dLatScaled;
+            const [newLat, newLon] = scaleDisplacement(origin.lat, origin.lon, m.lat, m.lon, scale);
 
             return [newLat, newLon];
         });
@@ -207,10 +217,9 @@ export function useLeafletMap(
 
         const scale = vectorScale.value;
         const axis = point.axis;
-
-        // Calculate scaled end point: start + vector * scale
-        const endLat = axis.startLat + axis.vectorLat * scale;
-        const endLon = axis.startLon + axis.vectorLon * scale;
+        const targetLat = axis.startLat + axis.vectorLat;
+        const targetLon = axis.startLon + axis.vectorLon;
+        const [endLat, endLon] = scaleDisplacement(axis.startLat, axis.startLon, targetLat, targetLon, scale);
 
         // Draw projection axis line
         const projectionLine = L.polyline(
@@ -221,8 +230,7 @@ export function useLeafletMap(
                 [endLat, endLon],
             ],
             {
-                // Use color from LVG design
-                color: '#FF6B6B',
+                color: PROJECTION_LINE_COLOR,
                 weight: 2,
                 opacity: 0.7,
             },

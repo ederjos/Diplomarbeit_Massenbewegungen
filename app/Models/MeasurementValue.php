@@ -56,27 +56,21 @@ class MeasurementValue extends Model
     protected static function booted(): void
     {
         // Listens to saving event (on class-level -> static)
-        static::saving(function (MeasurementValue $measurementValue) {
+        static::saving(function (MeasurementValue $mv) {
             // Automatically sync geom from x,y,z if geom is missing or x,y,z or addition changed
-            if (isset($measurementValue->x, $measurementValue->y, $measurementValue->z) && (! $measurementValue->geom || $measurementValue->isDirty(['x', 'y', 'z', 'addition_id']))) {
-                $addition = $measurementValue->addition_id ? $measurementValue->addition : null;
-                $measurementValue->geom = $measurementValue->computeGeom($measurementValue->x, $measurementValue->y, $measurementValue->z, $addition);
+            if (isset($mv->x, $mv->y, $mv->z) &&
+                (! $mv->geom || $mv->isDirty(['x', 'y', 'z', 'addition_id']))) {
+                $addition = $mv->addition_id ? $mv->addition : null;
+                $mv->geom = $mv->computeGeom($mv->x, $mv->y, $mv->z, $addition);
             }
         });
     }
 
     public static function computeGeom(?float $x = null, ?float $y = null, ?float $z = null, ?Addition $addition = null): MagellanPoint
     {
-        $geomX = $x;
-        $geomY = $y;
-        $geomZ = $z;
-
-        // Apply addition offset
-        if ($addition) {
-            $geomX += $addition->dx;
-            $geomY += $addition->dy;
-            $geomZ += $addition->dz;
-        }
+        $geomX = $x + ($addition?->dx ?? 0);
+        $geomY = $y + ($addition?->dy ?? 0);
+        $geomZ = $z + ($addition?->dz ?? 0);
 
         return MagellanPoint::make($geomX, $geomY, $geomZ, srid: config('spatial.srids.default'));
     }

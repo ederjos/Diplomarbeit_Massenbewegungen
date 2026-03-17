@@ -10,8 +10,8 @@ const activeTab = defineModel<'results' | 'basics'>('activeTab');
             <span
                 class="absolute z-10 h-9 rounded-md bg-white transition-transform duration-300 ease-in-out"
                 :style="{
-                    width: '50%',
-                    transform: activeTab === 'results' ? 'translateX(0)' : 'translateX(100%)',
+                    width: '49%',
+                    transform: activeTab === 'results' ? 'translateX(0)' : 'translateX(102%)',
                 }"
             ></span>
             <li class="z-30 flex-auto text-center">

@@ -61,43 +61,48 @@ function handleToggleFavorite(event: Event, projectId: number) {
         th-class="px-6 py-3"
         @sort-by="(col) => emit('sort-by', col)"
     >
-        <Link
-            v-for="project in projects"
-            :key="project.id"
-            :href="show(project.id)"
-            :aria-label="`Projekt ${project.name} öffnen`"
-            class="cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
-            :class="project.isFavorite ? 'bg-amber-50 hover:bg-amber-100' : 'hover:bg-gray-50'"
-            as="tr"
-        >
-            <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                {{ project.id }}
-            </td>
-            <td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
-                {{ project.name }}
-            </td>
-            <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                {{ formatDate(project.lastMeasurement) }}
-            </td>
-            <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                {{ project.isActive ? formatDate(project.nextMeasurement) : '-' }}
-            </td>
-            <!--
-            Claude Sonnet 4.6, 2026-02-20
-            "Edit this th to have a star icon for selecting whether a project is a favorite."
-            -->
-            <td class="px-4 py-4 text-center" @click="handleToggleFavorite($event, project.id)">
-                <button :title="project.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'">
-                    <Star
-                        class="h-5 w-5"
-                        :class="
-                            project.isFavorite
-                                ? 'fill-amber-400 stroke-amber-400'
-                                : 'stroke-gray-300 hover:stroke-amber-400'
-                        "
-                    />
-                </button>
-            </td>
-        </Link>
+        <template v-if="projects.length">
+            <Link
+                v-for="project in projects"
+                :key="project.id"
+                :href="show(project.id)"
+                :aria-label="`Projekt ${project.name} öffnen`"
+                class="cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
+                :class="project.isFavorite ? 'bg-amber-50 hover:bg-amber-100' : 'hover:bg-gray-50'"
+                as="tr"
+            >
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                    {{ project.id }}
+                </td>
+                <td class="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
+                    {{ project.name }}
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                    {{ formatDate(project.lastMeasurement) }}
+                </td>
+                <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
+                    {{ project.isActive ? formatDate(project.nextMeasurement) : '-' }}
+                </td>
+                <!--
+                Claude Sonnet 4.6, 2026-02-20
+                "Edit this th to have a star icon for selecting whether a project is a favorite."
+                -->
+                <td class="px-4 py-4 text-center" @click="handleToggleFavorite($event, project.id)">
+                    <button :title="project.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'">
+                        <Star
+                            class="h-5 w-5"
+                            :class="
+                                project.isFavorite
+                                    ? 'fill-amber-400 stroke-amber-400'
+                                    : 'stroke-gray-300 hover:stroke-amber-400'
+                            "
+                        />
+                    </button>
+                </td>
+            </Link>
+        </template>
+        <tr v-else>
+            <td colspan="5" class="px-6 py-8 text-center text-sm text-gray-500">Keine Projekte vorhanden.</td>
+        </tr>
     </AppTableWrapper>
 </template>
