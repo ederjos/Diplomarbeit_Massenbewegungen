@@ -30,14 +30,14 @@ const submit = () => {
         <div class="w-full max-w-md overflow-hidden rounded-lg bg-white p-6 shadow-md">
             <h1 class="mb-6 text-center text-2xl font-bold text-gray-900">Registrierung anfragen</h1>
 
-            <form @submit.prevent="submit" class="space-y-4">
+            <form class="space-y-4" @submit.prevent="submit">
                 <div>
                     <label for="name" class="mb-1 block text-sm font-medium text-gray-700">Name</label>
                     <input
                         id="name"
+                        v-model="form.name"
                         type="text"
                         class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        v-model="form.name"
                         required
                         autofocus
                         autocomplete="name"
@@ -53,9 +53,9 @@ const submit = () => {
                     <label for="email" class="mb-1 block text-sm font-medium text-gray-700">E-Mail</label>
                     <input
                         id="email"
+                        v-model="form.email"
                         type="email"
                         class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        v-model="form.email"
                         required
                         autocomplete="username"
                         :aria-describedby="form.errors.email ? 'email-error' : undefined"
@@ -70,8 +70,8 @@ const submit = () => {
                     <label for="password" class="mb-1 block text-sm font-medium text-gray-700">Passwort</label>
                     <PasswordInput
                         id="password"
-                        class="block w-full rounded-md border-gray-300 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         v-model="form.password"
+                        class="block w-full rounded-md border-gray-300 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         required
                         autocomplete="new-password"
                         :aria-describedby="form.errors.password ? 'password-error' : undefined"
@@ -88,8 +88,8 @@ const submit = () => {
                     </label>
                     <PasswordInput
                         id="password_confirmation"
-                        class="block w-full rounded-md border-gray-300 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         v-model="form.password_confirmation"
+                        class="block w-full rounded-md border-gray-300 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         required
                         autocomplete="new-password"
                         :aria-describedby="
@@ -113,8 +113,8 @@ const submit = () => {
                     </label>
                     <textarea
                         id="note"
-                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         v-model="form.note"
+                        class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         rows="3"
                         placeholder="z.B. gewünschte Rolle, Grund der Registrierung ..."
                         :aria-describedby="form.errors.note ? 'note-error' : undefined"

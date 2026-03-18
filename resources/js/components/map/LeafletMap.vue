@@ -78,7 +78,10 @@ const unsortedDisplacementRows = computed<DisplacementRow[]>(() => {
         props.points
             .map((point) => {
                 const displacement = props.displacements[point.id];
-                if (!displacement) return null;
+
+                if (!displacement) {
+                    return null;
+                }
 
                 const result: DisplacementRow = {
                     pointId: point.id,
@@ -108,6 +111,7 @@ function handlePointClick(pointId: number) {
         clearTimeout(highlightTimeout);
         highlightTimeout = null;
     }
+
     selectedPointId.value = pointId;
 
     // Matches CSS animation (1s + 100ms buffer)
@@ -126,7 +130,9 @@ watch([toRef(props.points), selectedReference, selectedComparison, vectorScale, 
 
 onMounted(() => {
     // If no map can be found, there's nothing we can do.
-    if (!mapContainer.value) return;
+    if (!mapContainer.value) {
+        return;
+    }
 
     initMap(mapContainer.value);
 
@@ -146,6 +152,7 @@ onUnmounted(() => {
         clearTimeout(highlightTimeout);
         highlightTimeout = null;
     }
+
     // Stop observing the map
     resizeObserver?.disconnect();
 });
@@ -154,16 +161,16 @@ onUnmounted(() => {
 <template>
     <div class="flex h-full w-full flex-col overflow-hidden">
         <MapToolbar
-            :measurements="baseMeasurements"
             v-model:selected-reference="selectedReference"
             v-model:selected-comparison="selectedComparison"
             v-model:vector-scale="vectorScale"
             v-model:is-gait-line="isGaitLine"
+            :measurements="baseMeasurements"
         />
 
         <!-- The map is always 85% high, no matter the table size -->
         <div class="flex h-[85vh] overflow-hidden">
-            <div ref="mapContainer" class="relative z-0 h-full flex-1"></div>
+            <div ref="mapContainer" class="relative z-0 h-full flex-1" />
 
             <!-- Table is only shown if there is a selected comparison epoch -->
             <DisplacementTable

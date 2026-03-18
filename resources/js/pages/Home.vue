@@ -31,6 +31,7 @@ const displayedProjects = computed(() => {
     // Display the favorite projects on top, but keep the sorting
     const favorites = sortedProjects.value.filter((p) => p.isFavorite);
     const nonFavorites = sortedProjects.value.filter((p) => !p.isFavorite);
+
     return [...favorites, ...nonFavorites];
 });
 </script>

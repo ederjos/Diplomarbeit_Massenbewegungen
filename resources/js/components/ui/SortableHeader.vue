@@ -25,12 +25,12 @@ const emit = defineEmits<{
     -->
     <th
         :aria-sort="isActive ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'"
-        @click="emit('sort')"
-        @keydown.enter="emit('sort')"
-        @keydown.space.prevent="emit('sort')"
         class="group cursor-pointer bg-gray-50 px-2 py-2 text-xs font-semibold text-gray-600 uppercase transition-colors select-none hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
         :class="styleClass"
         tabindex="0"
+        @click="emit('sort')"
+        @keydown.enter="emit('sort')"
+        @keydown.space.prevent="emit('sort')"
     >
         <div class="flex items-center gap-1">
             {{ label }}

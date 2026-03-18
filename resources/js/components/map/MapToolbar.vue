@@ -21,6 +21,7 @@ const safeVectorScale = computed({
     set(value: number | null) {
         if (value === null || !Number.isFinite(value) || value < MIN_VECTOR_SCALE) {
             vectorScale.value = MIN_VECTOR_SCALE;
+
             return;
         }
 
@@ -34,11 +35,11 @@ const safeVectorScale = computed({
         <div>
             <label for="reference-select" class="mb-1 block text-sm font-bold">Referenzepoche</label>
             <select
+                id="reference-select"
                 v-model.number="selectedReference"
                 :disabled="isGaitLine"
                 :aria-disabled="isGaitLine"
                 class="rounded border p-1 disabled:text-gray-400"
-                id="reference-select"
             >
                 <option
                     v-for="m in props.measurements"
@@ -54,11 +55,11 @@ const safeVectorScale = computed({
             <label for="comparison-select" class="mb-1 block text-sm font-bold">Vergleichsepoche</label>
             <!-- aria-disabled -> accessibility announcement -> tells screen readers it's disabled -->
             <select
+                id="comparison-select"
                 v-model.number="selectedComparison"
                 :disabled="isGaitLine"
                 :aria-disabled="isGaitLine"
                 class="rounded border p-1 disabled:text-gray-400"
-                id="comparison-select"
             >
                 <option
                     v-for="m in props.measurements"
@@ -73,20 +74,20 @@ const safeVectorScale = computed({
         <div>
             <label class="mb-1 block text-sm font-bold" for="input-vector-scale">Vektormaßstab M 1&nbsp;:&nbsp;</label>
             <input
+                id="input-vector-scale"
                 v-model.number="safeVectorScale"
                 :min="MIN_VECTOR_SCALE"
                 :max="MAX_VECTOR_SCALE"
                 class="w-28 rounded border p-1"
                 type="number"
-                id="input-vector-scale"
             />
         </div>
         <div class="me-4 flex items-center">
             <input
+                id="checkbox-is-gait-line"
                 v-model="isGaitLine"
                 class="border-default-medium bg-neutral-secondary-medium h-4 w-4 rounded-xs border"
                 type="checkbox"
-                id="checkbox-is-gait-line"
             />
             <label class="text-heading ml-2 block text-sm font-bold select-none" for="checkbox-is-gait-line"
                 >Ganglinie</label

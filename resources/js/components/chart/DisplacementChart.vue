@@ -69,11 +69,13 @@ const chartOption = computed<EChartsOption>(() => {
 
         const data: ([number, number] | null)[] = props.measurements.map((measurement) => {
             const displacement = pointDisplacements?.[measurement.id];
+
             if (!displacement) {
                 return null;
             }
 
             let value = 0;
+
             switch (currentMode.value) {
                 case 'horizontal':
                     // Use projected distance when available
@@ -175,6 +177,7 @@ const chartOption = computed<EChartsOption>(() => {
                 label: {
                     formatter: (params) => {
                         const timestamp = params.value as number;
+
                         return `${timestampToMeasurementName.get(timestamp)} ${formatDate(timestamp)}`;
                     },
                 },
@@ -228,25 +231,25 @@ function restoreView() {
                 <button
                     v-for="(label, value) in modeLabels"
                     :key="value"
-                    @click="currentMode = value"
                     class="rounded px-3 py-1 transition-colors"
                     :class="currentMode === value ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'"
+                    @click="currentMode = value"
                 >
                     {{ label.short }}
                 </button>
 
-                <div class="mx-1 w-px bg-gray-300"></div>
+                <div class="mx-1 w-px bg-gray-300" />
 
-                <button @click="setVisibility(true)" class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200">
+                <button class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200" @click="setVisibility(true)">
                     Alle
                 </button>
-                <button @click="setVisibility(false)" class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200">
+                <button class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200" @click="setVisibility(false)">
                     Keine
                 </button>
 
-                <div class="mx-1 w-px bg-gray-300"></div>
+                <div class="mx-1 w-px bg-gray-300" />
 
-                <button @click="restoreView()" class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200">
+                <button class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200" @click="restoreView()">
                     Zurücksetzen
                 </button>
             </div>

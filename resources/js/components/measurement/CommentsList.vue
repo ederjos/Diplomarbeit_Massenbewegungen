@@ -9,7 +9,10 @@ const props = defineProps<{
 }>();
 
 const selectedComparisonMeasurement = computed(() => {
-    if (!props.comparisonId) return null;
+    if (!props.comparisonId) {
+        return null;
+    }
+
     return props.measurements.find((measurement) => measurement.id === props.comparisonId) ?? null;
 });
 </script>
@@ -19,7 +22,7 @@ const selectedComparisonMeasurement = computed(() => {
     GPT-5.3-Codex, 2026-02-13
     "Taking a look at measurement.ts and then Project.vue, please insert a list of all comments regarding the currently selected comparison measurement showing all data that is loaded, i.e. content, created, updated, author name, author role."
     -->
-    <h2 class="mb-4 text-xl font-bold text-slate-700" id="comments-heading">
+    <h2 id="comments-heading" class="mb-4 text-xl font-bold text-slate-700">
         Kommentare zur Messepoche {{ selectedComparisonMeasurement?.name }}
     </h2>
     <p v-if="selectedComparisonMeasurement" class="mb-4 text-sm text-slate-600">
@@ -39,7 +42,9 @@ const selectedComparisonMeasurement = computed(() => {
             :key="comment.id"
             class="rounded-md border border-slate-200 bg-slate-50 p-4"
         >
-            <p class="mb-3 whitespace-pre-wrap text-slate-800">{{ comment.content }}</p>
+            <p class="mb-3 whitespace-pre-wrap text-slate-800">
+                {{ comment.content }}
+            </p>
             <div class="grid gap-1 text-sm text-slate-600 md:grid-cols-2">
                 <p>
                     <span class="font-semibold text-slate-700">Erstellt:</span>

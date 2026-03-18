@@ -59,11 +59,18 @@ watch([selectedReference, selectedComparison], async ([refVal, compVal]) => {
 
         try {
             const response = await fetch(url, { signal: fetchController.signal });
-            if (!response.ok) return;
+
+            if (!response.ok) {
+                return;
+            }
+
             mapDisplacements.value = await response.json();
         } catch (error) {
             // Ignore abort errors (expected when a newer request supersedes)
-            if (error instanceof DOMException && error.name === 'AbortError') return;
+            if (error instanceof DOMException && error.name === 'AbortError') {
+                return;
+            }
+
             console.error('Failed to fetch map displacements:', error);
         }
     }
@@ -75,11 +82,11 @@ watch([selectedReference, selectedComparison], async ([refVal, compVal]) => {
         <section>
             <ErrorBoundary component-name="Karte">
                 <LeafletMap
+                    v-model:reference-id="selectedReference"
+                    v-model:comparison-id="selectedComparison"
                     :points="points"
                     :point-colors="pointColors"
                     :measurements="measurements"
-                    v-model:reference-id="selectedReference"
-                    v-model:comparison-id="selectedComparison"
                     :displacements="mapDisplacements"
                 />
             </ErrorBoundary>

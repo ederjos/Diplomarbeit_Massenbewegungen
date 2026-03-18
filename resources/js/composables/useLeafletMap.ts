@@ -1,5 +1,6 @@
 import L from 'leaflet';
-import { onUnmounted, ref, type Ref } from 'vue';
+import { onUnmounted, ref } from 'vue';
+import type { Ref } from 'vue';
 import type { Point } from '@/@types/measurement';
 import {
     DEFAULT_MAP_CENTER,
@@ -81,6 +82,7 @@ export function useLeafletMap(
 
         const allCoords: [number, number][] = [];
         points.value.forEach((p) => p.measurementValues.forEach((m) => allCoords.push([m.lat, m.lon])));
+
         if (allCoords.length) {
             map.value.fitBounds(allCoords, { padding: MAP_BOUNDS_PADDING });
         }
@@ -89,6 +91,7 @@ export function useLeafletMap(
     function zoomToPoint(pointId: number) {
         // only zoom to selected point
         const point = points.value.find((p) => p.id === pointId);
+
         if (!point || !map.value) {
             return;
         }
@@ -96,6 +99,7 @@ export function useLeafletMap(
         // First measurement value
         const m =
             point.measurementValues.find((m) => m.measurementId === referenceId.value) || point.measurementValues[0];
+
         if (m) {
             map.value.setView([m.lat, m.lon], POINT_FOCUS_ZOOM_LEVEL);
         }
@@ -115,7 +119,9 @@ export function useLeafletMap(
     }
 
     function drawMap() {
-        if (!map.value || !markersLayer) return;
+        if (!map.value || !markersLayer) {
+            return;
+        }
 
         // Clear existing layers before redrawing
         markersLayer.clearLayers();
@@ -125,9 +131,13 @@ export function useLeafletMap(
 
         points.value.forEach((point) => {
             const latlngs = computeLatLngs(point, scale);
-            if (!latlngs.length) return;
+
+            if (!latlngs.length) {
+                return;
+            }
 
             const firstCoord = latlngs[0];
+
             // First, draw projection line if requested
             if (isGaitLine.value && point.axis) {
                 addProjectionLine(point);
@@ -244,6 +254,7 @@ export function useLeafletMap(
         if (!markersLayer) {
             return;
         }
+
         // Polyline with white outline for contrast
         const framePolyline = L.polyline(latlngs, { color: POLYLINE_FRAME_COLOR, weight: POLYLINE_FRAME_WEIGHT });
         const currPolyline = L.polyline(latlngs, { color: POLYLINE_MAIN_COLOR, weight: POLYLINE_MAIN_WEIGHT });
@@ -257,6 +268,7 @@ export function useLeafletMap(
         if (!markersLayer) {
             return;
         }
+
         // Draw small circle markers for the LAST measurement
         const marker = L.circleMarker(lastCoord, {
             radius: MARKER_CIRCLE_RADIUS,
@@ -275,6 +287,7 @@ export function useLeafletMap(
         if (!markersLayer) {
             return;
         }
+
         // Text label next to the "arrowhead"
         const textMarker = L.marker(lastCoord, {
             icon: L.divIcon({

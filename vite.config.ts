@@ -9,7 +9,7 @@ export default defineConfig({
     build: {
         rolldownOptions: {
             output: {
-                advancedChunks /* renamed to `codeSplitting` in Vite 8 */: {
+                codeSplitting: {
                     groups: [
                         {
                             // transitive dependency of echarts, but large enough to deserve its own chunk

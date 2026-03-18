@@ -28,6 +28,7 @@ const pointColors = computed(() => {
     props.points.forEach((p, index) => {
         colorMap[p.id] = colors[index % colors.length];
     });
+
     return colorMap;
 });
 </script>
@@ -43,11 +44,11 @@ const pointColors = computed(() => {
             <!-- Page title -->
             <h1 class="mb-4 text-center text-2xl font-bold text-slate-700">Projekt {{ project.name }}</h1>
             <!-- v-model used for 2-way data-binding -->
-            <TabSwitcher v-model:activeTab="activeTab" />
+            <TabSwitcher v-model:active-tab="activeTab" />
             <div>
                 <ResultsTab
-                    id="results"
                     v-show="activeTab === 'results'"
+                    id="results"
                     :project-id="project.id"
                     :points="points"
                     :point-colors="pointColors"
@@ -58,8 +59,8 @@ const pointColors = computed(() => {
                     :chart-displacements="chartDisplacements"
                 />
                 <DetailsTab
-                    id="basics"
                     v-show="activeTab === 'basics'"
+                    id="basics"
                     :project="project"
                     :contact-persons="contactPersons"
                 />

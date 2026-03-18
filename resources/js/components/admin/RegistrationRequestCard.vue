@@ -21,6 +21,7 @@ const approveRequest = () => {
     if (!selectedRoleId.value) {
         return;
     }
+
     approveForm.role_id = selectedRoleId.value;
     approveForm.submit(approve(props.request.id));
 };
@@ -31,6 +32,7 @@ const rejectRequest = () => {
     if (!confirm(`Registrierungsanfrage von "${props.request.name}" wirklich ablehnen?`)) {
         return;
     }
+
     rejectForm.submit(reject(props.request.id));
 };
 </script>
@@ -43,8 +45,12 @@ const rejectRequest = () => {
     <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div class="space-y-1">
-                <p class="text-lg font-semibold text-gray-900">{{ request.name }}</p>
-                <p class="text-sm text-gray-600">{{ request.email }}</p>
+                <p class="text-lg font-semibold text-gray-900">
+                    {{ request.name }}
+                </p>
+                <p class="text-sm text-gray-600">
+                    {{ request.email }}
+                </p>
                 <p class="text-xs text-gray-400">Angefragt am {{ formatDate(props.request.createdAt, false) }}</p>
                 <div v-if="request.note" class="mt-2 rounded bg-gray-50 p-3 text-sm text-gray-700">
                     <span class="font-medium">Anmerkung:</span> {{ request.note }}
@@ -68,16 +74,16 @@ const rejectRequest = () => {
 
                 <div class="flex gap-2">
                     <button
-                        @click="approveRequest()"
                         :disabled="!selectedRoleId || approveForm.processing"
                         class="inline-flex items-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+                        @click="approveRequest()"
                     >
                         Genehmigen
                     </button>
                     <button
-                        @click="rejectRequest()"
                         :disabled="rejectForm.processing"
                         class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
+                        @click="rejectRequest()"
                     >
                         Ablehnen
                     </button>

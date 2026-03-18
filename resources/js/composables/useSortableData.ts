@@ -17,7 +17,9 @@ export function useSortableData<T>(
     const sortDirection = ref<'asc' | 'desc'>(initialDirection);
 
     const sorted = computed(() => {
-        if (!sortColumn.value) return data.value;
+        if (!sortColumn.value) {
+            return data.value;
+        }
 
         const column = sortColumn.value;
 
@@ -30,10 +32,16 @@ export function useSortableData<T>(
 
             // Handle null/undefined values (nulls go to the end)
             if (valueA === null || valueA === undefined) {
-                if (valueB === null || valueB === undefined) return 0;
+                if (valueB === null || valueB === undefined) {
+                    return 0;
+                }
+
                 return 1;
             }
-            if (valueB === null || valueB === undefined) return -1;
+
+            if (valueB === null || valueB === undefined) {
+                return -1;
+            }
 
             // String comparison
             if (typeof valueA === 'string' && typeof valueB === 'string') {

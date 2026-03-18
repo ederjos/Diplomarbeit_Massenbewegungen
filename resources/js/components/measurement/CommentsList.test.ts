@@ -27,6 +27,7 @@ function makeMeasurementWithComments(): Measurement {
             },
         },
     ];
+
     return measurement;
 }
 

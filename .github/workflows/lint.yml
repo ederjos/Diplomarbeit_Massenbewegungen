@@ -40,6 +40,11 @@ jobs:
         run: npm run lint
         continue-on-error: true
 
+      - id: typecheck
+        name: Run Type Check
+        run: npm run type-check
+        continue-on-error: true
+
       - name: Check linter results
-        if: steps.pint.outcome == 'failure' || steps.eslint.outcome == 'failure'
+        if: steps.pint.outcome == 'failure' || steps.eslint.outcome == 'failure' || steps.typecheck.outcome == 'failure'
         run: exit 1

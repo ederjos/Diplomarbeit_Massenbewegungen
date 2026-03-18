@@ -27,7 +27,7 @@ const emit = defineEmits<{
         class="z-10 h-full shrink-0 overflow-y-auto border-l bg-gray-50 p-4 shadow-lg"
         :class="DISPLACEMENT_TABLE_WIDTH"
     >
-        <h3 class="mb-3 text-lg font-bold" id="displacement-heading">Verschiebungen</h3>
+        <h3 id="displacement-heading" class="mb-3 text-lg font-bold">Verschiebungen</h3>
         <AppTableWrapper
             :columns="[
                 { label: 'Punkt', columnName: 'name' },
@@ -37,8 +37,8 @@ const emit = defineEmits<{
             ]"
             :sort-column="sortColumn"
             :sort-direction="sortDirection"
-            tableClass="relative w-full border-collapse text-left text-sm"
-            theadClass="sticky top-0 z-10 border-b bg-gray-100 text-xs uppercase shadow-sm"
+            table-class="relative w-full border-collapse text-left text-sm"
+            thead-class="sticky top-0 z-10 border-b bg-gray-100 text-xs uppercase shadow-sm"
             @sort-by="(col) => emit('sort-by', col)"
         >
             <tr
@@ -46,17 +46,23 @@ const emit = defineEmits<{
                 :key="p.pointId"
                 class="cursor-pointer border-b bg-white transition-colors odd:bg-gray-50 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
                 :class="{ 'animate-row-highlight': p.pointId === props.highlightedPointId }"
-                @click="emit('select-point', p.pointId)"
-                @keydown.enter="emit('select-point', p.pointId)"
                 tabindex="0"
                 :aria-label="`Punkt ${p.name} auswählen`"
+                @click="emit('select-point', p.pointId)"
+                @keydown.enter="emit('select-point', p.pointId)"
             >
-                <td class="px-3 py-2 font-medium text-gray-900">{{ p.name }}</td>
-                <td class="px-3 py-2 text-right tabular-nums">{{ p.distance2dOrProjection.toFixed(1) }}</td>
+                <td class="px-3 py-2 font-medium text-gray-900">
+                    {{ p.name }}
+                </td>
+                <td class="px-3 py-2 text-right tabular-nums">
+                    {{ p.distance2dOrProjection.toFixed(1) }}
+                </td>
                 <td class="px-3 py-2 text-right tabular-nums">
                     {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(1) }}
                 </td>
-                <td class="px-3 py-2 text-right tabular-nums">{{ p.distance3d.toFixed(1) }}</td>
+                <td class="px-3 py-2 text-right tabular-nums">
+                    {{ p.distance3d.toFixed(1) }}
+                </td>
             </tr>
             <tr v-if="props.displacementRows.length === 0">
                 <td colspan="4" class="px-3 py-4 text-center text-gray-500">Keine Daten für die Auswahl</td>

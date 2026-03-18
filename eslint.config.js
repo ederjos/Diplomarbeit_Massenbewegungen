@@ -1,14 +1,11 @@
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
-import prettier from 'eslint-config-prettier';
+import prettier from 'eslint-config-prettier/flat';
 import importPlugin from 'eslint-plugin-import';
 import vue from 'eslint-plugin-vue';
 
 export default defineConfigWithVueTs(
-    vue.configs['flat/essential'],
+    vue.configs['flat/recommended'],
     vueTsConfigs.recommended,
-    {
-        ignores: ['vendor', 'node_modules', 'public', 'bootstrap/ssr', 'vite.config.ts', 'vitest.config.ts'],
-    },
     {
         plugins: {
             import: importPlugin,
@@ -19,17 +16,11 @@ export default defineConfigWithVueTs(
                     alwaysTryTypes: true,
                     project: './tsconfig.json',
                 },
+                node: true,
             },
         },
         rules: {
-            'vue/multi-word-component-names': 'warn',
-            '@typescript-eslint/consistent-type-imports': [
-                'error',
-                {
-                    prefer: 'type-imports',
-                    fixStyle: 'separate-type-imports',
-                },
-            ],
+            '@typescript-eslint/consistent-type-imports': 'error',
             'import/order': [
                 'error',
                 {
@@ -40,14 +31,32 @@ export default defineConfigWithVueTs(
                     },
                 },
             ],
+            'import/consistent-type-specifier-style': [
+                'error',
+                'prefer-top-level',
+            ],
         },
     },
-    // Pages use single-word names by convention (routes map 1:1 to page components)
+    {
+        ignores: [
+            'vendor',
+            'node_modules',
+            'public/build',
+            'bootstrap/ssr',
+            'vite.config.ts',
+            'vitest.config.ts',
+            'resources/js/actions/**',
+            'resources/js/routes/**',
+            'resources/js/wayfinder/**',
+        ],
+    },
+    // Pages use single-word names by convention
     {
         files: ['resources/js/pages/**/*.vue'],
         rules: {
             'vue/multi-word-component-names': 'off',
         },
     },
+    // Turn off all rules that might conflict with Prettier
     prettier,
 );

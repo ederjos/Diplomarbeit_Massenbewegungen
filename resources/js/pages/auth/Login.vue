@@ -36,14 +36,14 @@ const submit = () => {
                 {{ status }}
             </div>
 
-            <form @submit.prevent="submit" class="space-y-4">
+            <form class="space-y-4" @submit.prevent="submit">
                 <div>
                     <label for="email" class="mb-1 block text-sm font-medium text-gray-700">E-Mail</label>
                     <input
                         id="email"
+                        v-model="form.email"
                         type="email"
                         class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        v-model="form.email"
                         required
                         autofocus
                         autocomplete="username"
@@ -59,8 +59,8 @@ const submit = () => {
                     <label for="password" class="mb-1 block text-sm font-medium text-gray-700">Passwort</label>
                     <PasswordInput
                         id="password"
-                        class="block w-full rounded-md border-gray-300 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         v-model="form.password"
+                        class="block w-full rounded-md border-gray-300 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         required
                         autocomplete="current-password"
                         :aria-describedby="form.errors.password ? 'password-error' : undefined"
@@ -74,8 +74,8 @@ const submit = () => {
                 <div>
                     <label class="flex items-center">
                         <input
-                            type="checkbox"
                             v-model="form.remember"
+                            type="checkbox"
                             class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
                         />
                         <span class="ml-2 text-sm text-gray-600">Angemeldet bleiben</span>

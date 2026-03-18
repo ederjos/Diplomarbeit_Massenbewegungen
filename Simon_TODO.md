@@ -21,7 +21,4 @@
 
 ---
 
-- Upgrades:
-    - Laravel 13
-
 - (maybe) Tailwind-Klassen zusammenfassen anstatt sie überall zu wiederholen & Tailwind-Theme korrekt verwenden (e.g. color-chart-1)
