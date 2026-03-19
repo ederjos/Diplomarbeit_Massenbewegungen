@@ -45,7 +45,7 @@ test('positive deltaHeights get a "+" sign', () => {
     expect(wrapper.text()).toContain('+1.2');
 });
 
-test('emits "select-point" when a row is clicked', async () => {
+test('emits "select-point" when a point button is clicked', async () => {
     const wrapper = mount(DisplacementTable, {
         props: {
             displacementRows: rows,
@@ -53,15 +53,14 @@ test('emits "select-point" when a row is clicked', async () => {
             sortDirection: 'asc',
         },
     });
-    // tr is a direct child of tbody (ignore thead)
-    const tableRows = wrapper.findAll('tbody>tr');
-    await tableRows[0].trigger('click');
+    const pointButtons = wrapper.findAll('tbody>tr td:first-child button');
+    await pointButtons[0].trigger('click');
 
     // Automatically tests for if the emitted event exists and was emitted (at least) once
     expect(wrapper.emitted('select-point')?.[0]).toEqual([123]);
 });
 
-test('emits "sort-by" when a header is clicked', async () => {
+test('emits "sort-by" when a header button is clicked', async () => {
     const wrapper = mount(DisplacementTable, {
         props: {
             displacementRows: rows,
@@ -70,8 +69,8 @@ test('emits "sort-by" when a header is clicked', async () => {
         },
     });
 
-    const headers = wrapper.findAll('th');
-    await headers[0].trigger('click');
+    const headerButtons = wrapper.findAll('th button');
+    await headerButtons[0].trigger('click');
 
     // First column in the visible table is the point name
     expect(wrapper.emitted('sort-by')?.[0]).toEqual(['name']);

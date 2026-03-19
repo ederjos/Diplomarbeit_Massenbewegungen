@@ -64,9 +64,9 @@ test('emits "sort-by" with correct column when header is clicked', async () => {
             sortColumn: null,
         },
     });
-    const headers = wrapper.findAll('th');
-    await headers[0].trigger('click');
+    const headerButtons = wrapper.findAll('th button');
+    await headerButtons[0].trigger('click');
     expect(wrapper.emitted('sort-by')?.[0]).toEqual(['id']);
-    await headers[2].trigger('click');
+    await headerButtons[2].trigger('click');
     expect(wrapper.emitted('sort-by')?.[1]).toEqual(['lastMeasurement']);
 });

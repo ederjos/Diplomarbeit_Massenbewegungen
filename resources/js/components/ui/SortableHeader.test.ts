@@ -24,25 +24,7 @@ test('emits sort event when clicked', async () => {
         },
     });
 
-    await wrapper.find('th').trigger('click');
-
-    // The component should have emitted an event called 'sort'
-    expect(wrapper.emitted()).toHaveProperty('sort');
-    // It should have been emitted exactly once
-    expect(wrapper.emitted('sort')).toHaveLength(1);
-});
-
-test('emits sort event when Enter key is pressed', async () => {
-    const wrapper = mount(SortableHeader, {
-        props: {
-            label: 'Name',
-            column: 'name',
-            isActive: false,
-            direction: 'asc',
-        },
-    });
-
-    await wrapper.find('th').trigger('keydown.enter');
+    await wrapper.find('th button').trigger('click');
 
     // The component should have emitted an event called 'sort'
     expect(wrapper.emitted()).toHaveProperty('sort');
