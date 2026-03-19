@@ -87,8 +87,17 @@ function handleToggleFavorite(event: Event, projectId: number) {
                 Claude Sonnet 4.6, 2026-02-20
                 "Edit this th to have a star icon for selecting whether a project is a favorite."
                 -->
-                <td class="px-4 py-4 text-center" @click="handleToggleFavorite($event, project.id)">
-                    <button :title="project.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'">
+                <td class="px-4 py-4 text-center">
+                    <button
+                        type="button"
+                        :title="project.isFavorite ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen'"
+                        :aria-label="
+                            project.isFavorite
+                                ? `Projekt ${project.name} aus Favoriten entfernen`
+                                : `Projekt ${project.name} zu Favoriten hinzufügen`
+                        "
+                        @click="handleToggleFavorite($event, project.id)"
+                    >
                         <Star
                             class="h-5 w-5"
                             :class="

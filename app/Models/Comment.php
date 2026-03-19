@@ -18,6 +18,7 @@ class Comment extends Model
 
     public function measurement(): BelongsTo
     {
+        // Never used, but we might want to use it in the future
         return $this->belongsTo(Measurement::class);
     }
 

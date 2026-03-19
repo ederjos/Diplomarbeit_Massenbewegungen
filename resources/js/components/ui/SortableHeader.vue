@@ -25,18 +25,20 @@ const emit = defineEmits<{
     -->
     <th
         :aria-sort="isActive ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'"
-        class="group cursor-pointer bg-gray-50 px-2 py-2 text-xs font-semibold text-gray-600 uppercase transition-colors select-none hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
+        scope="col"
+        class="bg-gray-50 px-2 py-2 text-xs font-semibold text-gray-600 uppercase"
         :class="styleClass"
-        tabindex="0"
-        @click="emit('sort')"
-        @keydown.enter="emit('sort')"
-        @keydown.space.prevent="emit('sort')"
     >
-        <div class="flex items-center gap-1">
-            {{ label }}
+        <button
+            type="button"
+            class="group flex w-full items-center gap-1 text-left transition-colors select-none hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
+            @click="emit('sort')"
+            :aria-label="`Nach ${label} sortieren`"
+        >
+            <span>{{ label }}</span>
             <ArrowUp v-if="isActive && direction === 'asc'" class="h-4 w-4 text-indigo-600" />
             <ArrowDown v-else-if="isActive && direction === 'desc'" class="h-4 w-4 text-indigo-600" />
             <ArrowUpDown v-else class="h-4 w-4 text-gray-400 opacity-0 transition-opacity group-hover:opacity-100" />
-        </div>
+        </button>
     </th>
 </template>

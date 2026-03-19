@@ -26,11 +26,13 @@ class Measurement extends Model
 
     public function project(): BelongsTo
     {
+        // Never used, but we might want to use it in the future
         return $this->belongsTo(Project::class);
     }
 
     public function measurementValues(): HasMany
     {
+        // Never used, but we might want to use it in the future
         return $this->hasMany(MeasurementValue::class);
     }
 

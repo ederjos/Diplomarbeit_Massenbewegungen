@@ -74,6 +74,7 @@ const rejectRequest = () => {
 
                 <div class="flex gap-2">
                     <button
+                        type="button"
                         :disabled="!selectedRoleId || approveForm.processing"
                         class="inline-flex items-center rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-700 focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
                         @click="approveRequest()"
@@ -81,6 +82,7 @@ const rejectRequest = () => {
                         Genehmigen
                     </button>
                     <button
+                        type="button"
                         :disabled="rejectForm.processing"
                         class="inline-flex items-center rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
                         @click="rejectRequest()"

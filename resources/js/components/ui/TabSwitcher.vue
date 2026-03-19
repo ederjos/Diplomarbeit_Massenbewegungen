@@ -16,10 +16,12 @@ const activeTab = defineModel<'results' | 'basics'>('activeTab');
             ></span>
             <li class="z-30 flex-auto text-center">
                 <button
+                    id="results-tab"
                     class="relative z-20 mb-0 flex w-full cursor-pointer items-center justify-center rounded-md border-0 px-0 py-2 text-sm"
                     :class="activeTab === 'results' ? 'font-semibold text-slate-700' : 'text-slate-600'"
                     role="tab"
                     :aria-selected="activeTab === 'results'"
+                    aria-controls="results-panel"
                     type="button"
                     @click="activeTab = 'results'"
                 >
@@ -28,10 +30,12 @@ const activeTab = defineModel<'results' | 'basics'>('activeTab');
             </li>
             <li class="z-30 flex-auto text-center">
                 <button
+                    id="basics-tab"
                     class="relative z-20 mb-0 flex w-full cursor-pointer items-center justify-center rounded-lg border-0 px-0 py-2 text-sm"
                     :class="activeTab === 'basics' ? 'font-semibold text-slate-700' : 'text-slate-600'"
                     role="tab"
                     :aria-selected="activeTab === 'basics'"
+                    aria-controls="basics-panel"
                     type="button"
                     @click="activeTab = 'basics'"
                 >

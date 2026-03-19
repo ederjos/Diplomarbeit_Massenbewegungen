@@ -229,6 +229,7 @@ function restoreView() {
 
             <div class="flex gap-2 text-sm">
                 <button
+                    type="button"
                     v-for="(label, value) in modeLabels"
                     :key="value"
                     class="rounded px-3 py-1 transition-colors"
@@ -240,16 +241,16 @@ function restoreView() {
 
                 <div class="mx-1 w-px bg-gray-300" />
 
-                <button class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200" @click="setVisibility(true)">
+                <button type="button" @click="setVisibility(true)" class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200">
                     Alle
                 </button>
-                <button class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200" @click="setVisibility(false)">
+                <button type="button" @click="setVisibility(false)" class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200">
                     Keine
                 </button>
 
                 <div class="mx-1 w-px bg-gray-300" />
 
-                <button class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200" @click="restoreView()">
+                <button type="button" @click="restoreView()" class="rounded bg-gray-100 px-3 py-1 hover:bg-gray-200">
                     Zurücksetzen
                 </button>
             </div>

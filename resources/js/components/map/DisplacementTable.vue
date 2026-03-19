@@ -44,19 +44,20 @@ const emit = defineEmits<{
             <tr
                 v-for="p in props.displacementRows"
                 :key="p.pointId"
-                class="cursor-pointer border-b bg-white transition-colors odd:bg-gray-50 hover:bg-gray-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
+                class="border-b bg-white transition-colors odd:bg-gray-50 hover:bg-gray-100"
                 :class="{ 'animate-row-highlight': p.pointId === props.highlightedPointId }"
-                tabindex="0"
-                :aria-label="`Punkt ${p.name} auswählen`"
-                @click="emit('select-point', p.pointId)"
-                @keydown.enter="emit('select-point', p.pointId)"
             >
                 <td class="px-3 py-2 font-medium text-gray-900">
-                    {{ p.name }}
+                    <button
+                        type="button"
+                        class="w-full rounded px-1 py-1 text-left transition-colors hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
+                        :aria-label="`Punkt ${p.name} auswählen`"
+                        @click="emit('select-point', p.pointId)"
+                    >
+                        {{ p.name }}
+                    </button>
                 </td>
-                <td class="px-3 py-2 text-right tabular-nums">
-                    {{ p.distance2dOrProjection.toFixed(1) }}
-                </td>
+                <td class="px-3 py-2 text-right tabular-nums">{{ p.distance2dOrProjection.toFixed(1) }}</td>
                 <td class="px-3 py-2 text-right tabular-nums">
                     {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(1) }}
                 </td>

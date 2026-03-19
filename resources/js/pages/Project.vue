@@ -47,8 +47,10 @@ const pointColors = computed(() => {
             <TabSwitcher v-model:active-tab="activeTab" />
             <div>
                 <ResultsTab
+                    id="results-panel"
+                    role="tabpanel"
+                    aria-labelledby="results-tab"
                     v-show="activeTab === 'results'"
-                    id="results"
                     :project-id="project.id"
                     :points="points"
                     :point-colors="pointColors"
@@ -59,8 +61,10 @@ const pointColors = computed(() => {
                     :chart-displacements="chartDisplacements"
                 />
                 <DetailsTab
+                    id="basics-panel"
+                    role="tabpanel"
+                    aria-labelledby="basics-tab"
                     v-show="activeTab === 'basics'"
-                    id="basics"
                     :project="project"
                     :contact-persons="contactPersons"
                 />

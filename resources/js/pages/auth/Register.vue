@@ -134,6 +134,7 @@ const submit = () => {
                     </Link>
 
                     <button
+                        type="submit"
                         class="ml-4 inline-flex items-center rounded-md bg-gray-800 px-4 py-2 text-xs font-semibold tracking-widest text-white uppercase hover:bg-gray-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:outline-none disabled:opacity-25"
                         :disabled="form.processing"
                     >
