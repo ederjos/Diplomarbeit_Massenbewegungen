@@ -4,5 +4,5 @@ set -e
 # test backend code
 ./vendor/bin/sail composer run test
 
-# test frontend code
-./vendor/bin/sail npm run test
+# test frontend code (make it terminate automatically with -- --run)
+./vendor/bin/sail npm run test -- --run

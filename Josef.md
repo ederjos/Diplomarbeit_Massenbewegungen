@@ -35,4 +35,6 @@ Human academic writing often includes choices and emphasis, like “This was mod
 Stop explaining every entity with equal weight.
 AI text often gives every concept the same amount of attention. A human usually emphasizes the important parts and handles minor parts more briefly.
 
+## Measurement zu Point in Service class
 
+Measurement repräsentiert jedes Datum

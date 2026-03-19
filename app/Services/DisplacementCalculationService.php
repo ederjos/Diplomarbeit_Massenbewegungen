@@ -28,6 +28,7 @@ class DisplacementCalculationService
 
     /**
      * Compute displacements between two specific measurements for all visible points.
+     * Structure: pointId => { distance2d, distance3d, projectedDistance, deltaHeight }
      */
     public function computeForPair(Collection $visiblePoints, int $referenceId, int $comparisonId): array
     {
@@ -38,16 +39,17 @@ class DisplacementCalculationService
         $displacements = [];
 
         foreach ($visiblePoints as $point) {
+            /** @var Collection<int, MeasurementValue> $pointValues */
             $pointValues = $allValues->get($point->id);
-            $refVal = $pointValues?->get($referenceId);
-            $compVal = $pointValues?->get($comparisonId);
-            if (! $refVal || ! $compVal) {
+            $referenceMeasurementValue = $pointValues?->get($referenceId);
+            $comparisonMeasurementValue = $pointValues?->get($comparisonId);
+            if (! $referenceMeasurementValue || ! $comparisonMeasurementValue) {
                 continue;
             }
 
             $displacements[$point->id] = $this->computeDisplacement(
-                $refVal->geom,
-                $compVal->geom,
+                $referenceMeasurementValue->geom,
+                $comparisonMeasurementValue->geom,
                 $projectionsByPoint->get($point->id),
             );
         }
@@ -56,7 +58,7 @@ class DisplacementCalculationService
     }
 
     /**
-     * Compute displacements for every point × every measurement relative to the first measurement (Nullmessung).
+     * Compute displacements for every point × every measurement relative to the first measurement.
      * Structure: pointId => { measurementId => { distance2d, distance3d, projectedDistance, deltaHeight } }
      */
     public function computeAll(Collection $visiblePoints, Collection $measurements): array
@@ -74,16 +76,16 @@ class DisplacementCalculationService
         $displacements = [];
 
         foreach ($visiblePoints as $point) {
+            /** @var Collection<int, MeasurementValue> $pointValues */
             $pointValues = $allValues->get($point->id);
             if (! $pointValues) {
                 continue;
             }
 
-            // Use the first measurement with data as the reference (Nullmessung)
+            // Use the first measurement with data as the reference (ordered by datetime in the query)
             // for every measurement get its pointValues and take the first with existing data
-            $refVal = $measurements->map(fn ($m) => $pointValues->get($m->id))->first(fn ($v) => $v !== null);
-
-            if (! $refVal) {
+            $referenceMeasurementValue = $measurements->map(fn($m) => $pointValues->get($m->id))->first(fn($v) => $v !== null);
+            if (! $referenceMeasurementValue) {
                 continue;
             }
 
@@ -91,14 +93,14 @@ class DisplacementCalculationService
             $pointDisplacements = [];
 
             foreach ($measurements as $measurement) {
-                $compVal = $pointValues->get($measurement->id);
-                if (! $compVal) {
+                $comparisonMeasurementValue = $pointValues->get($measurement->id);
+                if (! $comparisonMeasurementValue) {
                     continue;
                 }
 
                 $pointDisplacements[$measurement->id] = $this->computeDisplacement(
-                    $refVal->geom,
-                    $compVal->geom,
+                    $referenceMeasurementValue->geom,
+                    $comparisonMeasurementValue->geom,
                     $projection,
                 );
             }

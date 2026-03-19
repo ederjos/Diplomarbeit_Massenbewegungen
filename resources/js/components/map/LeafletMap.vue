@@ -124,7 +124,7 @@ function handlePointClick(pointId: number) {
 
 // Plain prop array wouldn't trigger updates -> watch with toRef to make it reactive
 // also watch for changes deep inside the points array, e.g. new measurements being added to an epoch
-watch([toRef(props.points), selectedReference, selectedComparison, vectorScale, isGaitLine], () => drawMap(), {
+watch([toRef(props.points), selectedReference, selectedComparison, vectorScale, isGaitLine], drawMap, {
     deep: true,
 });
 
