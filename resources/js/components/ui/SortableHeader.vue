@@ -32,8 +32,8 @@ const emit = defineEmits<{
         <button
             type="button"
             class="group flex w-full items-center gap-1 text-left transition-colors select-none hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
-            @click="emit('sort')"
             :aria-label="`Nach ${label} sortieren`"
+            @click="emit('sort')"
         >
             <span>{{ label }}</span>
             <ArrowUp v-if="isActive && direction === 'asc'" class="h-4 w-4 text-indigo-600" />
