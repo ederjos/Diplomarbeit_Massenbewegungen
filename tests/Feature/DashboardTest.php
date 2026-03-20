@@ -3,19 +3,21 @@
 use App\Models\User;
 use Tests\TestCase;
 
-test('guests are redirected to the login page', function () {
-    /** @var TestCase $this */
-    $response = $this->get(route('home'));
-    $response->assertRedirect('/login');
-});
+describe('Dashboard', function () {
+    it('redirects guests to the login page', function () {
+        /** @var TestCase $this */
+        $response = $this->get(route('home'));
+        $response->assertRedirect('/login');
+    });
 
-test('authenticated users can visit the dashboard', function () {
-    /** @var TestCase $this */
+    it('allows authenticated users to visit the dashboard', function () {
+        /** @var TestCase $this */
 
-    /** @var User $user */
-    $user = User::factory()->create();
-    $this->actingAs($user);
+        /** @var User $user */
+        $user = User::factory()->create();
+        $this->actingAs($user);
 
-    $response = $this->get(route('home'));
-    $response->assertOk();
+        $response = $this->get(route('home'));
+        $response->assertOk();
+    });
 });

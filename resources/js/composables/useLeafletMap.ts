@@ -24,7 +24,7 @@ import {
 import { DEFAULT_WMS_OPTIONS, WMS_LAYERS } from '@/config/mapLayers';
 
 /**
- * Clause Opus 4.6, 2026-02-14
+ * Claude Opus 4.6, 2026-02-14
  * "[...] Please strcture a possible composable to extract the leaflet logic from the vue component. [...]"
  */
 

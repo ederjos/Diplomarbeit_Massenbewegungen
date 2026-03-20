@@ -9,216 +9,218 @@ use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
-test('project page exposes displacement values for the selected comparison epoch', function () {
-    /** @var TestCase $this */
-    $project = Project::factory()->createOne();
+describe('Project displacement', function () {
+    it('shows displacement values for the selected comparison epoch on the project page', function () {
+        /** @var TestCase $this */
+        $project = Project::factory()->createOne();
 
-    $firstMeasurement = Measurement::factory()->createOne([
-        'project_id' => $project->id,
-        'measurement_datetime' => '2025-01-01 00:00:00',
-    ]);
+        $firstMeasurement = Measurement::factory()->createOne([
+            'project_id' => $project->id,
+            'measurement_datetime' => '2025-01-01 00:00:00',
+        ]);
 
-    $comparisonMeasurement = Measurement::factory()->createOne([
-        'project_id' => $project->id,
-        'measurement_datetime' => '2025-02-01 00:00:00',
-    ]);
+        $comparisonMeasurement = Measurement::factory()->createOne([
+            'project_id' => $project->id,
+            'measurement_datetime' => '2025-02-01 00:00:00',
+        ]);
 
-    $lastMeasurement = Measurement::factory()->createOne([
-        'project_id' => $project->id,
-        'measurement_datetime' => '2025-03-01 00:00:00',
-    ]);
+        $lastMeasurement = Measurement::factory()->createOne([
+            'project_id' => $project->id,
+            'measurement_datetime' => '2025-03-01 00:00:00',
+        ]);
 
-    $project->fill(['reference_measurement_id' => $firstMeasurement->id])->save();
+        $project->fill(['reference_measurement_id' => $firstMeasurement->id])->save();
 
-    $projection = Projection::factory()->createOne([
-        'ax' => 1.0,
-        'ay' => 0.0,
-    ]);
+        $projection = Projection::factory()->createOne([
+            'ax' => 1.0,
+            'ay' => 0.0,
+        ]);
 
-    $point = Point::factory()->createOne([
-        'project_id' => $project->id,
-        'projection_id' => $projection->id,
-        'is_visible' => true,
-    ]);
+        $point = Point::factory()->createOne([
+            'project_id' => $project->id,
+            'projection_id' => $projection->id,
+            'is_visible' => true,
+        ]);
 
-    $referenceCoords = [100.0, 200.0, 300.0];
-    // dX=3, dY=4, dZ=12
-    $comparisonCoords = [103.0, 204.0, 312.0];
-    $lastCoords = [110.0, 200.0, 290.0];
+        $referenceCoords = [100.0, 200.0, 300.0];
+        // dX=3, dY=4, dZ=12
+        $comparisonCoords = [103.0, 204.0, 312.0];
+        $lastCoords = [110.0, 200.0, 290.0];
 
-    // First measurement
-    MeasurementValue::factory()->createOne([
-        'point_id' => $point->id,
-        'measurement_id' => $firstMeasurement->id,
-        'x' => $referenceCoords[0],
-        'y' => $referenceCoords[1],
-        'z' => $referenceCoords[2],
-        'addition_id' => null,
-    ]);
+        // First measurement
+        MeasurementValue::factory()->createOne([
+            'point_id' => $point->id,
+            'measurement_id' => $firstMeasurement->id,
+            'x' => $referenceCoords[0],
+            'y' => $referenceCoords[1],
+            'z' => $referenceCoords[2],
+            'addition_id' => null,
+        ]);
 
-    // Second, comparison measurement
-    MeasurementValue::factory()->createOne([
-        'point_id' => $point->id,
-        'measurement_id' => $comparisonMeasurement->id,
-        'x' => $comparisonCoords[0],
-        'y' => $comparisonCoords[1],
-        'z' => $comparisonCoords[2],
-        'addition_id' => null,
-    ]);
+        // Second, comparison measurement
+        MeasurementValue::factory()->createOne([
+            'point_id' => $point->id,
+            'measurement_id' => $comparisonMeasurement->id,
+            'x' => $comparisonCoords[0],
+            'y' => $comparisonCoords[1],
+            'z' => $comparisonCoords[2],
+            'addition_id' => null,
+        ]);
 
-    // Third, last measurement (should be ignored)
-    MeasurementValue::factory()->createOne([
-        'point_id' => $point->id,
-        'measurement_id' => $lastMeasurement->id,
-        'x' => $lastCoords[0],
-        'y' => $lastCoords[1],
-        'z' => $lastCoords[2],
-        'addition_id' => null,
-    ]);
+        // Third, last measurement (should be ignored)
+        MeasurementValue::factory()->createOne([
+            'point_id' => $point->id,
+            'measurement_id' => $lastMeasurement->id,
+            'x' => $lastCoords[0],
+            'y' => $lastCoords[1],
+            'z' => $lastCoords[2],
+            'addition_id' => null,
+        ]);
 
-    /**
-     * GPT-5.2-Codex, 2026-02-12
-     * "Write this test so that it checks if the displacements were calculated correctly"
-     */
+        /**
+         * GPT-5.2-Codex, 2026-02-12
+         * "Write this test so that it checks if the displacements were calculated correctly"
+         */
 
-    // Calculate expected displacement values
-    $expectedDx = $comparisonCoords[0] - $referenceCoords[0];
-    $expectedDy = $comparisonCoords[1] - $referenceCoords[1];
-    $expectedDz = $comparisonCoords[2] - $referenceCoords[2];
+        // Calculate expected displacement values
+        $expectedDx = $comparisonCoords[0] - $referenceCoords[0];
+        $expectedDy = $comparisonCoords[1] - $referenceCoords[1];
+        $expectedDz = $comparisonCoords[2] - $referenceCoords[2];
 
-    // meters -> centimeters
-    $expected2d = sqrt($expectedDx ** 2 + $expectedDy ** 2) * 100;
-    $expected3d = sqrt($expectedDx ** 2 + $expectedDy ** 2 + $expectedDz ** 2) * 100;
-    // axis is (1,0)
-    $expectedProjection = $expectedDx * 100;
-    $expectedDeltaHeight = $expectedDz * 100;
+        // meters -> centimeters
+        $expected2d = sqrt($expectedDx ** 2 + $expectedDy ** 2) * 100;
+        $expected3d = sqrt($expectedDx ** 2 + $expectedDy ** 2 + $expectedDz ** 2) * 100;
+        // axis is (1,0)
+        $expectedProjection = $expectedDx * 100;
+        $expectedDeltaHeight = $expectedDz * 100;
 
-    /** @var User $user */
-    $user = User::factory()->createOne();
-    $project->users()->attach($user->id);
-    $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id);
+        /** @var User $user */
+        $user = User::factory()->createOne();
+        $project->users()->attach($user->id);
+        $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id);
 
-    $response->assertSuccessful()
-        ->assertInertia(fn (Assert $page) => $page
-            ->component('Project')
-            ->where('comparisonId', $comparisonMeasurement->id)
-            // mapDisplacements: pair-specific displacements for the initial map view
-            ->where("mapDisplacements.{$point->id}.distance2d", fn ($value) => abs($value - $expected2d) < 0.001)
-            ->where("mapDisplacements.{$point->id}.distance3d", fn ($value) => abs($value - $expected3d) < 0.001)
-            ->where("mapDisplacements.{$point->id}.projectedDistance", fn ($value) => abs($value - $expectedProjection) < 0.001)
-            ->where("mapDisplacements.{$point->id}.deltaHeight", fn ($value) => abs($value - $expectedDeltaHeight) < 0.001)
-            // chartDisplacements: all measurements relative to Nullmessung, keyed by point and measurement
-            ->where("chartDisplacements.{$point->id}.{$comparisonMeasurement->id}.distance2d", fn ($value) => abs($value - $expected2d) < 0.001)
+        $response->assertSuccessful()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('Project')
+                ->where('comparisonId', $comparisonMeasurement->id)
+                // mapDisplacements: pair-specific displacements for the initial map view
+                ->where("mapDisplacements.{$point->id}.distance2d", fn ($value) => abs($value - $expected2d) < 0.001)
+                ->where("mapDisplacements.{$point->id}.distance3d", fn ($value) => abs($value - $expected3d) < 0.001)
+                ->where("mapDisplacements.{$point->id}.projectedDistance", fn ($value) => abs($value - $expectedProjection) < 0.001)
+                ->where("mapDisplacements.{$point->id}.deltaHeight", fn ($value) => abs($value - $expectedDeltaHeight) < 0.001)
+                // chartDisplacements: all measurements relative to Nullmessung, keyed by point and measurement
+                ->where("chartDisplacements.{$point->id}.{$comparisonMeasurement->id}.distance2d", fn ($value) => abs($value - $expected2d) < 0.001)
+            );
+    });
+
+    it('skips points without comparison values in displacement calculations', function () {
+        /** @var TestCase $this */
+        $project = Project::factory()->createOne();
+
+        $referenceMeasurement = Measurement::factory()->createOne([
+            'project_id' => $project->id,
+            'measurement_datetime' => '2025-01-01 00:00:00',
+        ]);
+
+        $comparisonMeasurement = Measurement::factory()->createOne([
+            'project_id' => $project->id,
+            'measurement_datetime' => '2026-01-01 00:00:00',
+        ]);
+
+        $project->fill(['reference_measurement_id' => $referenceMeasurement->id])->save();
+
+        $pointWithData = Point::factory()->createOne([
+            'project_id' => $project->id,
+            'is_visible' => true,
+        ]);
+
+        $pointWithoutComparison = Point::factory()->createOne([
+            'project_id' => $project->id,
+            'is_visible' => true,
+        ]);
+
+        $pointWithoutReference = Point::factory()->createOne([
+            'project_id' => $project->id,
+            'is_visible' => true,
+        ]);
+
+        // Point 1 has values for both measurements
+        MeasurementValue::factory()->createOne([
+            'point_id' => $pointWithData->id,
+            'measurement_id' => $referenceMeasurement->id,
+        ]);
+
+        MeasurementValue::factory()->createOne([
+            'point_id' => $pointWithData->id,
+            'measurement_id' => $comparisonMeasurement->id,
+        ]);
+
+        // Point 2 only has the reference value
+        MeasurementValue::factory()->createOne([
+            'point_id' => $pointWithoutComparison->id,
+            'measurement_id' => $referenceMeasurement->id,
+        ]);
+
+        // Point 3 only has the comparison value
+        MeasurementValue::factory()->createOne([
+            'point_id' => $pointWithoutReference->id,
+            'measurement_id' => $comparisonMeasurement->id,
+        ]);
+
+        /** @var User $user */
+        $user = User::factory()->createOne();
+        $project->users()->attach($user, ['is_contact_person' => true]);
+
+        $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id);
+
+        $response->assertInertia(fn (Assert $page) => $page
+            // mapDisplacements: only the point with data for BOTH reference and comparison
+            ->has('mapDisplacements', 1)
+            ->where("mapDisplacements.{$pointWithData->id}.distance2d", fn ($value) => is_numeric($value))
+            ->missing("mapDisplacements.{$pointWithoutComparison->id}")
+            ->missing("mapDisplacements.{$pointWithoutReference->id}")
         );
-});
+    });
 
-test('displacement calculations skip points without comparison values', function () {
-    /** @var TestCase $this */
-    $project = Project::factory()->createOne();
+    it('sets projectedDistance to null for points without a projection', function () {
+        /** @var TestCase $this */
+        $project = Project::factory()->createOne();
 
-    $referenceMeasurement = Measurement::factory()->createOne([
-        'project_id' => $project->id,
-        'measurement_datetime' => '2025-01-01 00:00:00',
-    ]);
+        $referenceMeasurement = Measurement::factory()->createOne([
+            'project_id' => $project->id,
+            'measurement_datetime' => '2025-01-01 00:00:00',
+        ]);
 
-    $comparisonMeasurement = Measurement::factory()->createOne([
-        'project_id' => $project->id,
-        'measurement_datetime' => '2026-01-01 00:00:00',
-    ]);
+        $comparisonMeasurement = Measurement::factory()->createOne([
+            'project_id' => $project->id,
+            'measurement_datetime' => '2026-01-01 00:00:00',
+        ]);
 
-    $project->fill(['reference_measurement_id' => $referenceMeasurement->id])->save();
+        $pointWithoutProjection = Point::factory()->createOne([
+            'project_id' => $project->id,
+            'is_visible' => true,
+            'projection_id' => null,
+        ]);
 
-    $pointWithData = Point::factory()->createOne([
-        'project_id' => $project->id,
-        'is_visible' => true,
-    ]);
+        // Both measurements have values for the point
+        MeasurementValue::factory()->createOne([
+            'point_id' => $pointWithoutProjection->id,
+            'measurement_id' => $referenceMeasurement->id,
+        ]);
 
-    $pointWithoutComparison = Point::factory()->createOne([
-        'project_id' => $project->id,
-        'is_visible' => true,
-    ]);
+        MeasurementValue::factory()->createOne([
+            'point_id' => $pointWithoutProjection->id,
+            'measurement_id' => $comparisonMeasurement->id,
+        ]);
 
-    $pointWithoutReference = Point::factory()->createOne([
-        'project_id' => $project->id,
-        'is_visible' => true,
-    ]);
+        /** @var User $user */
+        $user = User::factory()->createOne();
+        $project->users()->attach($user->id);
 
-    // Point 1 has values for both measurements
-    MeasurementValue::factory()->createOne([
-        'point_id' => $pointWithData->id,
-        'measurement_id' => $referenceMeasurement->id,
-    ]);
+        $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id.'&reference='.$referenceMeasurement->id);
 
-    MeasurementValue::factory()->createOne([
-        'point_id' => $pointWithData->id,
-        'measurement_id' => $comparisonMeasurement->id,
-    ]);
-
-    // Point 2 only has the reference value
-    MeasurementValue::factory()->createOne([
-        'point_id' => $pointWithoutComparison->id,
-        'measurement_id' => $referenceMeasurement->id,
-    ]);
-
-    // Point 3 only has the comparison value
-    MeasurementValue::factory()->createOne([
-        'point_id' => $pointWithoutReference->id,
-        'measurement_id' => $comparisonMeasurement->id,
-    ]);
-
-    /** @var User $user */
-    $user = User::factory()->createOne();
-    $project->users()->attach($user, ['is_contact_person' => true]);
-
-    $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id);
-
-    $response->assertInertia(fn (Assert $page) => $page
-        // mapDisplacements: only the point with data for BOTH reference and comparison
-        ->has('mapDisplacements', 1)
-        ->where("mapDisplacements.{$pointWithData->id}.distance2d", fn ($value) => is_numeric($value))
-        ->missing("mapDisplacements.{$pointWithoutComparison->id}")
-        ->missing("mapDisplacements.{$pointWithoutReference->id}")
-    );
-});
-
-test('points without projection have null projectedDistance', function () {
-    /** @var TestCase $this */
-    $project = Project::factory()->createOne();
-
-    $referenceMeasurement = Measurement::factory()->createOne([
-        'project_id' => $project->id,
-        'measurement_datetime' => '2025-01-01 00:00:00',
-    ]);
-
-    $comparisonMeasurement = Measurement::factory()->createOne([
-        'project_id' => $project->id,
-        'measurement_datetime' => '2026-01-01 00:00:00',
-    ]);
-
-    $pointWithoutProjection = Point::factory()->createOne([
-        'project_id' => $project->id,
-        'is_visible' => true,
-        'projection_id' => null,
-    ]);
-
-    // Both measurements have values for the point
-    MeasurementValue::factory()->createOne([
-        'point_id' => $pointWithoutProjection->id,
-        'measurement_id' => $referenceMeasurement->id,
-    ]);
-
-    MeasurementValue::factory()->createOne([
-        'point_id' => $pointWithoutProjection->id,
-        'measurement_id' => $comparisonMeasurement->id,
-    ]);
-
-    /** @var User $user */
-    $user = User::factory()->createOne();
-    $project->users()->attach($user->id);
-
-    $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id.'&reference='.$referenceMeasurement->id);
-
-    $response->assertInertia(fn (Assert $page) => $page
-        ->where("mapDisplacements.{$pointWithoutProjection->id}.projectedDistance", null)
-    );
+        $response->assertInertia(fn (Assert $page) => $page
+            ->where("mapDisplacements.{$pointWithoutProjection->id}.projectedDistance", null)
+        );
+    });
 });
