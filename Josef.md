@@ -38,3 +38,10 @@ AI text often gives every concept the same amount of attention. A human usually 
 ## Measurement zu Point in Service class
 
 Measurement repräsentiert jedes Datum
+
+## :: vs -> in php
+
+in PHP the :: operator (called the "scope resolution operator") is used to access static methods, static properties, and constants on a class without needing an instance of that class. In contrast, -> is used to access methods and properties on an object instance.
+
+`User::factory()->create();`
+

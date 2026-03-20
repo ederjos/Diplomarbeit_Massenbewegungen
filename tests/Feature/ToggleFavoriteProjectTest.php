@@ -18,7 +18,7 @@ describe('Toggle favorite project', function () {
         // Now mark as favorite
         $this->actingAs($user)->post(route('project.toggleFavorite', $project))
             // Forward to home
-            ->assertRedirect('/');
+            ->assertRedirect(route('home'));
 
         $response = $this->actingAs($user)->get(route('home'));
 
@@ -51,6 +51,6 @@ describe('Toggle favorite project', function () {
         $response = $this->post(route('project.toggleFavorite', $project));
 
         // Forbidden
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('login'));
     });
 });

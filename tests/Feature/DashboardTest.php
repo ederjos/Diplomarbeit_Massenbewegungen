@@ -7,7 +7,7 @@ describe('Dashboard', function () {
     it('redirects guests to the login page', function () {
         /** @var TestCase $this */
         $response = $this->get(route('home'));
-        $response->assertRedirect('/login');
+        $response->assertRedirect(route('login'));
     });
 
     it('allows authenticated users to visit the dashboard', function () {
