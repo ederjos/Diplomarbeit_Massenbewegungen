@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-import type { ChartDisplacements, MapDisplacements, Measurement, Point } from '@/@types/measurement';
+
+import type { ChartDisplacements, MapDisplacements, Measurement, Point } from '@/types/measurement';
+
 import { displacementsForPair, image } from '@/actions/App/Http/Controllers/ProjectController';
 import DisplacementChart from '@/components/chart/DisplacementChart.vue';
 import LeafletMap from '@/components/map/LeafletMap.vue';

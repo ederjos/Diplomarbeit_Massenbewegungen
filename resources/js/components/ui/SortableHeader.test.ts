@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { expect, test } from 'vitest';
+
 import SortableHeader from './SortableHeader.vue';
 
 test('renders the label text', () => {

@@ -1,7 +1,10 @@
+import type { Ref } from 'vue';
+
 import L from 'leaflet';
 import { onUnmounted, ref } from 'vue';
-import type { Ref } from 'vue';
-import type { Point } from '@/@types/measurement';
+
+import type { Point } from '@/types/measurement';
+
 import {
     DEFAULT_MAP_CENTER,
     DEFAULT_ZOOM_LEVEL,
@@ -98,7 +101,7 @@ export function useLeafletMap(
 
         // First measurement value
         const m =
-            point.measurementValues.find((m) => m.measurementId === referenceId.value) || point.measurementValues[0];
+            point.measurementValues.find((m) => m.measurementId === referenceId.value) ?? point.measurementValues[0];
 
         if (m) {
             map.value.setView([m.lat, m.lon], POINT_FOCUS_ZOOM_LEVEL);

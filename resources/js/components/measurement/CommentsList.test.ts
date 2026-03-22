@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils';
 import { expect, test } from 'vitest';
-import type { Measurement } from '@/@types/measurement';
+
+import type { Measurement } from '@/types/measurement';
+
 import CommentsList from './CommentsList.vue';
 
 function makeMeasurementWithoutComments(): Measurement {

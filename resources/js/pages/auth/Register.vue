@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, useForm } from '@inertiajs/vue3';
+
 import { store as register } from '@/actions/App/Http/Controllers/RegistrationRequestController';
 import { create as login } from '@/actions/Laravel/Fortify/Http/Controllers/AuthenticatedSessionController';
 import PasswordInput from '@/components/auth/PasswordInput.vue';

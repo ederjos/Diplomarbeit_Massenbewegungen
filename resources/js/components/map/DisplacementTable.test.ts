@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils';
 import { expect, test } from 'vitest';
-import type { DisplacementRow } from '@/@types/measurement';
+
+import type { DisplacementRow } from '@/types/measurement';
+
 import DisplacementTable from './DisplacementTable.vue';
 
 const rows: DisplacementRow[] = [

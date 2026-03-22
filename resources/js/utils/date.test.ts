@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest';
+
 import { formatDate } from './date';
 
 test('formatDate formats ISO date string as date only', () => {

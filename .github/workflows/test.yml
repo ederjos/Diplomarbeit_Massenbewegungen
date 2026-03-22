@@ -1,4 +1,4 @@
-name: tests
+name: test
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     branches: ['main']
 
 jobs:
-  ci:
+  test:
     runs-on: ubuntu-latest
 
     env:
@@ -58,8 +58,16 @@ jobs:
       - name: Build Assets
         run: npm run build
 
-      - name: Run Pest
+      - id: pest
+        name: Run Pest
         run: composer run test
+        continue-on-error: true
 
-      - name: Run Vitest
+      - id: vitest
+        name: Run Vitest
         run: npm run test
+        continue-on-error: true
+
+      - name: Check test results
+        if: steps.pest.outcome == 'failure' || steps.vitest.outcome == 'failure'
+        run: exit 1

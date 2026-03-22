@@ -1,4 +1,5 @@
 import type { Ref } from 'vue';
+
 import { computed, ref } from 'vue';
 
 /**
@@ -9,7 +10,7 @@ import { computed, ref } from 'vue';
 
 export function useSortableData<T>(
     data: Ref<T[]>,
-    allowUnsort: boolean = true,
+    allowUnsort = true,
     initialColumn?: keyof T | null,
     initialDirection: 'asc' | 'desc' = 'asc',
 ) {

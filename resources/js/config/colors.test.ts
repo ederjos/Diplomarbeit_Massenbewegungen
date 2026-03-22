@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest';
+
 import { colors } from './colors';
 
 test('colors is a non-empty array', () => {

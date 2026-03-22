@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils';
-import { test, expect, vi } from 'vitest';
-import type { ProjectOverview } from '@/@types/project';
+import { expect, test, vi } from 'vitest';
+
+import type { ProjectOverview } from '@/types/project';
+
 import OverviewTable from './OverviewTable.vue';
 
 // mock the Link component as we assume it works correctly and we don't want to test it here

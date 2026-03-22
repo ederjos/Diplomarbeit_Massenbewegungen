@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T">
+<script setup lang="ts" generic="T extends Record<string, any>">
 import SortableHeader from '@/components/ui/SortableHeader.vue';
 
 /**
@@ -6,11 +6,11 @@ import SortableHeader from '@/components/ui/SortableHeader.vue';
  * "What would be the cleanest approach to ensure type safety for the column names?"
  */
 
-type TableLabel<T> = {
+interface TableLabel<T> {
     label: string;
     // null for non-sortable columns
     columnName: keyof T | null;
-};
+}
 
 const props = withDefaults(
     defineProps<{

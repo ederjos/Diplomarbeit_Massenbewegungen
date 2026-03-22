@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { Measurement } from '@/@types/measurement';
+
+import type { Measurement } from '@/types/measurement';
+
 import { formatDate } from '@/utils/date';
 
 const props = defineProps<{

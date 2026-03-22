@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { expect, test } from 'vitest';
+
 import TabSwitcher from './TabSwitcher.vue';
 
 test('renders two buttons with appropriate labels', () => {

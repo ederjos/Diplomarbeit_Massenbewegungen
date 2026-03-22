@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
-import { test, expect } from 'vitest';
+import { expect, test } from 'vitest';
+
 import PasswordInput from './PasswordInput.vue';
 
 test('default input type is password', () => {

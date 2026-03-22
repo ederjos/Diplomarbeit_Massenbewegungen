@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils';
-import { test, expect, vi } from 'vitest';
-import type { ProjectOverview } from '@/@types/project';
+import { expect, test, vi } from 'vitest';
+
+import type { ProjectOverview } from '@/types/project';
+
 import Home from './Home.vue';
 
 vi.mock('@inertiajs/vue3', () => ({

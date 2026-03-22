@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { ProjectDetails } from '@/@types/project';
-import type { User } from '@/@types/user';
+import type { ProjectDetails } from '@/types/project';
+import type { User } from '@/types/user';
+
 import DetailRow from '@/components/ui/DetailRow.vue';
 import { formatDate } from '@/utils/date';
 

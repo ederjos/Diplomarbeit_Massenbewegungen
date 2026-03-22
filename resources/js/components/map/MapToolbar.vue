@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { BaseMeasurement } from '@/@types/measurement';
+
+import type { BaseMeasurement } from '@/types/measurement';
+
 import { MAX_VECTOR_SCALE, MIN_VECTOR_SCALE } from '@/config/mapConstants';
 import { formatDate } from '@/utils/date';
 

@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { expect, test } from 'vitest';
+
 import DetailRow from './DetailRow.vue';
 
 test('renders the label and value text', () => {

@@ -1,40 +1,20 @@
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import prettier from 'eslint-config-prettier/flat';
-import importPlugin from 'eslint-plugin-import';
+import perfectionist from 'eslint-plugin-perfectionist';
 import vue from 'eslint-plugin-vue';
 
 export default defineConfigWithVueTs(
     vue.configs['flat/recommended'],
-    vueTsConfigs.recommended,
+    vueTsConfigs.recommendedTypeChecked,
+    vueTsConfigs.stylisticTypeChecked,
     {
         plugins: {
-            import: importPlugin,
-        },
-        settings: {
-            'import/resolver': {
-                typescript: {
-                    alwaysTryTypes: true,
-                    project: './tsconfig.json',
-                },
-                node: true,
-            },
+            perfectionist,
         },
         rules: {
             '@typescript-eslint/consistent-type-imports': 'error',
-            'import/order': [
-                'error',
-                {
-                    groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-                    alphabetize: {
-                        order: 'asc',
-                        caseInsensitive: true,
-                    },
-                },
-            ],
-            'import/consistent-type-specifier-style': [
-                'error',
-                'prefer-top-level',
-            ],
+            'perfectionist/sort-imports': ['error', { tsconfig: { rootDir: '.' } }],
+            'perfectionist/sort-named-imports': 'error',
         },
     },
     {
@@ -43,8 +23,6 @@ export default defineConfigWithVueTs(
             'node_modules',
             'public/build',
             'bootstrap/ssr',
-            'vite.config.ts',
-            'vitest.config.ts',
             'resources/js/actions/**',
             'resources/js/routes/**',
             'resources/js/wayfinder/**',

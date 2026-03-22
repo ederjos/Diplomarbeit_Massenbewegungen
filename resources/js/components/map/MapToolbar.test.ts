@@ -1,6 +1,8 @@
 import { mount } from '@vue/test-utils';
-import { test, expect } from 'vitest';
-import type { BaseMeasurement } from '@/@types/measurement';
+import { expect, test } from 'vitest';
+
+import type { BaseMeasurement } from '@/types/measurement';
+
 import MapToolbar from './MapToolbar.vue';
 
 const measurements: BaseMeasurement[] = [

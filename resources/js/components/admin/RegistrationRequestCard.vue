@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import type { RegistrationRequest } from '@/@types/registrationRequest';
-import type { Role } from '@/@types/user';
+
+import type { RegistrationRequest } from '@/types/registrationRequest';
+import type { Role } from '@/types/user';
+
 import { approve, reject } from '@/actions/App/Http/Controllers/AdminController';
 import { formatDate } from '@/utils/date';
 

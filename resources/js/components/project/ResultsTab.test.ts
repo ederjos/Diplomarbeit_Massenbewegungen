@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
-import { test, expect, vi } from 'vitest';
+import { expect, test, vi } from 'vitest';
+
 import ResultsTab from './ResultsTab.vue';
 
 vi.mock('@/components/map/LeafletMap.vue', () => ({

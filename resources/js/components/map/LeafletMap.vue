@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
-import type { BaseMeasurement, DisplacementRow, MapDisplacements, Measurement, Point } from '@/@types/measurement';
+
+import type { BaseMeasurement, DisplacementRow, MapDisplacements, Measurement, Point } from '@/types/measurement';
+
 import DisplacementTable from '@/components/map/DisplacementTable.vue';
 import MapToolbar from '@/components/map/MapToolbar.vue';
 import { useLeafletMap } from '@/composables/useLeafletMap';

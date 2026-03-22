@@ -1,7 +1,9 @@
 import { mount } from '@vue/test-utils';
-import { test, expect } from 'vitest';
-import type { ProjectDetails } from '@/@types/project';
-import type { User } from '@/@types/user';
+import { expect, test } from 'vitest';
+
+import type { ProjectDetails } from '@/types/project';
+import type { User } from '@/types/user';
+
 import DetailsTab from './DetailsTab.vue';
 
 const project: ProjectDetails = {

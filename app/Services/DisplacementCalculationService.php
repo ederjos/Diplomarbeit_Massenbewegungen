@@ -84,7 +84,7 @@ class DisplacementCalculationService
 
             // Use the first measurement with data as the reference (ordered by datetime in the query)
             // for every measurement get its pointValues and take the first with existing data
-            $referenceMeasurementValue = $measurements->map(fn($m) => $pointValues->get($m->id))->first(fn($v) => $v !== null);
+            $referenceMeasurementValue = $measurements->map(fn ($m) => $pointValues->get($m->id))->first(fn ($v) => $v !== null);
             if (! $referenceMeasurementValue) {
                 continue;
             }

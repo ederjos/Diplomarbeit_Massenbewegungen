@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+
 import { index as admin } from '@/actions/App/Http/Controllers/AdminController';
 import { index as home } from '@/actions/App/Http/Controllers/ProjectController';
 import { destroy as logout } from '@/actions/Laravel/Fortify/Http/Controllers/AuthenticatedSessionController';

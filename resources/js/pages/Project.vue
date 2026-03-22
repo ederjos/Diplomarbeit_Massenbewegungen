@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import type { ChartDisplacements, MapDisplacements, Measurement, Point } from '@/@types/measurement';
-import type { ProjectDetails } from '@/@types/project';
-import type { User } from '@/@types/user';
+
+import type { ChartDisplacements, MapDisplacements, Measurement, Point } from '@/types/measurement';
+import type { ProjectDetails } from '@/types/project';
+import type { User } from '@/types/user';
+
 import DetailsTab from '@/components/project/DetailsTab.vue';
 import ResultsTab from '@/components/project/ResultsTab.vue';
 import TabSwitcher from '@/components/ui/TabSwitcher.vue';

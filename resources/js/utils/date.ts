@@ -1,6 +1,6 @@
 export function formatDate(
     value?: string | number | Date | null,
-    isDateOnly: boolean = true,
+    isDateOnly = true,
     locale: Intl.LocalesArgument = 'de-AT',
     options: Intl.DateTimeFormatOptions = {},
 ): string {

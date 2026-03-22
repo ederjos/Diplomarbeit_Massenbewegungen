@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { expect, test } from 'vitest';
+
 import AppToggle from './AppToggle.vue';
 
 test('renders the label text', () => {

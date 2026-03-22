@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import type { ProjectOverview } from '@/@types/project';
+
+import type { ProjectOverview } from '@/types/project';
+
 import OverviewTable from '@/components/project/OverviewTable.vue';
 import AppToggle from '@/components/ui/AppToggle.vue';
 import { useSortableData } from '@/composables/useSortableData';

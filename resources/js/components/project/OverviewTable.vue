@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
 import { Star } from 'lucide-vue-next';
-import type { ProjectOverview } from '@/@types/project';
+
+import type { ProjectOverview } from '@/types/project';
+
 // works thanks to laravel wayfinder, no hardcoded URL
 import { show, toggleFavorite } from '@/actions/App/Http/Controllers/ProjectController';
 import AppTableWrapper from '@/components/ui/AppTableWrapper.vue';

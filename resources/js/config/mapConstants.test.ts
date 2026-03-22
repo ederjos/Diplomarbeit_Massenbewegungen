@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest';
+
 import {
     DEFAULT_VECTOR_SCALE,
     DEFAULT_ZOOM_LEVEL,

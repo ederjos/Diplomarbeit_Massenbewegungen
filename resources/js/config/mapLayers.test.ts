@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest';
+
 import { DEFAULT_WMS_OPTIONS, MAP_LAYERS, WMS_LAYERS } from './mapLayers';
 
 test('MAP_LAYERS has valid VOGIS URLs', () => {

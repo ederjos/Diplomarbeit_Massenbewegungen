@@ -32,7 +32,7 @@ function reset() {
 }
 
 onErrorCaptured((err, _, info) => {
-    error.value = err as Error;
+    error.value = err;
     console.error(`Error in ${props.componentName}:`, err, info);
     // Return false to stop error propagation
     return false;

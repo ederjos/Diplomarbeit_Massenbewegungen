@@ -35,24 +35,14 @@ export default defineConfig({
     },
     plugins: [
         laravel({
-            input: ['resources/js/app.ts'],
+            input: 'resources/js/app.ts',
             ssr: 'resources/js/ssr.ts',
             refresh: true,
         }),
         tailwindcss(),
-        wayfinder({
-            formVariants: true,
-        }),
-        vue({
-            template: {
-                transformAssetUrls: {
-                    base: null,
-                    includeAbsolute: false,
-                },
-            },
-        }),
-        webfontDownload(['https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700'], {
-            assetsSubfolder: 'webfonts',
+        vue(),
+        wayfinder(),
+        webfontDownload(['https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700&display=swap'], {
             subsetsAllowed: ['latin'],
         }),
     ],

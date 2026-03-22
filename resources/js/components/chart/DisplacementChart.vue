@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import type { LineSeriesOption } from 'echarts/charts';
-import { LineChart } from 'echarts/charts';
 import type {
     DataZoomComponentOption,
     GridComponentOption,
     LegendComponentOption,
     TooltipComponentOption,
 } from 'echarts/components';
+import type { ComposeOption, EChartsInitOpts } from 'echarts/core';
+
+import { LineChart } from 'echarts/charts';
 import {
     DataZoomComponent,
     GridComponent,
@@ -14,13 +16,14 @@ import {
     ToolboxComponent, // required for restore action
     TooltipComponent,
 } from 'echarts/components';
-import type { ComposeOption, EChartsInitOpts } from 'echarts/core';
 import { use } from 'echarts/core';
 import { SVGRenderer } from 'echarts/renderers';
 import { computed, ref } from 'vue';
 import VChart from 'vue-echarts';
 import 'echarts/i18n/langDE.js';
-import type { BaseMeasurement, BasePoint, ChartDisplacements } from '@/@types/measurement';
+
+import type { BaseMeasurement, BasePoint, ChartDisplacements } from '@/types/measurement';
+
 import { formatDate } from '@/utils/date';
 
 const props = defineProps<{

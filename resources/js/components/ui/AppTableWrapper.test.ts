@@ -1,5 +1,6 @@
 import { mount } from '@vue/test-utils';
-import { test, expect, vi } from 'vitest';
+import { expect, test, vi } from 'vitest';
+
 import AppTableWrapper from './AppTableWrapper.vue';
 
 // SortableHeader emits 'sort' internally, AppTableWrapper translates that to 'sort-by'
@@ -13,16 +14,16 @@ vi.mock('@/components/ui/SortableHeader.vue', () => ({
 
 // Also mock the columns prop type for better type checking
 // AppTableWrapper is generic and doesn't know the actual column names
-type Row = {
+interface Row {
     name: string;
     value: string;
     action: string;
-};
+}
 
-type Column = {
+interface Column {
     label: string;
     columnName: keyof Row | null;
-};
+}
 
 const columns: Column[] = [
     { label: 'Name', columnName: 'name' },
