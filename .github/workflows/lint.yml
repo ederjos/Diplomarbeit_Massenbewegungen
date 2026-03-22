@@ -30,6 +30,9 @@ jobs:
           composer install --no-interaction
           npm ci
 
+      - name: Generate Wayfinder Routes
+        run: php artisan wayfinder:generate
+
       - id: pint
         name: Run Pint
         run: composer run lint:check
