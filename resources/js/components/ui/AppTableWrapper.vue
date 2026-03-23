@@ -64,7 +64,7 @@ const emit = defineEmits<{
             </tr>
         </thead>
         <tbody :class="props.tbodyClass">
-            <slot></slot>
+            <slot />
         </tbody>
     </table>
 </template>

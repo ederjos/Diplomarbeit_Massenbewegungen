@@ -16,7 +16,7 @@ defineProps<{
             <div
                 class="absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform"
                 :class="{ 'translate-x-5': isChecked }"
-            ></div>
+            />
         </div>
         <span class="text-sm text-gray-700">{{ label }}</span>
     </label>

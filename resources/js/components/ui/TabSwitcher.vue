@@ -13,7 +13,7 @@ const activeTab = defineModel<'results' | 'basics'>('activeTab');
                     width: '49%',
                     transform: activeTab === 'results' ? 'translateX(0)' : 'translateX(102%)',
                 }"
-            ></span>
+            />
             <li class="z-30 flex-auto text-center">
                 <button
                     id="results-tab"

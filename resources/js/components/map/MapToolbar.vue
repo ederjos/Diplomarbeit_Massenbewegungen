@@ -91,9 +91,9 @@ const safeVectorScale = computed({
                 class="border-default-medium bg-neutral-secondary-medium h-4 w-4 rounded-xs border"
                 type="checkbox"
             />
-            <label class="text-heading ml-2 block text-sm font-bold select-none" for="checkbox-is-gait-line"
-                >Ganglinie</label
-            >
+            <label class="text-heading ml-2 block text-sm font-bold select-none" for="checkbox-is-gait-line">
+                Ganglinie
+            </label>
         </div>
     </div>
 </template>

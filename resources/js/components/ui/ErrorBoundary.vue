@@ -11,7 +11,7 @@
  * Isolation benefit: If mapping fails, users can still view project details, comments, measurements
  */
 
-import { TriangleAlert } from 'lucide-vue-next';
+import { TriangleAlert } from '@lucide/vue';
 import { onErrorCaptured, ref } from 'vue';
 
 const props = withDefaults(
@@ -51,7 +51,9 @@ onErrorCaptured((err, _, info) => {
                 {{ componentName }} konnte nicht geladen werden. Bitte versuchen Sie es erneut.
             </p>
             <div v-if="showDetails && error.message" class="mb-4 rounded bg-white p-4 text-left">
-                <p class="mb-2 font-mono text-sm text-gray-700">{{ error.message }}</p>
+                <p class="mb-2 font-mono text-sm text-gray-700">
+                    {{ error.message }}
+                </p>
                 <details v-if="error.stack" class="mt-2">
                     <summary class="cursor-pointer text-sm text-gray-600 hover:text-gray-800">Stack Trace</summary>
                     <pre class="mt-2 overflow-auto text-xs text-gray-600">{{ error.stack }}</pre>
@@ -66,5 +68,5 @@ onErrorCaptured((err, _, info) => {
             </button>
         </div>
     </div>
-    <slot v-else></slot>
+    <slot v-else />
 </template>

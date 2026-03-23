@@ -58,7 +58,9 @@ const emit = defineEmits<{
                         {{ p.name }}
                     </button>
                 </td>
-                <td class="px-3 py-2 text-right tabular-nums">{{ p.distance2dOrProjection.toFixed(1) }}</td>
+                <td class="px-3 py-2 text-right tabular-nums">
+                    {{ p.distance2dOrProjection.toFixed(1) }}
+                </td>
                 <td class="px-3 py-2 text-right tabular-nums">
                     {{ p.deltaHeight > 0 ? '+' : '' }}{{ p.deltaHeight.toFixed(1) }}
                 </td>

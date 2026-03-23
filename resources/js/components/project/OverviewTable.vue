@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link, router } from '@inertiajs/vue3';
-import { Star } from 'lucide-vue-next';
+import { Star } from '@lucide/vue';
 
 import type { ProjectOverview } from '@/types/project';
 

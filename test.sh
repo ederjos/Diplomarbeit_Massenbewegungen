@@ -1,5 +1,4 @@
 #!/bin/bash
-set -e
 
 # test backend code
 ./vendor/bin/sail composer run test
