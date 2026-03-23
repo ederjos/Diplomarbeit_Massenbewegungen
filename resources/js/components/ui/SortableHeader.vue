@@ -25,13 +25,12 @@ const emit = defineEmits<{
     -->
     <th
         :aria-sort="isActive ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'"
-        scope="col"
-        class="bg-gray-50 px-2 py-2 text-xs font-semibold text-gray-600 uppercase"
+        class="group cursor-pointer bg-gray-50 px-2 py-2 text-xs font-semibold text-gray-600 uppercase transition-colors select-none hover:bg-gray-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
         :class="styleClass"
     >
         <button
             type="button"
-            class="group flex w-full items-center gap-1 text-left transition-colors select-none hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
+            class="group flex w-full cursor-pointer items-center gap-1 text-left transition-colors select-none hover:text-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-inset"
             :aria-label="`Nach ${label} sortieren`"
             @click="emit('sort')"
         >

@@ -45,3 +45,9 @@ in PHP the :: operator (called the "scope resolution operator") is used to acces
 
 `User::factory()->create();`
 
+## typescript
+
+extends?
+type vs interface?
+![alt text](Josef.md.png)
+
