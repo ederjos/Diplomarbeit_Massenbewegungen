@@ -47,7 +47,7 @@ test('positive deltaHeights get a "+" sign', () => {
     expect(wrapper.text()).toContain('+1.2');
 });
 
-test('emits "select-point" when a point button is clicked', async () => {
+test('emits "select-point" when a point is clicked', async () => {
     const wrapper = mount(DisplacementTable, {
         props: {
             displacementRows: rows,
@@ -55,7 +55,7 @@ test('emits "select-point" when a point button is clicked', async () => {
             sortDirection: 'asc',
         },
     });
-    const pointButtons = wrapper.findAll('tbody>tr td:first-child button');
+    const pointButtons = wrapper.findAll('tbody>tr td:first-child');
     await pointButtons[0].trigger('click');
 
     // Automatically tests for if the emitted event exists and was emitted (at least) once
