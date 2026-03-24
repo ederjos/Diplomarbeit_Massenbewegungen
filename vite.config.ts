@@ -42,7 +42,7 @@ export default defineConfig({
         tailwindcss(),
         vue(),
         wayfinder(),
-        webfontDownload(['https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700&display=swap'], {
+        webfontDownload(['https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700'], {
             subsetsAllowed: ['latin'],
         }),
     ],

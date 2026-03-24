@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="680" height="400" viewBox="0 0 680 400" role="img">
+    <defs>
+        <style>
+            @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700');
+        </style>
+
+        <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M2 1 L8 5 L2 9" fill="none" stroke="context-stroke" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </marker>
+    </defs>
+
+    <rect x="0" y="0" width="680" height="400" rx="20" fill="beige" />
+
+    <polygon points="80,320 200,155 320,320" fill="slategray" fill-opacity="0.6" />
+    <polygon points="360,320 480,155 600,320" fill="slategray" fill-opacity="0.6" />
+    <polygon points="120,330 340,90 560,330" fill="lightsteelblue" />
+    <polygon points="200,330 340,90 480,330" fill="#c5cbe1" />
+    <polygon points="303,130 340,90 377,130 372,145 308,145" fill="snow" fill-opacity="0.9" />
+
+    <g stroke="royalblue" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="248" cy="230" r="5" fill="royalblue" stroke="none" />
+        <line x1="248" y1="230" x2="213" y2="262" marker-end="url(#arrow)" />
+
+        <circle cx="274" cy="255" r="5" fill="royalblue" stroke="none" />
+        <line x1="274" y1="255" x2="240" y2="287" marker-end="url(#arrow)" />
+
+        <circle cx="224" cy="278" r="5" fill="royalblue" stroke="none" />
+        <line x1="224" y1="278" x2="192" y2="306" marker-end="url(#arrow)" />
+    </g>
+
+    <g stroke="seagreen" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="432" cy="230" r="5" fill="seagreen" stroke="none" />
+        <line x1="432" y1="230" x2="467" y2="262" marker-end="url(#arrow)" />
+
+        <circle cx="406" cy="255" r="5" fill="seagreen" stroke="none" />
+        <line x1="406" y1="255" x2="440" y2="287" marker-end="url(#arrow)" />
+
+        <circle cx="456" cy="278" r="5" fill="seagreen" stroke="none" />
+        <line x1="456" y1="278" x2="488" y2="306" marker-end="url(#arrow)" />
+    </g>
+
+    <g stroke="peru" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="340" cy="200" r="5" fill="peru" stroke="none" />
+        <line x1="340" y1="200" x2="340" y2="234" marker-end="url(#arrow)" />
+    </g>
+
+    <text x="340" y="372" fill="midnightblue" font-family="'Instrument Sans', ui-sans-serif, sans-serif" font-size="42" font-weight="700" letter-spacing="6" text-anchor="middle">
+        MASS DEFO
+    </text>
+</svg>
