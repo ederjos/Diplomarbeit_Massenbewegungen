@@ -7,7 +7,6 @@ import type { ProjectOverview } from '@/types/project';
 import OverviewTable from '@/components/project/OverviewTable.vue';
 import AppToggle from '@/components/ui/AppToggle.vue';
 import { useSortableData } from '@/composables/useSortableData';
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 // Get data directly from inertia without an additional API call
 const props = defineProps<{
@@ -40,18 +39,17 @@ const displayedProjects = computed(() => {
 
 <template>
     <Head title="Home" />
-    <AuthenticatedLayout>
-        <h1 class="text-2xl font-bold text-slate-700">Projekte</h1>
-        <div class="flex w-full max-w-4xl flex-col gap-4">
-            <div class="flex items-center justify-end">
-                <AppToggle v-model="showOnlyActive" label="Nur aktive Projekte anzeigen" />
-            </div>
-            <OverviewTable
-                :projects="displayedProjects"
-                :sort-column="sortColumn"
-                :sort-direction="sortDirection"
-                @sort-by="handleSort"
-            />
+
+    <h1 class="text-2xl font-bold text-slate-700">Projekte</h1>
+    <div class="flex w-full max-w-4xl flex-col gap-4">
+        <div class="flex items-center justify-end">
+            <AppToggle v-model="showOnlyActive" label="Nur aktive Projekte anzeigen" />
         </div>
-    </AuthenticatedLayout>
+        <OverviewTable
+            :projects="displayedProjects"
+            :sort-column="sortColumn"
+            :sort-direction="sortDirection"
+            @sort-by="handleSort"
+        />
+    </div>
 </template>

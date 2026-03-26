@@ -10,7 +10,6 @@ import DetailsTab from '@/components/project/DetailsTab.vue';
 import ResultsTab from '@/components/project/ResultsTab.vue';
 import TabSwitcher from '@/components/ui/TabSwitcher.vue';
 import { colors } from '@/config/colors';
-import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const props = defineProps<{
     project: ProjectDetails;
@@ -37,40 +36,39 @@ const pointColors = computed(() => {
 
 <template>
     <Head :title="`${project.name}`" />
-    <AuthenticatedLayout>
-        <!-- Source: https://www.material-tailwind.com/docs/html/tabs -->
-        <!-- Gemini 2.5 Pro, 2026-02-12
-             "Please fix the tab so that when changing the tab selection 'Results' or 'Basics' that the white background 'moves' from one to the other, like in the original."
-         -->
-        <div class="w-full">
-            <!-- Page title -->
-            <h1 class="mb-4 text-center text-2xl font-bold text-slate-700">Projekt {{ project.name }}</h1>
-            <!-- v-model used for 2-way data-binding -->
-            <TabSwitcher v-model:active-tab="activeTab" />
-            <div>
-                <ResultsTab
-                    v-show="activeTab === 'results'"
-                    id="results-panel"
-                    role="tabpanel"
-                    aria-labelledby="results-tab"
-                    :project-id="project.id"
-                    :points="points"
-                    :point-colors="pointColors"
-                    :measurements="measurements"
-                    :initial-reference-id="referenceId"
-                    :initial-comparison-id="comparisonId"
-                    :initial-map-displacements="mapDisplacements"
-                    :chart-displacements="chartDisplacements"
-                />
-                <DetailsTab
-                    v-show="activeTab === 'basics'"
-                    id="basics-panel"
-                    role="tabpanel"
-                    aria-labelledby="basics-tab"
-                    :project="project"
-                    :contact-persons="contactPersons"
-                />
-            </div>
+
+    <!-- Source: https://www.material-tailwind.com/docs/html/tabs -->
+    <!-- Gemini 2.5 Pro, 2026-02-12
+         "Please fix the tab so that when changing the tab selection 'Results' or 'Basics' that the white background 'moves' from one to the other, like in the original."
+    -->
+    <div class="w-full">
+        <!-- Page title -->
+        <h1 class="mb-4 text-center text-2xl font-bold text-slate-700">Projekt {{ project.name }}</h1>
+        <!-- v-model used for 2-way data-binding -->
+        <TabSwitcher v-model:active-tab="activeTab" />
+        <div>
+            <ResultsTab
+                v-show="activeTab === 'results'"
+                id="results-panel"
+                role="tabpanel"
+                aria-labelledby="results-tab"
+                :project-id="project.id"
+                :points="points"
+                :point-colors="pointColors"
+                :measurements="measurements"
+                :initial-reference-id="referenceId"
+                :initial-comparison-id="comparisonId"
+                :initial-map-displacements="mapDisplacements"
+                :chart-displacements="chartDisplacements"
+            />
+            <DetailsTab
+                v-show="activeTab === 'basics'"
+                id="basics-panel"
+                role="tabpanel"
+                aria-labelledby="basics-tab"
+                :project="project"
+                :contact-persons="contactPersons"
+            />
         </div>
-    </AuthenticatedLayout>
+    </div>
 </template>

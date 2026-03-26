@@ -1,26 +1,19 @@
-import type { DefineComponent } from 'vue';
-
 import { createInertiaApp } from '@inertiajs/vue3';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createApp, h } from 'vue';
 
-import '../css/app.css';
+import AuthenticatedLayout from '@/layouts/AuthenticatedLayout.vue';
 
 const appName = import.meta.env.VITE_APP_NAME ?? 'Laravel';
 
 void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
-    resolve: (name) =>
-        resolvePageComponent(`./pages/${name}.vue`, import.meta.glob<DefineComponent>('./pages/**/*.vue')),
-    setup({ el, App, props, plugin }) {
-        createApp({ render: () => h(App, props) })
-            .use(plugin)
-            .mount(el);
+    layout: (name) => {
+        if (name.startsWith('auth/')) {
+            return null;
+        }
+
+        return AuthenticatedLayout;
     },
     progress: {
         color: '#4B5563',
     },
-}).then(() => {
-    // `data-page` is only required for the initial page load and is kinda ugly to keep in the root div
-    document.getElementById('app')?.removeAttribute('data-page');
 });
