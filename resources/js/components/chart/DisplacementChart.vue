@@ -18,7 +18,7 @@ import {
 } from 'echarts/components';
 import { use } from 'echarts/core';
 import { SVGRenderer } from 'echarts/renderers';
-import { computed, ref } from 'vue';
+import { computed, ref, useTemplateRef } from 'vue';
 import VChart from 'vue-echarts';
 import 'echarts/i18n/langDE.js';
 
@@ -40,7 +40,7 @@ type EChartsOption = ComposeOption<
     LegendComponentOption | GridComponentOption | DataZoomComponentOption | TooltipComponentOption | LineSeriesOption
 >;
 
-const chartRef = ref<InstanceType<typeof VChart> | null>(null);
+const chartRef = useTemplateRef('displacement-chart');
 
 const initOptions: EChartsInitOpts = {
     renderer: 'svg',
@@ -268,7 +268,7 @@ function restoreView() {
         </div>
 
         <div class="h-full min-h-0 w-full flex-1">
-            <VChart ref="chartRef" :init-options="initOptions" :option="chartOption" autoresize />
+            <VChart ref="displacement-chart" :init-options="initOptions" :option="chartOption" autoresize />
         </div>
     </div>
 </template>
