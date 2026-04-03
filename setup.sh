@@ -50,7 +50,7 @@ docker compose run --rm laravel.test bash -c "
     composer install &&
     php artisan key:generate &&
     npm install &&
-    npm run build &&
+    npm run build:ssr &&
     php artisan migrate:fresh --force --seed
 "
 

@@ -43,8 +43,8 @@ type EChartsOption = ComposeOption<
 const chartRef = useTemplateRef('displacement-chart');
 
 const initOptions: EChartsInitOpts = {
-    renderer: 'svg',
     locale: 'DE',
+    renderer: 'svg',
 };
 
 type Mode = 'total' | 'horizontal' | 'vertical';
@@ -117,6 +117,12 @@ const chartOption = computed<EChartsOption>(() => {
         };
     });
 
+    // the default dataZoom background is confusing but can't be disabled, so making it transparent is the next best option
+    const disabledDataBackgroud = {
+        lineStyle: { opacity: 0 },
+        areaStyle: { opacity: 0 },
+    };
+
     return {
         legend: {
             type: 'scroll',
@@ -165,6 +171,8 @@ const chartOption = computed<EChartsOption>(() => {
             },
             {
                 type: 'slider',
+                dataBackground: disabledDataBackgroud,
+                selectedDataBackground: disabledDataBackgroud,
                 xAxisIndex: 0,
                 bottom: 40,
                 labelFormatter: (value) => formatDate(value, true, 'de-AT', { year: 'numeric', month: 'short' }),

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRegistrationRequest;
 use App\Models\RegistrationRequest;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,7 +20,7 @@ class RegistrationRequestController extends Controller
         RegistrationRequest::create([
             'name' => $request->validated('name'),
             'email' => $request->validated('email'),
-            'password' => Hash::make($request->validated('password')),
+            'password' => $request->validated('password'), // Hashing is done by Eloquent
             'note' => $request->validated('note'),
         ]);
 

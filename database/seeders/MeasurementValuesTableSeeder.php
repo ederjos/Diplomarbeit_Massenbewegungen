@@ -7,7 +7,6 @@ use App\Models\MeasurementValue;
 use App\Models\Point;
 use App\Models\Project;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\File;
 
 class MeasurementValuesTableSeeder extends Seeder
 {
@@ -16,39 +15,17 @@ class MeasurementValuesTableSeeder extends Seeder
      */
     public function run(): void
     {
-        $files = File::files(database_path('seeders/csv'));
-
-        $files = array_filter($files, fn ($file) => $file->getFilename() !== 'Zeitpunkte.csv');
-
-        // NM.csv is the base measurement and therefore should be processed first
-        usort($files, function ($a, $b) {
-            $aName = $a->getFilename();
-            $bName = $b->getFilename();
-
-            if ($aName === 'NM.csv') {
-                return -1;
-            }
-            if ($bName === 'NM.csv') {
-                return 1;
-            }
-
-            return strnatcasecmp($aName, $bName);
-        });
-
-        // should already exist
         $projectId = 1;
+        $measurements = Measurement::where('project_id', $projectId)->orderBy('measurement_datetime')->pluck('id', 'name')->toArray();
         $points = Point::where('project_id', $projectId)->pluck('id', 'name')->toArray();
         $measurementValues = [];
 
-        foreach ($files as $file) {
-            $measurementName = $file->getFilenameWithoutExtension();
-            $measurement = Measurement::where('name', $measurementName)->first();
+        foreach ($measurements as $measurementName => $measurementId) {
+            $lines = file(database_path("seeders/csv/{$measurementName}.csv"), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-            if (! $measurement) {
+            if (! $lines) {
                 continue;
             }
-
-            $lines = file($file->getPathname(), FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
             foreach ($lines as $line) {
                 $data = str_getcsv($line, ',');
@@ -80,12 +57,12 @@ class MeasurementValuesTableSeeder extends Seeder
                 }
 
                 $measurementValues[] = [
-                    'point_id' => $pointId,
-                    'measurement_id' => $measurement->id,
                     'x' => $x,
                     'y' => $y,
                     'z' => $z,
                     'geom' => MeasurementValue::computeGeom($x, $y, $z),
+                    'point_id' => $pointId,
+                    'measurement_id' => $measurementId,
                 ];
             }
         }
@@ -96,13 +73,11 @@ class MeasurementValuesTableSeeder extends Seeder
         }
 
         // Set the first measurement (NM) as the reference epoch for the project
-        $firstMeasurement = Measurement::where('project_id', $projectId)
-            ->orderBy('measurement_datetime')
-            ->first();
+        $firstMeasurementId = $measurements['NM'];
 
-        if ($firstMeasurement) {
+        if ($firstMeasurementId) {
             Project::where('id', $projectId)->update([
-                'reference_measurement_id' => $firstMeasurement->id,
+                'reference_measurement_id' => $firstMeasurementId,
             ]);
         }
     }
