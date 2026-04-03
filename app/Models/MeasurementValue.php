@@ -66,7 +66,7 @@ class MeasurementValue extends Model
         });
     }
 
-    public static function computeGeom(?float $x = null, ?float $y = null, ?float $z = null, ?Addition $addition = null): MagellanPoint
+    public static function computeGeom(float $x, float $y, float $z, ?Addition $addition = null): MagellanPoint
     {
         $geomX = $x + ($addition?->dx ?? 0);
         $geomY = $y + ($addition?->dy ?? 0);
