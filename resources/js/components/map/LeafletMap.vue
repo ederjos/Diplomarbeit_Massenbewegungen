@@ -117,7 +117,7 @@ function handlePointClick(pointId: number) {
     selectedPointId.value = pointId;
 
     // Matches CSS animation (1s + 100ms buffer)
-    highlightTimeout = window.setTimeout(() => {
+    highlightTimeout = setTimeout(() => {
         // Only clear if the timeout is still the latest
         selectedPointId.value = null;
         highlightTimeout = null;

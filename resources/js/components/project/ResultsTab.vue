@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useHttp } from '@inertiajs/vue3';
 import { ref, watch } from 'vue';
 
 import type { ChartDisplacements, MapDisplacements, Measurement, Point } from '@/types/measurement';
@@ -24,7 +25,7 @@ const selectedReference = ref<number | null>(props.initialReferenceId);
 const selectedComparison = ref<number | null>(props.initialComparisonId);
 const mapDisplacements = ref<MapDisplacements>(props.initialMapDisplacements);
 
-let fetchController: AbortController | null = null;
+const displacementsHttp = useHttp<Record<string, never>, MapDisplacements>({});
 
 /**
  * Claude Sonnet 4.6, 2026-02-28
@@ -34,45 +35,33 @@ let fetchController: AbortController | null = null;
 // When the selected epochs change, fetch new displacements and update the URL
 watch([selectedReference, selectedComparison], async ([refVal, compVal]) => {
     // Update URL query params for shareability (without navigation)
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
 
-    if (refVal != null) {
+    if (refVal !== null) {
         params.set('reference', String(refVal));
     } else {
         params.delete('reference');
     }
 
-    if (compVal != null) {
+    if (compVal !== null) {
         params.set('comparison', String(compVal));
     } else {
         params.delete('comparison');
     }
 
-    history.replaceState(null, '', `${window.location.pathname}?${params}`);
+    history.replaceState(history.state, '', `${location.pathname}?${params}`);
 
     // Fetch new displacements from the API
-    if (refVal != null && compVal != null) {
-        fetchController?.abort();
-        fetchController = new AbortController();
+    if (refVal !== null && compVal !== null) {
+        displacementsHttp.cancel();
 
         const url = displacementsForPair.url(props.projectId, {
             query: { reference: refVal, comparison: compVal },
         });
 
         try {
-            const response = await fetch(url, { signal: fetchController.signal });
-
-            if (!response.ok) {
-                return;
-            }
-
-            mapDisplacements.value = await response.json();
+            mapDisplacements.value = await displacementsHttp.get(url);
         } catch (error) {
-            // Ignore abort errors (expected when a newer request supersedes)
-            if (error instanceof DOMException && error.name === 'AbortError') {
-                return;
-            }
-
             console.error('Failed to fetch map displacements:', error);
         }
     }
