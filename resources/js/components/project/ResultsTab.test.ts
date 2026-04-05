@@ -1,10 +1,17 @@
-import { mount } from '@vue/test-utils';
+import { flushPromises, mount } from '@vue/test-utils';
 import { expect, test, vi } from 'vitest';
 
 import ResultsTab from './ResultsTab.vue';
 
 vi.mock('@/components/map/LeafletMap.vue', () => ({
-    default: { template: '<div class="leafletMapMock"></div>' },
+    // default: { template: '<div class="leafletMapMock"></div>' },
+    // TEMP: Leaflet SSR fix
+    __esModule: true,
+    __isTeleport: false,
+    default: {
+        name: 'LeafletMapMock',
+        template: '<div class="leafletMapMock"></div>',
+    },
 }));
 
 vi.mock('@/components/chart/DisplacementChart.vue', () => ({
@@ -32,16 +39,20 @@ const defaultProps = {
     chartDisplacements: {},
 };
 
-test('all three mocked sections are rendered', () => {
+test('all three mocked sections are rendered', async () => {
     const wrapper = mount(ResultsTab, {
         props: defaultProps,
     });
+
+    // TEMP: Leaflet SSR fix
+    await flushPromises();
+
     expect(wrapper.find('.leafletMapMock').exists()).toBe(true);
     expect(wrapper.find('.displacementChartMock').exists()).toBe(true);
     expect(wrapper.find('.commentsListMock').exists()).toBe(true);
 });
 
-test('renders without errors when no measurements are provided', () => {
+test('renders without errors when no measurements are provided', async () => {
     const wrapper = mount(ResultsTab, {
         props: {
             ...defaultProps,
@@ -49,6 +60,10 @@ test('renders without errors when no measurements are provided', () => {
             initialComparisonId: null,
         },
     });
+
+    // TEMP: Leaflet SSR fix
+    await flushPromises();
+
     expect(wrapper.find('.leafletMapMock').exists()).toBe(true);
     expect(wrapper.find('.displacementChartMock').exists()).toBe(true);
     expect(wrapper.find('.commentsListMock').exists()).toBe(true);

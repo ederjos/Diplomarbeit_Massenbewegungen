@@ -1,14 +1,23 @@
 <script setup lang="ts">
 import { useHttp } from '@inertiajs/vue3';
-import { ref, watch } from 'vue';
+import { defineAsyncComponent, onMounted, ref, watch } from 'vue';
 
 import type { ChartDisplacements, MapDisplacements, Measurement, Point } from '@/types/measurement';
 
 import { displacementsForPair, image } from '@/actions/App/Http/Controllers/ProjectController';
 import DisplacementChart from '@/components/chart/DisplacementChart.vue';
-import LeafletMap from '@/components/map/LeafletMap.vue';
 import CommentsList from '@/components/measurement/CommentsList.vue';
 import ErrorBoundary from '@/components/ui/ErrorBoundary.vue';
+
+// === TEMP: Leaflet SSR fix ===
+const LeafletMap = defineAsyncComponent(() => import('@/components/map/LeafletMap.vue'));
+
+const isClient = ref(false);
+
+onMounted(() => {
+    isClient.value = true;
+});
+// === END TEMP ===
 
 const props = defineProps<{
     projectId: number;
@@ -73,6 +82,7 @@ watch([selectedReference, selectedComparison], async ([refVal, compVal]) => {
         <section>
             <ErrorBoundary component-name="Karte">
                 <LeafletMap
+                    v-if="isClient"
                     v-model:reference-id="selectedReference"
                     v-model:comparison-id="selectedComparison"
                     :points="points"

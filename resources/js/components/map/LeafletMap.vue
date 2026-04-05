@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, toRef, watch } from 'vue';
+import { computed, onMounted, onUnmounted, ref, toRef, useTemplateRef, watch } from 'vue';
 
 import type { BaseMeasurement, DisplacementRow, MapDisplacements, Measurement, Point } from '@/types/measurement';
 
@@ -31,7 +31,7 @@ const selectedReference = defineModel<number | null>('referenceId', { default: n
 // Selected comparison measurement ID
 const selectedComparison = defineModel<number | null>('comparisonId', { default: null });
 
-const mapContainer = ref<HTMLDivElement | null>(null);
+const mapContainer = useTemplateRef('map-container');
 
 const vectorScale = ref<number>(DEFAULT_VECTOR_SCALE);
 const isGaitLine = ref<boolean>(false);
@@ -172,7 +172,7 @@ onUnmounted(() => {
 
         <!-- The map is always 85% high, no matter the table size -->
         <div class="flex h-[85vh] overflow-hidden">
-            <div ref="mapContainer" class="relative z-0 h-full flex-1" />
+            <div ref="map-container" class="relative z-0 h-full flex-1" />
 
             <!-- Table is only shown if there is a selected comparison epoch -->
             <DisplacementTable
