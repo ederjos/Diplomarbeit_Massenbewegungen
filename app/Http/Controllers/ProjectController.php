@@ -34,8 +34,8 @@ class ProjectController extends Controller
 
         $projects = $user->projects()
             // Only select necessary columns
-            ->select(['projects.id', 'projects.name', 'projects.is_active', 'projects.period'])
-            ->withLastAndNextMeasurementDate()
+            ->select(['projects.id', 'projects.name', 'projects.is_active', 'projects.measurement_interval'])
+            ->withLastMeasurementDate()
             ->get();
 
         return Inertia::render('Home', [

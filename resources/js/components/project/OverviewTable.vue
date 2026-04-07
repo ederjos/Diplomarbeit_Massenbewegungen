@@ -52,7 +52,6 @@ function handleToggleFavorite(event: Event, projectId: number) {
             { label: 'ID', columnName: 'id' },
             { label: 'Name', columnName: 'name' },
             { label: 'Letzte Messung', columnName: 'lastMeasurement' },
-            { label: 'Nächste Messung', columnName: 'nextMeasurement' },
             { label: 'Favorit', columnName: null },
         ]"
         :sort-column="sortColumn"
@@ -81,9 +80,6 @@ function handleToggleFavorite(event: Event, projectId: number) {
                 </td>
                 <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
                     {{ formatDate(project.lastMeasurement) }}
-                </td>
-                <td class="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                    {{ project.isActive ? formatDate(project.nextMeasurement) : '-' }}
                 </td>
                 <!--
                 Claude Sonnet 4.6, 2026-02-20

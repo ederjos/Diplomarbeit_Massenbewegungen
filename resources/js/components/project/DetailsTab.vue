@@ -25,7 +25,7 @@ defineProps<{
                     <DetailRow label="Letzte Geschäftszahl" :value="project.lastFileNumber ?? '—'" />
                     <DetailRow label="Auftraggeber" :value="project.client ?? '—'" />
                     <DetailRow label="Sachbearbeiter" :value="project.clerk ?? '—'" />
-                    <DetailRow label="Intervall" :value="project.period ?? '—'" />
+                    <DetailRow label="Intervall" :value="project.measurementInterval ?? '—'" />
                     <DetailRow label="Typ" :value="project.type ?? '—'" />
                     <DetailRow label="Größenordnung Bewegung" :value="project.movementMagnitude ?? '—'" />
                     <DetailRow label="Status" :value="project.isActive ? 'Aktiv' : 'Inaktiv'" />

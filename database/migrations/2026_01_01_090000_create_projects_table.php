@@ -17,7 +17,7 @@ return new class extends Migration
             $table->boolean('is_active');
             $table->text('comment')->default('');
             $table->integer('last_file_number');
-            $table->rawColumn('period', 'INTERVAL default \'6 months\'');
+            $table->string('measurement_interval')->default('');
             $table->string('movement_magnitude')->default('');
             $table->binary('image')->nullable();
             $table->string('image_mime_type', 50)->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('type');
             $table->string('municipality');
             // FK constraint added after measurements table is created
-            $table->unsignedBigInteger('reference_measurement_id')->nullable();
+            $table->foreignId('reference_measurement_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

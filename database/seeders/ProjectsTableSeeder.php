@@ -18,7 +18,7 @@ class ProjectsTableSeeder extends Seeder
             'is_active' => true,
             'comment' => 'Dies ist das Testprojekt für die Entwicklung.',
             'last_file_number' => 7273,
-            'period' => '2 months 14 days',
+            'measurement_interval' => 'Alle 6 Monate',
             'movement_magnitude' => '3 cm/Jahr in den letzten zwei Jahren',
             /**
              * Claude 4.6 Sonnet, 2026-03-03

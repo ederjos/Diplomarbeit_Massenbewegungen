@@ -24,7 +24,6 @@ const projects: ProjectOverview[] = [
         name: 'Project 1',
         isActive: true,
         lastMeasurement: '2026-01-01',
-        nextMeasurement: '2026-02-01',
         isFavorite: false,
     },
     {
@@ -32,7 +31,6 @@ const projects: ProjectOverview[] = [
         name: 'Project 2',
         isActive: false,
         lastMeasurement: '2025-01-01',
-        nextMeasurement: null,
         isFavorite: true,
     },
 ];
@@ -46,17 +44,6 @@ test('all project names are rendered', () => {
     });
     expect(wrapper.text()).toContain('Project 1');
     expect(wrapper.text()).toContain('Project 2');
-});
-
-test('shows "-" for nextMeasurement of inactive projects', () => {
-    const wrapper = mount(OverviewTable, {
-        props: {
-            projects,
-            sortColumn: null,
-        },
-    });
-    const rows = wrapper.findAll('tbody tr');
-    expect(rows[1].text()).toContain('-');
 });
 
 test('emits "sort-by" with correct column when header is clicked', async () => {

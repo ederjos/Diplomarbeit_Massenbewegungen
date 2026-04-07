@@ -12,7 +12,7 @@ const project: ProjectDetails = {
     isActive: true,
     comment: 'This is a test project.',
     lastFileNumber: 42,
-    period: '2 mons',
+    measurementInterval: 'every 2 mons',
     client: 'Test Client',
     clerk: 'Test Clerk',
     municipality: 'Bregenz',
@@ -42,8 +42,8 @@ test('key project fields are rendered', () => {
     expect(wrapper.text()).toContain('This is a test project.');
     // Last file number
     expect(wrapper.text()).toContain('42');
-    // Period
-    expect(wrapper.text()).toContain('2 mons');
+    // Measurement interval
+    expect(wrapper.text()).toContain('every 2 mons');
     // Client
     expect(wrapper.text()).toContain('Test Client');
     // Clerk

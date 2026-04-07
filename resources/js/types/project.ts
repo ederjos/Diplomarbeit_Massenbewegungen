@@ -6,19 +6,18 @@ interface ProjectBase {
 
 export interface ProjectOverview extends ProjectBase {
     lastMeasurement: string | null;
-    nextMeasurement: string | null;
     isFavorite: boolean;
 }
 
 export interface ProjectDetails extends ProjectBase {
     comment: string;
     lastFileNumber: number;
-    period: string;
+    measurementInterval: string | null;
+    movementMagnitude: string | null;
     client: string;
     clerk: string;
     municipality: string;
     type: string;
-    movementMagnitude: string | null;
     firstMeasurement: string | null;
     lastMeasurement: string | null;
 }

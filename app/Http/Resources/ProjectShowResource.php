@@ -20,7 +20,7 @@ class ProjectShowResource extends JsonResource
             'comment' => $this->comment,
             'lastFileNumber' => $this->last_file_number,
             'isActive' => $this->is_active,
-            'period' => $this->period,
+            'measurementInterval' => $this->measurement_interval,
             'client' => $this->client,
             'clerk' => $this->clerk,
             'municipality' => $this->municipality,

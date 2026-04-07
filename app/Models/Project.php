@@ -21,7 +21,7 @@ class Project extends Model
         'is_active',
         'comment',
         'last_file_number',
-        'period',
+        'measurement_interval',
         'movement_magnitude',
         'image',
         'image_mime_type',
@@ -40,16 +40,11 @@ class Project extends Model
         ];
     }
 
-    public function scopeWithLastAndNextMeasurementDate(Builder $query): void
+    public function scopeWithLastMeasurementDate(Builder $query): void
     {
         // Can be queried in the Controller
-        // Using raw sql allows us to calculate the 'next_measurement' date directly on the database part.
         $query->addSelect([
             'last_measurement' => Measurement::select('measurement_datetime')
-                ->whereColumn('project_id', 'projects.id')
-                ->latest('measurement_datetime')
-                ->limit(1),
-            'next_measurement' => Measurement::selectRaw('measurement_datetime + projects.period')
                 ->whereColumn('project_id', 'projects.id')
                 ->latest('measurement_datetime')
                 ->limit(1),

@@ -21,7 +21,6 @@ class ProjectResource extends JsonResource
             'name' => $this->name,
             'isActive' => (bool) $this->is_active,
             'lastMeasurement' => $this->last_measurement,
-            'nextMeasurement' => $this->is_active ? $this->next_measurement : null,
             // check if the project id is in the list of favorite projects
             'isFavorite' => (bool) $this->pivot->is_favorite,
         ];

@@ -36,7 +36,6 @@ const projects: ProjectOverview[] = [
         name: 'Project 1',
         isActive: true,
         lastMeasurement: '2025-01-01',
-        nextMeasurement: '2025-02-01',
         isFavorite: false,
     },
     {
@@ -44,7 +43,6 @@ const projects: ProjectOverview[] = [
         name: 'Project 2',
         isActive: false,
         lastMeasurement: '2026-01-01',
-        nextMeasurement: null,
         isFavorite: true,
     },
 ];
