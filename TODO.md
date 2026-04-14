@@ -2,26 +2,26 @@
 
 ## Technical Debt
 
-* **Bezugsepoche GUI**: Admin/Editor soll Bezugsepoche pro Projekt setzen können (Settings-Seite)
-* **Punktesichtbarkeit**: Einzelne Messpunkte ein-/ausblenden (für Admin)
-* **Transformationen pro Punkt**: GUI zum Festlegen ob Addition, Projektion oder beides pro Punkt
-* **CSV-Import im Web-Interface**: Import von Messdaten
+- **Bezugsepoche GUI**: Admin/Editor soll Bezugsepoche pro Projekt setzen können (Settings-Seite)
+- **Punktesichtbarkeit**: Einzelne Messpunkte ein-/ausblenden (für Admin)
+- **Transformationen pro Punkt**: GUI zum Festlegen ob Addition, Projektion oder beides pro Punkt
+- **CSV-Import im Web-Interface**: Import von Messdaten
 
-* **Kommentare** hinzufügen, bearbeiten
+- **Kommentare** hinzufügen, bearbeiten
 
-##  Refactor
+## Refactor
 
-* phpDocumentor
+- phpDocumentor
 
-* change db password
+- change db password
 
-* Harden Models
+- Harden Models
 
-* Return types, docstrings?
+- Return types, docstrings?
 
-* test coverage?
+- test coverage?
 
 ## notes
 
-* import L from leaflet -> bad (tree shaking)
-* leaflet latest release very old
+- import L from leaflet -> bad (tree shaking)
+- leaflet latest release very old

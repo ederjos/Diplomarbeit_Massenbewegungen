@@ -13,11 +13,12 @@ const project: ProjectDetails = {
     comment: 'This is a test project.',
     lastFileNumber: 42,
     measurementInterval: 'every 2 mons',
+    movementMagnitude: '5cm/per year over the last two years',
     client: 'Test Client',
     clerk: 'Test Clerk',
     municipality: 'Bregenz',
     type: 'Test Type',
-    movementMagnitude: '5cm/per year over the last two years',
+    referenceMeasurementId: null,
     firstMeasurement: '2025-01-01',
     lastMeasurement: '2026-01-01',
 };

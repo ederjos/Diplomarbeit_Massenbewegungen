@@ -17,21 +17,21 @@
     "require": {
         "php": "^8.5",
         "clickbar/laravel-magellan": "^2.1.0",
-        "inertiajs/inertia-laravel": "^3.0.1",
+        "inertiajs/inertia-laravel": "^3.0.6",
         "laravel/fortify": "^1.36.2",
-        "laravel/framework": "^13.3.0",
+        "laravel/framework": "^13.4.0",
         "laravel/tinker": "^3.0.0",
-        "laravel/wayfinder": "^0.1.15"
+        "laravel/wayfinder": "^0.1.16"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.1",
-        "laravel/boost": "^2.4.1",
+        "laravel/boost": "^2.4.3",
         "laravel/pail": "^1.2.6",
         "laravel/pint": "^1.29.0",
         "laravel/sail": "^1.56.0",
         "mockery/mockery": "^1.6.12",
-        "nunomaduro/collision": "^8.9.2",
-        "pestphp/pest": "^4.4.5",
+        "nunomaduro/collision": "^8.9.3",
+        "pestphp/pest": "^4.5.0",
         "pestphp/pest-plugin-laravel": "^4.1.0"
     },
     "autoload": {
