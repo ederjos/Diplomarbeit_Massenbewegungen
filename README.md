@@ -1,46 +1,87 @@
 # Diplomarbeit_Massenbewegungen
-Diplomarbeit als Web-Plattform zur Visualisierung von Massenbewegungen
+
+A web plattform for visualizing mass movements. Built as a diploma thesis project in cooperation with Vorarlberg's Survey State Office (LVG), it provides survey engineers and geologists with tools to import geodetic measurements, visualize point displacements on interactive maps, and track movement over time.
+
+## Features
+
+* **Interactive displacement map** with Leaflet.js: view scaled displacement vectors per measurement point or gait lines
+* **Displacement charts** with ECharts: show movement history across all measurement epochs
+* **Project management**: organize project monitoring sites with metadata, contact persons, and measurement intervals
+* **Role-based access control**: admin, expert, and guest roles with configurable permissions
+* **Registration approval workflow**: users request access, admins approve with a role assignment
+* **PostGIS-backed spatial data**: coordinate storage and transformation (MGI/Austria GK West <-> WGS84)
+* **Comment system**: add comments and information to individual measurement epochs
+
+## Tech Stack
+
+| Layer            | Technology                                    |
+|------------------|-----------------------------------------------|
+| Backend          | Laravel 13, PHP 8.5, PostgreSQL + PostGIS     |
+| Frontend         | Vue 3, Inertia.js v3, Tailwind CSS v4         |
+| Maps             | Leaflet.js with VOGIS WMS layers              |
+| Charts           | Apache ECharts via vue-echarts                |
+| Testing          | Pest 4 (PHP), Vitest (TypeScript)             |
+| Dev Environment  | Laravel Sail (Docker)                         |
+
+## Requirements
+
+* Docker
+* Linux or WSL
 
 ## Installation
 
-Auf Linux or via WSL:
-1. Repo clonen `git clone https://github.com/ederjos/Diplomarbeit_Massenbewegungen.git`.
-2. In das neue Verzeichnis wechseln `cd Diplomarbeit_Massenbewegungen`.
-3. Docker starten.
-4. Bash-Skript `setup.sh` ausführen. Dies kann einige Zeit in Anspruch nehmen.
+using Linux or WSL:
+```bash
+git clone https://github.com/ederjos/Diplomarbeit_Massenbewegungen.git
+cd Diplomarbeit_Massenbewegungen
+./setup.sh
+```
 
-Zum Starten: `./start.sh` ausführen  
-Zum Stoppen: `./start.sh` stoppen sowie `./stop.sh` ausführen
+The setup script will build the Docker containers, install dependencies, generate an application key, run migrations, and seed the database. This may take a few minutes on the first run.
 
-## Nach dem Pullen
+## Usage
 
-Manchmal wird bei Commits die Datenbank bearbeitet. Danach einfach diesen Befehl ausführen:  
-`./vendor/bin/sail artisan migrate:fresh --seed`
+The application will be available at http://localhost.
 
-## TBD/TODO
+Default admin credentials after seeding:
 
-### Technical Debt
+* Email: `josef.eder@student.htl-rankweil.at`
+* Password: `secret`
 
-* **Bezugsepoche GUI**: Admin/Editor soll Bezugsepoche pro Projekt setzen können (Settings-Seite)
-* **Punktesichtbarkeit**: Einzelne Messpunkte ein-/ausblenden (für Admin)
-* **Transformationen pro Punkt**: GUI zum Festlegen ob Addition, Projektion oder beides pro Punkt
-* **CSV-Import im Web-Interface**: Import von Messdaten
+### Start the application
 
-* **Kommentare** hinzufügen, bearbeiten
+```bash
+./start.sh
+```
 
-###  Refactor
+### Stop the application
 
-* phpDocumentor
+```bash
+# Stop npm dev server (Ctrl+C), then:
+./stop.sh
+```
 
-* change db password
+### After Pulling Updates
 
-* Harden Models
+If a pull includes database changes (new migrations or seeders), reset and re-seed:
 
-* Return types, docstrings?
+```bash
+./vendor/bin/sail artisan migrate:fresh --seed
+```
 
-* test coverage?
+## Development
 
-## notes
+### Run tests
 
-* import L from leaflet -> bad (tree shaking)
-* leaflet latest release very old
+```bash
+./test.sh
+```
+
+### Lint and format
+
+```bash
+./lint.sh
+```
+
+## License
+MIT - see [LICENSE](./LICENSE) for details.

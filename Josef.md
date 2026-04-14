@@ -27,14 +27,6 @@
 ## Misc
 method signature = funktionskopf `public function show(param): result`
 
-## Tips on how to make it more human
-
-Add mild author perspective.
-Human academic writing often includes choices and emphasis, like “This was modelled separately because…” or “In practice, this matters when…”. That sounds more like someone explaining their own design decisions.
-
-Stop explaining every entity with equal weight.
-AI text often gives every concept the same amount of attention. A human usually emphasizes the important parts and handles minor parts more briefly.
-
 ## Measurement zu Point in Service class
 
 Measurement repräsentiert jedes Datum
