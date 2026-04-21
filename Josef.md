@@ -44,3 +44,21 @@ in PHP the :: operator (called the "scope resolution operator") is used to acces
 extends?
 type vs interface?
 ![alt text](Josef.md.png)
+
+## Presentation Tips
+
+Leute gleich abholen (nicht wie Projektmanagement)
+
+- Was war's Problem?
+- Warum haben wir die Arbeit gemacht?
+- Was ist das Gesamtbild?
+- Technische Details -> wozu?
+- Foreshadowing machen
+- auf Fragen vorbereiten (passiert selten)
+- kein Code durchscrollen (wenn Code, dann ein Snippet, ganz groß in die Slides)
+- 20 min (real ~12 min präsentieren)
+
+## Diploma presentation
+
+- technische Details
+- Team Lead: 1-2 min Thema vorstellen
