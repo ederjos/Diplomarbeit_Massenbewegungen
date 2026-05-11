@@ -1,0 +1,51 @@
+name: 'Setup PHP'
+
+description: 'Extends the shivammathur/setup-php action with optional installation and caching of Composer dependencies.'
+
+inputs:
+  php-version:
+    description: 'PHP version to install.'
+    required: false
+
+  run-install:
+    description: 'Whether to run `composer install` after setup.'
+    required: false
+    default: 'false'
+
+  cache:
+    description: 'Whether to cache Composer dependencies.'
+    required: false
+    default: 'false'
+
+outputs:
+  cache-hit:
+    description: 'Boolean indicating if Composer cache was restored.'
+    value: ${{ steps.composer-cache.outputs.cache-hit }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ inputs.php-version }}
+
+    - name: Get Composer Cache Directory
+      id: composer-cache-dir
+      if: ${{ inputs.cache == 'true' }}
+      run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      shell: bash
+
+    - name: Cache Composer Dependencies
+      id: composer-cache
+      if: ${{ inputs.cache == 'true' }}
+      uses: actions/cache@v5
+      with:
+        path: ${{ steps.composer-cache-dir.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: ${{ runner.os }}-composer-
+
+    - name: Install Composer Dependencies
+      if: ${{ inputs.run-install == 'true' }}
+      run: composer install --no-interaction
+      shell: bash

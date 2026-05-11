@@ -5,6 +5,7 @@
 .env.production
 .phpactor.json
 .phpunit.result.cache
+/.codex
 /.cursor
 /.idea
 /.nova
@@ -15,6 +16,7 @@
 /bootstrap/ssr
 /node_modules
 /public/build
+/public/fonts-manifest.dev.json
 /public/hot
 /public/storage
 /storage/*.key

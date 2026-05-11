@@ -1,0 +1,39 @@
+name: 'Setup Node.js'
+
+description: 'Extends the actions/setup-node action with optional installation and caching of npm dependencies.'
+
+inputs:
+  node-version:
+    description: 'Node.js version to install.'
+    required: false
+
+  run-install:
+    description: 'Whether to run `npm ci` (install) after setup.'
+    required: false
+    default: 'false'
+
+  cache:
+    description: 'Whether to cache npm dependencies.'
+    required: false
+    default: 'false'
+
+outputs:
+  cache-hit:
+    description: 'Boolean indicating if npm cache was restored.'
+    value: ${{ steps.setup-node.outputs.cache-hit }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      id: setup-node
+      uses: actions/setup-node@v6
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: ${{ inputs.cache == 'true' && 'npm' || '' }}
+        cache-dependency-path: '**/package-lock.json'
+
+    - name: Install npm Dependencies
+      if: ${{ inputs.run-install == 'true' }}
+      run: npm ci
+      shell: bash

@@ -16,22 +16,23 @@
     ],
     "require": {
         "php": "^8.5",
-        "clickbar/laravel-magellan": "^2.1.0",
-        "inertiajs/inertia-laravel": "^3.0.6",
-        "laravel/fortify": "^1.36.2",
-        "laravel/framework": "^13.4.0",
-        "laravel/tinker": "^3.0.0",
-        "laravel/wayfinder": "^0.1.16"
+        "clickbar/laravel-magellan": "^2.2.0",
+        "inertiajs/inertia-laravel": "^3.1.0",
+        "laravel/fortify": "^1.37.0",
+        "laravel/framework": "^13.8.0",
+        "laravel/tinker": "^3.0.2",
+        "laravel/wayfinder": "^0.1.18"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.1",
-        "laravel/boost": "^2.4.3",
+        "laravel/boost": "^2.4.6",
         "laravel/pail": "^1.2.6",
-        "laravel/pint": "^1.29.0",
-        "laravel/sail": "^1.56.0",
+        "laravel/pao": "^1.0.6",
+        "laravel/pint": "^1.29.1",
+        "laravel/sail": "^1.58.0",
         "mockery/mockery": "^1.6.12",
-        "nunomaduro/collision": "^8.9.3",
-        "pestphp/pest": "^4.5.0",
+        "nunomaduro/collision": "^8.9.4",
+        "pestphp/pest": "^4.7.0",
         "pestphp/pest-plugin-laravel": "^4.1.0"
     },
     "autoload": {

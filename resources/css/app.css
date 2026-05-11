@@ -93,17 +93,12 @@
     }
 }
 
-/* https://github.com/tailwindlabs/tailwindcss/pull/17831#:~:text=%40utility%20scrollbar%2Dstable */
-@utility scrollbar-stable {
-    scrollbar-gutter: stable;
-}
-
 @layer base {
     * {
         @apply border-border outline-ring/50;
     }
     html {
-        @apply scrollbar-stable;
+        @apply scrollbar-gutter-stable;
     }
     body {
         @apply bg-background text-foreground;

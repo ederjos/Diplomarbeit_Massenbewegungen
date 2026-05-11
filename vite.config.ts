@@ -3,8 +3,8 @@ import { wayfinder } from '@laravel/vite-plugin-wayfinder';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import laravel from 'laravel-vite-plugin';
+import { google } from 'laravel-vite-plugin/fonts';
 import { defineConfig } from 'vite';
-import webfontDownload from 'vite-plugin-webfont-dl';
 
 export default defineConfig({
     build: {
@@ -38,13 +38,16 @@ export default defineConfig({
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.ts'],
             refresh: true,
+            fonts: [
+                google('Instrument Sans', {
+                    weights: ['400..700'],
+                    display: 'auto',
+                }),
+            ],
         }),
         inertia(),
         tailwindcss(),
         vue(),
         wayfinder(),
-        webfontDownload(['https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700'], {
-            subsetsAllowed: ['latin'],
-        }),
     ],
 });

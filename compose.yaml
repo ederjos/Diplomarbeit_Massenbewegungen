@@ -5,7 +5,7 @@ services:
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-                NODE_VERSION: '24'
+                NODE_VERSION: '26'
                 POSTGRES_VERSION: '18'
         image: sail-8.5/app
         extra_hosts:

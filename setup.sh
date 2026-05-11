@@ -32,8 +32,7 @@ check_docker_installed() {
 
 check_docker_installed
 
-# usually set by sail, but since the container is built manually, these need to be set here
-# https://github.com/laravel/sail/blob/2295ec1403727adbdb29a5c28e7dc347c950d011/bin/sail#L146
+# https://github.com/laravel/sail/blob/f581665eff75ac48acda3abe8ad3cc34d87b1651/bin/sail#L146
 export WWWUSER="${WWWUSER:-$UID}"
 export WWWGROUP="${WWWGROUP:-$(id -g)}"
 
@@ -42,7 +41,8 @@ echo -e "${YELLOW}${BOLD}Starting setup...${RESET}\n"
 cp --update=none .env.example .env
 
 docker compose pull pgsql
-docker compose build --no-cache
+
+docker compose build --no-cache laravel.test
 
 docker compose up -d --wait pgsql
 

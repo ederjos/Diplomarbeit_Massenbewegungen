@@ -5,5 +5,5 @@
 
 # lint and format frontend code
 ./vendor/bin/sail npm run lint
-./vendor/bin/sail npm run type-check
+./vendor/bin/sail npm run types:check
 ./vendor/bin/sail npm run format

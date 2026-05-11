@@ -3,5 +3,5 @@
 # test backend code
 ./vendor/bin/sail composer run test
 
-# test frontend code (make it terminate automatically with -- --run)
-./vendor/bin/sail npm run test -- --run
+# test frontend code
+./vendor/bin/sail npm run test

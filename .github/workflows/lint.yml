@@ -14,38 +14,37 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: ./.github/actions/setup-php
         with:
           php-version: '8.5'
+          run-install: true
+          cache: true
 
-      - name: Setup Node
-        uses: actions/setup-node@v6
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
         with:
           node-version: '24'
-
-      - name: Install Dependencies
-        run: |
-          composer install --no-interaction
-          npm ci
+          run-install: true
+          cache: true
 
       - name: Generate Wayfinder Routes
         run: php artisan wayfinder:generate
 
-      - id: pint
-        name: Run Pint
+      - name: Lint Backend
+        id: backend-lint
         run: composer run lint:check
         continue-on-error: true
 
-      - id: eslint
-        name: Run ESLint
+      - name: Lint Frontend
+        id: frontend-lint
         run: npm run lint:check
         continue-on-error: true
 
-      - id: typecheck
-        name: Run Type Check
-        run: npm run type-check
+      - name: Check Frontend Types
+        id: frontend-types
+        run: npm run types:check
         continue-on-error: true
 
-      - name: Check linter results
-        if: steps.pint.outcome == 'failure' || steps.eslint.outcome == 'failure' || steps.typecheck.outcome == 'failure'
+      - name: Check Results
+        if: steps.backend-lint.outcome == 'failure' || steps.frontend-lint.outcome == 'failure' || steps.frontend-types.outcome == 'failure'
         run: exit 1
