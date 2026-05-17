@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-// use App\Models\Addition;
+use App\Models\Addition;
 use Illuminate\Database\Seeder;
 
 class AdditionsTableSeeder extends Seeder
@@ -12,8 +12,12 @@ class AdditionsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        // Addition::fillAndInsert([
-        //
-        // ]);
+        // For point 7, which is the only one with an addition
+        Addition::fillAndInsert([
+            'dx' => -0.39,
+            'dy' => 0.16,
+            'dz' => -0.16,
+            'created_at' => '2025-09-17 15:15:00',
+        ]);
     }
 }

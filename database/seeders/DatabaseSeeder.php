@@ -27,9 +27,9 @@ class DatabaseSeeder extends Seeder
             // Points are now created dynamically in MeasurementValuesTableSeeder
             // PointsTableSeeder::class,
             MeasurementsTableSeeder::class,
+            AdditionsTableSeeder::class,
             MeasurementValuesTableSeeder::class,
             ProjectionsTableSeeder::class,
-            AdditionsTableSeeder::class,
             CommentsTableSeeder::class,
         ]);
     }
