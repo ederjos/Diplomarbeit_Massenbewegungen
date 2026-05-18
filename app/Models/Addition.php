@@ -23,6 +23,9 @@ class Addition extends Model
         'dz',
     ];
 
+    /**
+     * Register model event hooks for addition updates.
+     */
     protected static function booted(): void
     {
         // Listens to saved event -> after addition is written
@@ -38,6 +41,9 @@ class Addition extends Model
         });
     }
 
+    /**
+     * Get measurement values affected by this addition.
+     */
     public function measurementValues(): HasMany
     {
         return $this->hasMany(MeasurementValue::class);

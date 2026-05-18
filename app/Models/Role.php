@@ -19,6 +19,11 @@ class Role extends Model
     ];
 
     // ensure that bools are correctly interpreted (some dbs store them as 0/1)
+    /**
+     * Get the model attribute casts.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -29,6 +34,9 @@ class Role extends Model
         ];
     }
 
+    /**
+     * Get the users assigned to the role.
+     */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

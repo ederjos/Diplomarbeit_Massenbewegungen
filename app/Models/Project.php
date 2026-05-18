@@ -32,6 +32,11 @@ class Project extends Model
         'reference_measurement_id',
     ];
 
+    /**
+     * Get the model attribute casts.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -40,6 +45,9 @@ class Project extends Model
         ];
     }
 
+    /**
+     * Add the most recent measurement timestamp to the select list.
+     */
     public function scopeWithLastMeasurementDate(Builder $query): void
     {
         // Can be queried in the Controller
@@ -51,6 +59,9 @@ class Project extends Model
         ]);
     }
 
+    /**
+     * Add the first and most recent measurement timestamps to the select list.
+     */
     public function scopeWithFirstAndLastMeasurementDate(Builder $query): void
     {
         $query->addSelect([
@@ -69,6 +80,9 @@ class Project extends Model
      * Gemini 3 Pro, 2025-12-30
      * "What is the code for the models to use a pivot table"
      */
+    /**
+     * Get the users assigned to the project.
+     */
     public function users(): BelongsToMany
     {
         // n:m relationship with User
@@ -78,16 +92,25 @@ class Project extends Model
             ->withTimestamps();
     }
 
+    /**
+     * Get the points associated with the project.
+     */
     public function points(): HasMany
     {
         return $this->hasMany(Point::class);
     }
 
+    /**
+     * Get the measurements associated with the project.
+     */
     public function measurements(): HasMany
     {
         return $this->hasMany(Measurement::class);
     }
 
+    /**
+     * Get the reference measurement for the project.
+     */
     public function referenceMeasurement(): BelongsTo
     {
         // Set by admin

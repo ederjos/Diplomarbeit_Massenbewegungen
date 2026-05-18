@@ -26,6 +26,11 @@ class Point extends Model
         'projection_id',
     ];
 
+    /**
+     * Get the model attribute casts.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -34,16 +39,25 @@ class Point extends Model
         ];
     }
 
+    /**
+     * Get the measurement values for this point.
+     */
     public function measurementValues(): HasMany
     {
         return $this->hasMany(MeasurementValue::class);
     }
 
+    /**
+     * Get the project that owns the point.
+     */
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
     }
 
+    /**
+     * Get the projection associated with the point.
+     */
     public function projection(): BelongsTo
     {
         return $this->belongsTo(Projection::class);
