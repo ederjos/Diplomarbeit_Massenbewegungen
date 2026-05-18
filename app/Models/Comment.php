@@ -16,12 +16,18 @@ class Comment extends Model
         'user_id',
     ];
 
+    /**
+     * Get the measurement that owns the comment.
+     */
     public function measurement(): BelongsTo
     {
         // Never used, but we might want to use it in the future
         return $this->belongsTo(Measurement::class);
     }
 
+    /**
+     * Get the user that authored the comment.
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

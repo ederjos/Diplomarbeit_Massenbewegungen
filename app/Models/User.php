@@ -25,6 +25,11 @@ class User extends Authenticatable
         'password',
     ];
 
+    /**
+     * Get the model attribute casts.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -32,12 +37,18 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * Determine whether the user belongs to the given project.
+     */
     public function isMemberOfProject(int $projectId): bool
     {
         return $this->projects()->where('projects.id', $projectId)->exists();
     }
 
     // Same as project
+    /**
+     * Get the projects the user belongs to.
+     */
     public function projects(): BelongsToMany
     {
         return $this->belongsToMany(Project::class)
@@ -45,11 +56,17 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    /**
+     * Get the role assigned to the user.
+     */
     public function role(): BelongsTo
     {
         return $this->belongsTo(Role::class);
     }
 
+    /**
+     * Get the comments authored by the user.
+     */
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class);

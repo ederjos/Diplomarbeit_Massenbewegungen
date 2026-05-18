@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Measurement;
 use App\Models\MeasurementValue;
+use App\Models\Point;
 use App\Models\Projection;
 use Clickbar\Magellan\Data\Geometries\Point as MagellanPoint;
 use Clickbar\Magellan\Database\PostgisFunctions\ST;
@@ -29,6 +31,9 @@ class DisplacementCalculationService
     /**
      * Compute displacements between two specific measurements for all visible points.
      * Structure: pointId => { distance2d, distance3d, projectedDistance, deltaHeight }
+     *
+     * @param  Collection<int, Point>  $visiblePoints
+     * @return array<int, array<string, float|null>>
      */
     public function computeForPair(Collection $visiblePoints, int $referenceId, int $comparisonId): array
     {
@@ -60,6 +65,10 @@ class DisplacementCalculationService
     /**
      * Compute displacements for every point × every measurement relative to the first measurement.
      * Structure: pointId => { measurementId => { distance2d, distance3d, projectedDistance, deltaHeight } }
+     *
+     * @param  Collection<int, Point>  $visiblePoints
+     * @param  Collection<int, Measurement>  $measurements
+     * @return array<int, array<int, array<string, float|null>>>
      */
     public function computeAll(Collection $visiblePoints, Collection $measurements): array
     {
@@ -115,6 +124,8 @@ class DisplacementCalculationService
 
     /**
      * Compute displacement metrics between two geometry points.
+     *
+     * @return array{distance2d: float, distance3d: float, deltaHeight: float, projectedDistance: float|null}
      */
     public function computeDisplacement(MagellanPoint $refGeom, MagellanPoint $compGeom, ?Projection $projection = null): array
     {
@@ -136,6 +147,11 @@ class DisplacementCalculationService
         ];
     }
 
+    /**
+     * Preload first/last measurement values for axis calculations.
+     *
+     * @param  Collection<int, Point>  $visiblePoints
+     */
     public function preloadMeasurementValues(Collection $visiblePoints): void
     {
         /**
@@ -169,6 +185,8 @@ class DisplacementCalculationService
      * first/last MeasurementValues. Stamps `preloadedAxis` onto each Point model.
      *
      * Must be called after preloadMeasurementValues().
+     *
+     * @param  Collection<int, Point>  $visiblePoints
      */
     public function computeAxisVectors(Collection $visiblePoints): void
     {
@@ -225,11 +243,13 @@ class DisplacementCalculationService
         }
     }
 
-    /*
-    Helper function that bulk-loads the reference and
-    comparison measurement values of each visible point
-    in a single database query
-    */
+    /**
+     * Bulk-load reference and comparison measurement values for visible points.
+     *
+     * @param  Collection<int, Point>  $visiblePoints
+     * @param  array<int>  $measurementIds
+     * @return SupportCollection<int, Collection<int, MeasurementValue>>
+     */
     private function loadValues(Collection $visiblePoints, array $measurementIds): SupportCollection
     {
         return MeasurementValue::whereIn('point_id', $visiblePoints->pluck('id'))
@@ -241,6 +261,12 @@ class DisplacementCalculationService
             ->map(fn ($group) => $group->keyBy('measurement_id'));
     }
 
+    /**
+     * Group projections by point id for fast lookup.
+     *
+     * @param  Collection<int, Point>  $visiblePoints
+     * @return SupportCollection<int, Projection>
+     */
     private function groupProjections(Collection $visiblePoints): SupportCollection
     {
         return $visiblePoints

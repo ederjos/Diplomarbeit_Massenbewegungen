@@ -25,7 +25,11 @@ class MeasurementValue extends Model
         'addition_id',
     ];
 
-    // How to convert attributes when reading/writing
+    /**
+     * Get the model attribute casts.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
@@ -33,7 +37,9 @@ class MeasurementValue extends Model
         ];
     }
 
-    // Usable as query scope
+    /**
+     * Scope query with lat/lon/height columns and sort by measurement datetime.
+     */
     public function scopeWithLatLonAndOrderedByDate(Builder $query): void
     {
         // Same as in Project: For the Controller, but reusable
@@ -52,7 +58,9 @@ class MeasurementValue extends Model
      * Gemini 3 Pro, 2026-01-11
      * "When removing the triggers by magellan, what code will make the geom field?"
      */
-    // Runs when the Model is booted
+    /**
+     * Register model event hooks for geometry synchronization.
+     */
     protected static function booted(): void
     {
         // Listens to saving event (on class-level -> static)
@@ -66,6 +74,9 @@ class MeasurementValue extends Model
         });
     }
 
+    /**
+     * Compute the geometry point with optional addition offsets.
+     */
     public static function computeGeom(float $x, float $y, float $z, ?Addition $addition = null): MagellanPoint
     {
         $geomX = $x + ($addition?->dx ?? 0);
@@ -75,16 +86,25 @@ class MeasurementValue extends Model
         return MagellanPoint::make($geomX, $geomY, $geomZ, srid: config('spatial.srids.default'));
     }
 
+    /**
+     * Get the point that owns the measurement value.
+     */
     public function point(): BelongsTo
     {
         return $this->belongsTo(Point::class);
     }
 
+    /**
+     * Get the measurement that owns the measurement value.
+     */
     public function measurement(): BelongsTo
     {
         return $this->belongsTo(Measurement::class);
     }
 
+    /**
+     * Get the addition applied to the measurement value.
+     */
     public function addition(): BelongsTo
     {
         return $this->belongsTo(Addition::class);

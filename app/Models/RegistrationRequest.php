@@ -20,6 +20,11 @@ class RegistrationRequest extends Model
         'password',
     ];
 
+    /**
+     * Get the model attribute casts.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [

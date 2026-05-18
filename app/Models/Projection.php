@@ -23,11 +23,17 @@ class Projection extends Model
         'ay',
     ];
 
+    /**
+     * Get the point associated with this projection.
+     */
     public function point(): HasOne
     {
         return $this->hasOne(Point::class);
     }
 
+    /**
+     * Project displacement onto the normalized axis.
+     */
     public function projectDisplacement(float $dX, float $dY): float
     {
         // Don't duplicate the dot product calculation

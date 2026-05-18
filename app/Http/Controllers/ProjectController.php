@@ -19,10 +19,16 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 class ProjectController extends Controller
 {
     // https://laravel.com/docs/12.x/container
+    /**
+     * Create a new controller instance.
+     */
     public function __construct(
         protected DisplacementCalculationService $displacementService
     ) {}
 
+    /**
+     * Show the projects list.
+     */
     public function index(Request $request): Response
     {
         /**
@@ -44,6 +50,9 @@ class ProjectController extends Controller
         ]);
     }
 
+    /**
+     * Toggle the favorite flag for the current user on the given project.
+     */
     public function toggleFavorite(Request $request, Project $project): RedirectResponse
     {
         $user = $request->user();
@@ -58,6 +67,9 @@ class ProjectController extends Controller
     }
 
     // provide the project image as a separate endpoint, so it can be easily used in an <img> tag without needing to base64-encode it
+    /**
+     * Serve the project image.
+     */
     public function image(Project $project): HttpResponse
     {
         if (! $project->image) {
@@ -78,6 +90,9 @@ class ProjectController extends Controller
         ]);
     }
 
+    /**
+     * Show project details.
+     */
     public function show(Request $request, Project $project): Response
     {
         // Apply scope to get first/last measurement dates before querying
@@ -135,6 +150,11 @@ class ProjectController extends Controller
         ]);
     }
 
+    /**
+     * Resolve reference and comparison measurement IDs.
+     *
+     * @return array{0: int|null, 1: int|null}
+     */
     private function resolveMeasurements(Request $request, Project $project): array
     {
         // Gets the measurement ids from the query string
