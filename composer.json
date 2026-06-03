@@ -19,20 +19,20 @@
         "clickbar/laravel-magellan": "^2.2.0",
         "inertiajs/inertia-laravel": "^3.1.0",
         "laravel/fortify": "^1.37.2",
-        "laravel/framework": "^13.9.0",
+        "laravel/framework": "^13.13.0",
         "laravel/tinker": "^3.0.2",
         "laravel/wayfinder": "^0.1.20"
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.1",
-        "laravel/boost": "^2.4.6",
-        "laravel/pail": "^1.2.6",
-        "laravel/pao": "^1.0.6",
+        "laravel/boost": "^2.4.8",
+        "laravel/pail": "^1.2.7",
+        "laravel/pao": "^1.1.0",
         "laravel/pint": "^1.29.1",
-        "laravel/sail": "^1.59.0",
+        "laravel/sail": "^1.61.0",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.9.4",
-        "pestphp/pest": "^4.7.0",
+        "pestphp/pest": "^4.7.2",
         "pestphp/pest-plugin-laravel": "^4.1.0"
     },
     "autoload": {
