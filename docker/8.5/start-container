@@ -9,6 +9,15 @@ if [ ! -z "$WWWUSER" ]; then
     usermod -u $WWWUSER sail
 fi
 
+if [ -d /var/www/html/node_modules/.vite-temp ]; then
+    chown -R sail:sail /var/www/html/node_modules/.vite-temp
+    chmod 0777 /var/www/html/node_modules/.vite-temp
+fi
+
+if [ -d /var/www/html/public/build ]; then
+    chown -R sail:sail /var/www/html/public/build
+fi
+
 if [ ! -d /.composer ]; then
     mkdir /.composer
 fi
