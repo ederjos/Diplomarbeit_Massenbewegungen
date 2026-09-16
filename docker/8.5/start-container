@@ -14,6 +14,16 @@ if [ -d /var/www/html/node_modules/.vite-temp ]; then
     chmod 0777 /var/www/html/node_modules/.vite-temp
 fi
 
+if [ -d /var/www/html/node_modules ]; then
+    chown -R sail:sail /var/www/html/node_modules
+fi
+
+for generated_directory in /var/www/html/resources/js/actions /var/www/html/resources/js/routes; do
+    if [ -d "$generated_directory" ]; then
+        chown -R sail:sail "$generated_directory"
+    fi
+done
+
 if [ -d /var/www/html/public/build ]; then
     chown -R sail:sail /var/www/html/public/build
 fi
