@@ -19,7 +19,7 @@ class MeasurementFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
+            'name' => fake()->unique()->word(),
             'measurement_datetime' => fake()->dateTime(),
             'project_id' => Project::factory(),
         ];

@@ -296,13 +296,22 @@ export function useLeafletMap(
             icon: L.divIcon({
                 // Set class for CSS styling
                 className: 'text-labels text-black text-xs font-bold',
-                html: `<span style="text-shadow: 1px 1px 0px white, -1px 1px 0px white, 1px -1px 0px white, -1px -1px 0px white;font-size:110%;">${pointName}</span>`,
+                html: `<span style="text-shadow: 1px 1px 0px white, -1px 1px 0px white, 1px -1px 0px white, -1px -1px 0px white;font-size:110%;">${escapeHtml(pointName)}</span>`,
                 iconSize: [0, 0],
                 iconAnchor: [10, -10],
             }),
         });
         textMarker.on('click', () => onPointClick(pointId));
         markersLayer.addLayer(textMarker);
+    }
+
+    function escapeHtml(value: string): string {
+        return value
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;');
     }
 
     onUnmounted(() => {

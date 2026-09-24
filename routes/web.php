@@ -41,10 +41,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/projects/{project}/measurements/manage', [MeasurementManagementController::class, 'manage'])->name('project.measurements.manage');
             Route::put('/projects/{project}/measurements', [MeasurementManagementController::class, 'sync'])->name('project.measurements.sync');
         });
+
     });
 
     Route::middleware(EnsureAdminPermissions::class)->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin');
+        Route::get('/projects/{project}/measurements/import', [AdminController::class, 'createMeasurementImport'])->name('project.measurements.import.create');
+        Route::post('/projects/{project}/measurements/import', [AdminController::class, 'storeMeasurementImport'])->name('project.measurements.import.store');
         Route::post('/admin/registration-requests/{registrationRequest}', [AdminController::class, 'approve'])->name('admin.registration-requests.approve');
         Route::delete('/admin/registration-requests/{registrationRequest}', [AdminController::class, 'reject'])->name('admin.registration-requests.reject');
     });

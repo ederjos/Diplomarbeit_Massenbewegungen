@@ -1,6 +1,7 @@
 export interface BaseProject {
     id: number;
     name: string;
+    previousMeasurementName?: string | null;
 }
 
 interface ActiveProject extends BaseProject {

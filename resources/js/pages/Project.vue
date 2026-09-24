@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 
 import type { ChartDisplacements, MapDisplacements, Measurement, Point } from '@/types/measurement';
 import type { ProjectDetails } from '@/types/project';
 import type { User } from '@/types/user';
 
+import { createMeasurementImport } from '@/actions/App/Http/Controllers/AdminController';
 import DetailsTab from '@/components/project/DetailsTab.vue';
 import ResultsTab from '@/components/project/ResultsTab.vue';
 import TabSwitcher from '@/components/ui/TabSwitcher.vue';
@@ -23,6 +24,8 @@ const props = defineProps<{
 }>();
 
 const activeTab = ref<'results' | 'basics'>('results');
+const page = usePage();
+const isAdmin = computed(() => page.props.auth.user?.permissions.isAdmin === true);
 
 const pointColors = computed(() => {
     const colorMap: Record<number, string> = {};
@@ -43,7 +46,17 @@ const pointColors = computed(() => {
     -->
     <div class="w-full">
         <!-- Page title -->
-        <h1 class="mb-4 text-center text-2xl font-bold text-slate-700">Projekt {{ project.name }}</h1>
+        <div class="mb-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+            <span aria-hidden="true" />
+            <h1 class="text-center text-2xl font-bold text-slate-700">Projekt {{ project.name }}</h1>
+            <Link
+                v-if="isAdmin"
+                :href="createMeasurementImport(project.id)"
+                class="justify-self-end rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium whitespace-nowrap text-white hover:bg-indigo-700"
+            >
+                CSV importieren
+            </Link>
+        </div>
         <!-- v-model used for 2-way data-binding -->
         <TabSwitcher v-model:active-tab="activeTab" />
         <div>
