@@ -62,9 +62,9 @@ function handleFileChange(event: Event, clearErrors: (...fields: string[]) => vo
                 </div>
 
                 <div class="space-y-2">
-                    <label for="measurement_datetime" class="block text-sm font-semibold text-gray-900"
-                        >Datum und Uhrzeit</label
-                    >
+                    <label for="measurement_datetime" class="block text-sm font-semibold text-gray-900">
+                        Datum und Uhrzeit
+                    </label>
                     <input
                         id="measurement_datetime"
                         name="measurement_datetime"

@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ApproveRegistrationRequest;
 use App\Http\Requests\ImportMeasurementsRequest;
+use App\Models\Measurement;
 use App\Models\Project;
 use App\Models\RegistrationRequest;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\MeasurementImportService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
 {
@@ -24,10 +27,10 @@ class AdminController extends Controller
     {
         return Inertia::render('Admin', [
             'registrationRequests' => RegistrationRequest::query()
-                ->orderBy('created_at')
+                ->orderBy('created_at', 'asc')
                 ->get(['id', 'name', 'email', 'note', 'created_at as createdAt']),
             'roles' => Role::query()
-                ->orderBy('name')
+                ->orderBy('name', 'asc')
                 ->get(['id', 'name']),
         ]);
     }
@@ -81,5 +84,43 @@ class AdminController extends Controller
         );
 
         return redirect()->route('project', $project);
+    }
+
+    // GET /projects/{project}/measurements/export
+    public function createMeasurementExport(Project $project): Response
+    {
+        return Inertia::render('admin/ExportMeasurements', [
+            'project' => [
+                'id' => $project->id,
+                'name' => $project->name,
+            ],
+            'measurements' => $project->measurements()
+                ->orderBy('measurement_datetime')
+                ->get(['id', 'name', 'measurement_datetime as datetime']),
+        ]);
+    }
+
+    // GET /projects/{project}/measurements/{measurement}/export
+    public function downloadMeasurementExport(Project $project, Measurement $measurement): StreamedResponse
+    {
+        // Does the measurement belong to the project? If not, return a 404 error. (should be handled by scoped bindings, but just in case)
+        abort_unless($measurement->project_id === $project->id, 404);
+
+        // Generate a filename based on the project and measurement names, replacing any non-alphanumeric characters with underscores.
+        $filename = Str::of("{$project->name}_{$measurement->name}_{$measurement->measurement_datetime->format('Y-m-d')}.csv")
+            ->replaceMatches('/[^\pL\pN._-]+/u', '_')
+            ->toString();
+
+        // Instead of generating the entire CSV in memory and then returning it, Laravel streams the CSV directly to the client.
+        return response()->streamDownload(function () use ($measurement): void {
+            $handle = fopen('php://output', 'wb'); // write binary
+            // eager load point id and name
+            // lazy -> process measurement values in chunks of roughly 500 records
+            foreach ($measurement->measurementValues()->with('point:id,name')->orderBy('id')->lazy(500) as $value) {
+                fputcsv($handle, [$value->point->name, $value->x, $value->y, $value->z], separator: ';', escape: '', eol: "\n");
+            }
+
+            fclose($handle);
+        }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 }

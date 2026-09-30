@@ -6,7 +6,7 @@ import type { ChartDisplacements, MapDisplacements, Measurement, Point } from '@
 import type { ProjectDetails } from '@/types/project';
 import type { User } from '@/types/user';
 
-import { createMeasurementImport } from '@/actions/App/Http/Controllers/AdminController';
+import { createMeasurementExport, createMeasurementImport } from '@/actions/App/Http/Controllers/AdminController';
 import DetailsTab from '@/components/project/DetailsTab.vue';
 import ResultsTab from '@/components/project/ResultsTab.vue';
 import TabSwitcher from '@/components/ui/TabSwitcher.vue';
@@ -49,13 +49,20 @@ const pointColors = computed(() => {
         <div class="mb-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
             <span aria-hidden="true" />
             <h1 class="text-center text-2xl font-bold text-slate-700">Projekt {{ project.name }}</h1>
-            <Link
-                v-if="isAdmin"
-                :href="createMeasurementImport(project.id)"
-                class="justify-self-end rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium whitespace-nowrap text-white hover:bg-indigo-700"
-            >
-                CSV importieren
-            </Link>
+            <div v-if="isAdmin" class="flex gap-2 justify-self-end">
+                <Link
+                    :href="createMeasurementImport(project.id)"
+                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium whitespace-nowrap text-white hover:bg-indigo-700"
+                >
+                    CSV importieren
+                </Link>
+                <Link
+                    :href="createMeasurementExport(project.id)"
+                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium whitespace-nowrap text-white hover:bg-indigo-700"
+                >
+                    CSV exportieren
+                </Link>
+            </div>
         </div>
         <!-- v-model used for 2-way data-binding -->
         <TabSwitcher v-model:active-tab="activeTab" />

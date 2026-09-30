@@ -97,6 +97,7 @@ describe('Admin controller', function () {
     it('allows an admin to open the measurement import page', function () {
         /** @var TestCase $this */
         $role = Role::factory()->createOne(['is_admin' => true]);
+        /** @var User $admin */
         $admin = User::factory()->createOne(['role_id' => $role->id]);
         $project = Project::factory()->createOne(['name' => 'Bergprojekt']);
         Measurement::factory()->createOne(['project_id' => $project->id, 'name' => 'FM27']);
@@ -114,6 +115,7 @@ describe('Admin controller', function () {
     it('imports a measurement and scopes point matching to the selected project', function () {
         /** @var TestCase $this */
         $role = Role::factory()->createOne(['is_admin' => true]);
+        /** @var User $admin */
         $admin = User::factory()->createOne(['role_id' => $role->id]);
         $project = Project::factory()->createOne();
         $otherProject = Project::factory()->createOne();
@@ -164,6 +166,7 @@ describe('Admin controller', function () {
     it('rejects a duplicate measurement name without writing any rows', function () {
         /** @var TestCase $this */
         $role = Role::factory()->createOne(['is_admin' => true]);
+        /** @var User $admin */
         $admin = User::factory()->createOne(['role_id' => $role->id]);
         $project = Project::factory()->createOne();
         Measurement::factory()->createOne(['project_id' => $project->id, 'name' => 'existing']);
@@ -181,6 +184,7 @@ describe('Admin controller', function () {
     it('blocks non-admins from importing measurements', function () {
         /** @var TestCase $this */
         $role = Role::factory()->createOne(['is_admin' => false]);
+        /** @var User $user */
         $user = User::factory()->createOne(['role_id' => $role->id]);
 
         $response = $this->actingAs($user)->get(route('project.measurements.import.create', Project::factory()->createOne()));
@@ -191,6 +195,7 @@ describe('Admin controller', function () {
     it('rejects CSV files above the measurement point limit', function () {
         /** @var TestCase $this */
         $role = Role::factory()->createOne(['is_admin' => true]);
+        /** @var User $admin */
         $admin = User::factory()->createOne(['role_id' => $role->id]);
         $project = Project::factory()->createOne();
         $csv = collect(range(1, 10001))
@@ -210,6 +215,7 @@ describe('Admin controller', function () {
     it('rejects malformed CSV rows without creating a measurement', function () {
         /** @var TestCase $this */
         $role = Role::factory()->createOne(['is_admin' => true]);
+        /** @var User $admin */
         $admin = User::factory()->createOne(['role_id' => $role->id]);
         $project = Project::factory()->createOne();
 
@@ -221,5 +227,55 @@ describe('Admin controller', function () {
 
         $response->assertSessionHasErrors('file');
         $this->assertDatabaseMissing('measurements', ['name' => 'malformed']);
+    });
+
+    it('allows an admin to select a measurement for export', function () {
+        /** @var TestCase $this */
+        $role = Role::factory()->createOne(['is_admin' => true]);
+        /** @var User $admin */
+        $admin = User::factory()->createOne(['role_id' => $role->id]);
+        $project = Project::factory()->createOne(['name' => 'Bergprojekt']);
+        Measurement::factory()->createOne(['project_id' => $project->id, 'name' => 'FM27']);
+
+        $response = $this->actingAs($admin)->get(route('project.measurements.export.create', $project));
+
+        $response->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->component('admin/ExportMeasurements')
+                ->where('project.name', 'Bergprojekt')
+                ->where('measurements.0.name', 'FM27'));
+    });
+
+    it('blocks non-admins from exporting measurements', function () {
+        /** @var TestCase $this */
+        $role = Role::factory()->createOne(['is_admin' => false]);
+        /** @var User $user */
+        $user = User::factory()->createOne(['role_id' => $role->id]);
+
+        $response = $this->actingAs($user)->get(route('project.measurements.export.create', Project::factory()->createOne()));
+
+        $response->assertForbidden();
+    });
+
+    it('exports a measurement as an importable CSV', function () {
+        /** @var TestCase $this */
+        $role = Role::factory()->createOne(['is_admin' => true]);
+        /** @var User $admin */
+        $admin = User::factory()->createOne(['role_id' => $role->id]);
+        $project = Project::factory()->createOne(['name' => 'Bergprojekt']);
+        $measurement = Measurement::factory()->createOne([
+            'project_id' => $project->id,
+            'name' => 'FM27',
+            'measurement_datetime' => '2026-09-23 12:30:00',
+        ]);
+        $point = Point::factory()->createOne(['project_id' => $project->id, 'name' => 'P-2']);
+        $measurement->measurementValues()->createMany([
+            ['point_id' => $point->id, 'x' => 4.0, 'y' => 5.0, 'z' => 6.0],
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('project.measurements.export.download', [$project, $measurement]));
+
+        $response->assertDownload('Bergprojekt_FM27_2026-09-23.csv');
+        expect($response->streamedContent())->toBe("P-2;4;5;6\n");
     });
 });
