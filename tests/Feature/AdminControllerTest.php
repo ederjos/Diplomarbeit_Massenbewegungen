@@ -324,7 +324,7 @@ describe('Admin controller', function () {
             'measurement_datetime' => '2026-09-23 12:30:00',
         ]);
         $point = Point::factory()->createOne(['project_id' => $project->id, 'name' => 'äöüÄÖÜßẞ', 'is_visible' => true]);
-        $measurement->measurementValues()->createOne([
+        $measurement->measurementValues()->create([
             'point_id' => $point->id,
             'x' => 4.0,
             'y' => 5.0,

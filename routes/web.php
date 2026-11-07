@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\MeasurementManagementController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectManagementController;
@@ -31,6 +32,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/projects/{project}/displacements', [ProjectController::class, 'displacementsForPair'])->name('project.displacements');
         Route::post('projects/{project}/favorite', [ProjectController::class, 'toggleFavorite'])->name('project.toggleFavorite');
         Route::get('/projects/{project}/image', [ProjectController::class, 'image'])->name('project.image');
+        Route::post('/projects/{project}/measurements/{measurement}/comments', [CommentController::class, 'store'])
+            ->scopeBindings()
+            ->name('project.measurements.comments.store');
+        Route::put('/projects/{project}/measurements/{measurement}/comments/{comment}', [CommentController::class, 'update'])
+            ->scopeBindings()
+            ->name('project.measurements.comments.update');
+        Route::delete('/projects/{project}/measurements/{measurement}/comments/{comment}', [CommentController::class, 'delete'])
+            ->scopeBindings()
+            ->name('project.measurements.comments.destroy');
 
         Route::middleware(EnsureProjectManagementPermission::class)->group(function () {
             Route::get('/projects/{project}/edit', [ProjectManagementController::class, 'edit'])->name('project.edit');

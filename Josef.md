@@ -109,6 +109,11 @@ Und soll es auch einen Logout über OIDC geben? Weil aktuell ist kein Logout imp
 - kommentare
 - erm (neue Rollen-Berechtigung) aktualisieren
 
+### Fragen
+
+- Kommentare: Name von Autor angeben? Und auch letzter bearbeitender User (evt Admin)
+- Wenn bei der aktuellen Epoche keine Kommentare sind, die von der vorherigen anzeigen?
+
 ### n2h
 
 - Gäste erhalten aktuell immer noch alle Gangliniendaten - ein Datensplit wäre nötig, um das zu verhindern.

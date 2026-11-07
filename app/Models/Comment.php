@@ -14,6 +14,7 @@ class Comment extends Model
         'content',
         'measurement_id',
         'user_id',
+        'last_edited_by_user_id',
     ];
 
     /**
@@ -31,5 +32,13 @@ class Comment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the user who last edited the comment.
+     */
+    public function lastEditor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'last_edited_by_user_id');
     }
 }

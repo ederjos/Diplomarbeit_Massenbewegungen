@@ -50,12 +50,16 @@ export interface DisplacementRow {
     deltaHeight: number;
 }
 
-interface Comment {
+export interface Comment {
     id: number;
     content: string;
     createdDatetime: string;
     updatedDatetime: string;
     user: User;
+    lastEditedDatetime: string | null;
+    lastEditor: User | null;
+    canEdit: boolean;
+    canDelete: boolean;
 }
 
 export interface BaseMeasurement {

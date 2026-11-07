@@ -111,6 +111,8 @@ class ProjectController extends Controller
             'measurements.comments' => fn ($q) => $q->orderBy('created_at'),
             'measurements.comments.user',
             'measurements.comments.user.role',
+            'measurements.comments.lastEditor',
+            'measurements.comments.lastEditor.role',
         ]);
 
         // Only include visible points

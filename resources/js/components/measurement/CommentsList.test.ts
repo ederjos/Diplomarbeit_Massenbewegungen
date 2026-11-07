@@ -1,9 +1,28 @@
+import type * as InertiaVue from '@inertiajs/vue3';
+
 import { mount } from '@vue/test-utils';
-import { expect, test } from 'vitest';
+import { expect, test, vi } from 'vitest';
 
 import type { Measurement } from '@/types/measurement';
 
 import CommentsList from './CommentsList.vue';
+
+vi.mock('@inertiajs/vue3', async () => {
+    const actual = await vi.importActual<typeof InertiaVue>('@inertiajs/vue3');
+
+    return {
+        ...actual,
+        usePage: () => ({
+            props: {
+                auth: {
+                    user: {
+                        permissions: { isAdmin: false, canComment: true },
+                    },
+                },
+            },
+        }),
+    };
+});
 
 function makeMeasurementWithoutComments(): Measurement {
     return {
@@ -22,6 +41,10 @@ function makeMeasurementWithComments(): Measurement {
             content: 'First comment',
             createdDatetime: '2026-01-01',
             updatedDatetime: '2026-01-01',
+            lastEditedDatetime: null,
+            lastEditor: null,
+            canEdit: false,
+            canDelete: false,
             user: {
                 id: 1,
                 name: 'Josef',
@@ -36,6 +59,7 @@ function makeMeasurementWithComments(): Measurement {
 test('shows "no comparison selected" when comparisonId is null', () => {
     const wrapper = mount(CommentsList, {
         props: {
+            projectId: 1,
             measurements: [makeMeasurementWithComments()],
             comparisonId: null,
         },
@@ -47,6 +71,7 @@ test('shows "no comparison selected" when comparisonId is null', () => {
 test('shows "no comments" when measurement has no comments', () => {
     const wrapper = mount(CommentsList, {
         props: {
+            projectId: 1,
             measurements: [makeMeasurementWithoutComments()],
             comparisonId: 1,
         },
@@ -58,6 +83,7 @@ test('shows "no comments" when measurement has no comments', () => {
 test('shows comment when measurement has comments', () => {
     const wrapper = mount(CommentsList, {
         props: {
+            projectId: 1,
             measurements: [makeMeasurementWithComments()],
             comparisonId: 1,
         },
@@ -74,10 +100,27 @@ test('shows comment when measurement has comments', () => {
 test('shows measurement name in heading', () => {
     const wrapper = mount(CommentsList, {
         props: {
+            projectId: 1,
             measurements: [makeMeasurementWithComments()],
             comparisonId: 1,
         },
     });
 
     expect(wrapper.find('h2').text()).toBe('Kommentare zur Messepoche Test Measurement');
+});
+
+test('hides the create form until the add button is clicked', async () => {
+    const wrapper = mount(CommentsList, {
+        props: {
+            projectId: 1,
+            measurements: [makeMeasurementWithoutComments()],
+            comparisonId: 1,
+        },
+    });
+
+    expect(wrapper.find('#new-comment').exists()).toBe(false);
+
+    await wrapper.get('button').trigger('click');
+
+    expect(wrapper.find('#new-comment').exists()).toBe(true);
 });

@@ -242,8 +242,9 @@ describe('Single project page', function () {
 
         $measurement = Measurement::factory()->createOne(['project_id' => $project->id]);
 
+        $role = Role::factory()->createOne(['can_comment' => true]);
         /** @var User $user */
-        $user = User::factory()->createOne();
+        $user = User::factory()->createOne(['role_id' => $role->id]);
         $project->users()->attach($user->id);
 
         $comment = Comment::factory()->createOne(['measurement_id' => $measurement->id, 'user_id' => $user->id]);
@@ -257,6 +258,9 @@ describe('Single project page', function () {
                     ->where('measurements.0.comments.0.id', $comment->id)
                     ->where('measurements.0.comments.0.content', $comment->content)
                     ->where('measurements.0.comments.0.user.name', $user->name)
+                    ->where('measurements.0.comments.0.canEdit', true)
+                    ->where('measurements.0.comments.0.canDelete', true)
+                    ->where('auth.user.permissions.canComment', true)
             );
     });
 });
