@@ -5,6 +5,7 @@ use App\Models\MeasurementValue;
 use App\Models\Point;
 use App\Models\Project;
 use App\Models\Projection;
+use App\Models\Role;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
@@ -94,8 +95,9 @@ describe('Project displacement', function () {
         $expectedProjection = $expectedDx * 100;
         $expectedDeltaHeight = $expectedDz * 100;
 
+        $role = Role::factory()->createOne(['can_view_detailed_data' => true]);
         /** @var User $user */
-        $user = User::factory()->createOne();
+        $user = User::factory()->createOne(['role_id' => $role->id]);
         $project->users()->attach($user->id);
         $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id);
 
@@ -167,8 +169,9 @@ describe('Project displacement', function () {
             'measurement_id' => $comparisonMeasurement->id,
         ]);
 
+        $role = Role::factory()->createOne(['can_view_detailed_data' => true]);
         /** @var User $user */
-        $user = User::factory()->createOne();
+        $user = User::factory()->createOne(['role_id' => $role->id]);
         $project->users()->attach($user, ['is_contact_person' => true]);
 
         $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id);
@@ -213,8 +216,9 @@ describe('Project displacement', function () {
             'measurement_id' => $comparisonMeasurement->id,
         ]);
 
+        $role = Role::factory()->createOne(['can_view_detailed_data' => true]);
         /** @var User $user */
-        $user = User::factory()->createOne();
+        $user = User::factory()->createOne(['role_id' => $role->id]);
         $project->users()->attach($user->id);
 
         $response = $this->actingAs($user)->get(route('project', $project).'?comparison='.$comparisonMeasurement->id.'&reference='.$referenceMeasurement->id);

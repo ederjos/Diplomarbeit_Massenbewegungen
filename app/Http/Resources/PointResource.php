@@ -18,7 +18,9 @@ class PointResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'axis' => $this->preloadedAxis ?? null,
-            'measurementValues' => MeasurementValueResource::collection($this->measurementValues)->resolve(),
+            'measurementValues' => $this->relationLoaded('measurementValues')
+                ? MeasurementValueResource::collection($this->measurementValues)->resolve()
+                : [],
         ];
     }
 }

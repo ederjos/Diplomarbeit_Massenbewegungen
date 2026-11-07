@@ -28,6 +28,7 @@ const props = defineProps<{
     initialComparisonId: number | null;
     initialMapDisplacements: MapDisplacements;
     chartDisplacements: ChartDisplacements;
+    canViewDetailedData: boolean;
 }>();
 
 const selectedReference = ref<number | null>(props.initialReferenceId);
@@ -89,6 +90,7 @@ watch([selectedReference, selectedComparison], async ([refVal, compVal]) => {
                     :point-colors="pointColors"
                     :measurements="measurements"
                     :displacements="mapDisplacements"
+                    :can-view-detailed-data="canViewDetailedData"
                 />
             </ErrorBoundary>
         </section>

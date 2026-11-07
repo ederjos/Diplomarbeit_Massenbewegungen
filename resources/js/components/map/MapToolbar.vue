@@ -8,6 +8,7 @@ import { formatDate } from '@/utils/date';
 
 const props = defineProps<{
     measurements: BaseMeasurement[];
+    canViewDetailedData: boolean;
 }>();
 
 const selectedReference = defineModel<number | null>('selectedReference');
@@ -84,7 +85,7 @@ const safeVectorScale = computed({
                 type="number"
             />
         </div>
-        <div class="me-4 flex items-center">
+        <div v-if="props.canViewDetailedData" class="me-4 flex items-center">
             <input
                 id="checkbox-is-gait-line"
                 v-model="isGaitLine"

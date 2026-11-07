@@ -46,6 +46,7 @@ class HandleInertiaRequests extends Middleware
                     'name' => $user->name,
                     'permissions' => [
                         'isAdmin' => $userRole->is_admin,
+                        'canViewDetailedData' => $userRole->is_admin || $userRole->can_view_detailed_data,
                         'canManageProjects' => $userRole->can_manage_projects,
                         'canManageMeasurements' => $userRole->can_manage_measurements,
                         'canComment' => $userRole->can_comment,

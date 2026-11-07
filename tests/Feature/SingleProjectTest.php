@@ -5,11 +5,39 @@ use App\Models\Measurement;
 use App\Models\MeasurementValue;
 use App\Models\Point;
 use App\Models\Project;
+use App\Models\Role;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 describe('Single project page', function () {
+    it('shows normal project data to users without gait-line permission', function () {
+        /** @var TestCase $this */
+        $role = Role::factory()->createOne([
+            'is_admin' => false,
+            'can_view_detailed_data' => false,
+        ]);
+        /** @var User $user */
+        $user = User::factory()->createOne(['role_id' => $role->id]);
+        $project = Project::factory()->createOne();
+        $project->users()->attach($user->id);
+        $point = Point::factory()->createOne(['project_id' => $project->id]);
+        $measurement = Measurement::factory()->createOne(['project_id' => $project->id]);
+        MeasurementValue::factory()->createOne([
+            'point_id' => $point->id,
+            'measurement_id' => $measurement->id,
+        ]);
+
+        $response = $this->actingAs($user)->get(route('project', $project));
+
+        $response->assertOk()
+            ->assertInertia(fn (Assert $page) => $page
+                ->has('points.0.measurementValues', 1)
+                ->has('mapDisplacements')
+                ->has('chartDisplacements')
+            );
+    });
+
     it('loads project-page measurements chronologically', function () {
         /** @var TestCase $this */
         $project = Project::factory()->createOne();
@@ -30,8 +58,9 @@ describe('Single project page', function () {
         // Assert that measurement values were created
         $this->assertDatabaseCount('measurement_values', 3);
 
+        $role = Role::factory()->createOne(['can_view_detailed_data' => true]);
         /** @var User $user */
-        $user = User::factory()->createOne();
+        $user = User::factory()->createOne(['role_id' => $role->id]);
         $project->users()->attach($user->id);
         $response = $this->actingAs($user)->get(route('project', $project));
 
@@ -76,8 +105,9 @@ describe('Single project page', function () {
             'addition_id' => null,
         ]);
 
+        $role = Role::factory()->createOne(['can_view_detailed_data' => true]);
         /** @var User $user */
-        $user = User::factory()->createOne();
+        $user = User::factory()->createOne(['role_id' => $role->id]);
         $project->users()->attach($user->id);
         $response = $this->actingAs($user)->get(route('project', $project));
 

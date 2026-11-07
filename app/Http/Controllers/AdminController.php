@@ -116,7 +116,11 @@ class AdminController extends Controller
             $handle = fopen('php://output', 'wb'); // write binary
             // eager load point id and name
             // lazy -> process measurement values in chunks of roughly 500 records
-            foreach ($measurement->measurementValues()->with('point:id,name')->orderBy('id')->lazy(500) as $value) {
+            foreach ($measurement->measurementValues()
+                ->whereHas('point', fn ($query) => $query->where('is_visible', true))
+                ->with('point:id,name')
+                ->orderBy('id')
+                ->lazy(500) as $value) {
                 fputcsv($handle, [$value->point->name, $value->x, $value->y, $value->z], separator: ';', escape: '', eol: "\n");
             }
 

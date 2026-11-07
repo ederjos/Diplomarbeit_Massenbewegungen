@@ -26,6 +26,7 @@ const props = defineProps<{
 const activeTab = ref<'results' | 'basics'>('results');
 const page = usePage();
 const isAdmin = computed(() => page.props.auth.user?.permissions.isAdmin === true);
+const canViewDetailedData = computed(() => page.props.auth.user?.permissions.canViewDetailedData === true);
 
 const pointColors = computed(() => {
     const colorMap: Record<number, string> = {};
@@ -49,8 +50,9 @@ const pointColors = computed(() => {
         <div class="mb-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
             <span aria-hidden="true" />
             <h1 class="text-center text-2xl font-bold text-slate-700">Projekt {{ project.name }}</h1>
-            <div v-if="isAdmin" class="flex gap-2 justify-self-end">
+            <div v-if="isAdmin || canViewDetailedData" class="flex gap-2 justify-self-end">
                 <Link
+                    v-if="isAdmin"
                     :href="createMeasurementImport(project.id)"
                     class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium whitespace-nowrap text-white hover:bg-indigo-700"
                 >
@@ -80,6 +82,7 @@ const pointColors = computed(() => {
                 :initial-comparison-id="comparisonId"
                 :initial-map-displacements="mapDisplacements"
                 :chart-displacements="chartDisplacements"
+                :can-view-detailed-data="canViewDetailedData"
             />
             <DetailsTab
                 v-show="activeTab === 'basics'"

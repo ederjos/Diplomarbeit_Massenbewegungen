@@ -13,6 +13,7 @@ class Role extends Model
     protected $fillable = [
         'name',
         'is_admin',
+        'can_view_detailed_data',
         'can_manage_projects',
         'can_manage_measurements',
         'can_comment',
@@ -28,6 +29,7 @@ class Role extends Model
     {
         return [
             'is_admin' => 'boolean',
+            'can_view_detailed_data' => 'boolean',
             'can_manage_projects' => 'boolean',
             'can_manage_measurements' => 'boolean',
             'can_comment' => 'boolean',

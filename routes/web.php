@@ -6,6 +6,7 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectManagementController;
 use App\Http\Controllers\RegistrationRequestController;
 use App\Http\Middleware\EnsureAdminPermissions;
+use App\Http\Middleware\EnsureMeasurementExportPermission;
 use App\Http\Middleware\EnsureMeasurementManagementPermission;
 use App\Http\Middleware\EnsureProjectManagementPermission;
 use App\Http\Middleware\EnsureProjectMember;
@@ -48,10 +49,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin');
         Route::get('/projects/{project}/measurements/import', [AdminController::class, 'createMeasurementImport'])->name('project.measurements.import.create');
         Route::post('/projects/{project}/measurements/import', [AdminController::class, 'storeMeasurementImport'])->name('project.measurements.import.store');
+        Route::post('/admin/registration-requests/{registrationRequest}', [AdminController::class, 'approve'])->name('admin.registration-requests.approve');
+        Route::delete('/admin/registration-requests/{registrationRequest}', [AdminController::class, 'reject'])->name('admin.registration-requests.reject');
+    });
+
+    Route::middleware([EnsureProjectMember::class, EnsureMeasurementExportPermission::class])->group(function () {
         Route::get('/projects/{project}/measurements/export', [AdminController::class, 'createMeasurementExport'])->name('project.measurements.export.create');
         // Scoped bindings are used here to ensure that the {measurement} belongs to the {project} in the route.
         Route::get('/projects/{project}/measurements/{measurement}/export', [AdminController::class, 'downloadMeasurementExport'])->scopeBindings()->name('project.measurements.export.download');
-        Route::post('/admin/registration-requests/{registrationRequest}', [AdminController::class, 'approve'])->name('admin.registration-requests.approve');
-        Route::delete('/admin/registration-requests/{registrationRequest}', [AdminController::class, 'reject'])->name('admin.registration-requests.reject');
     });
 });

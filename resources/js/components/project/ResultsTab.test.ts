@@ -37,6 +37,7 @@ const defaultProps = {
     initialComparisonId: 2,
     initialMapDisplacements: {},
     chartDisplacements: {},
+    canViewDetailedData: false,
 };
 
 test('all three mocked sections are rendered', async () => {

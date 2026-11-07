@@ -18,6 +18,7 @@ test('measurement options are rendered in selects', () => {
             selectedComparison: 2,
             vectorScale: 100,
             isGaitLine: false,
+            canViewDetailedData: true,
         },
     });
     const options = wrapper.findAll('option');
@@ -37,6 +38,7 @@ test('selects are disabled when isGaitLine is true', () => {
             selectedComparison: 2,
             vectorScale: 100,
             isGaitLine: true,
+            canViewDetailedData: true,
         },
     });
     const selects = wrapper.findAll('select');
@@ -53,9 +55,25 @@ test('emits "update:isGaitLine" when checkbox is toggled', async () => {
             selectedComparison: 2,
             vectorScale: 100,
             isGaitLine: false,
+            canViewDetailedData: true,
         },
     });
     const checkbox = wrapper.find('input[type="checkbox"]');
     await checkbox.setValue(true);
     expect(wrapper.emitted('update:isGaitLine')?.[0]).toEqual([true]);
+});
+
+test('hides the gait line checkbox without detailed data access', () => {
+    const wrapper = mount(MapToolbar, {
+        props: {
+            measurements,
+            selectedReference: 1,
+            selectedComparison: 2,
+            vectorScale: 100,
+            isGaitLine: false,
+            canViewDetailedData: false,
+        },
+    });
+
+    expect(wrapper.find('#checkbox-is-gait-line').exists()).toBe(false);
 });

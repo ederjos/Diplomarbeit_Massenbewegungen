@@ -19,10 +19,11 @@ class RoleFactory extends Factory
     {
         return [
             'name' => fake()->jobTitle(),
-            'is_admin' => fake()->boolean(),
-            'can_manage_projects' => fake()->boolean(),
-            'can_manage_measurements' => fake()->boolean(),
-            'can_comment' => fake()->boolean(),
+            'is_admin' => false,
+            'can_view_detailed_data' => false,
+            'can_manage_projects' => false,
+            'can_manage_measurements' => false,
+            'can_comment' => false,
         ];
     }
 }

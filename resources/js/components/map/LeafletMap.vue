@@ -24,6 +24,7 @@ const props = defineProps<{
     measurements: Measurement[];
     /** Backend-computed displacement values. Key: point id */
     displacements: MapDisplacements;
+    canViewDetailedData: boolean;
 }>();
 
 // Selected reference measurement ID
@@ -168,6 +169,7 @@ onUnmounted(() => {
             v-model:vector-scale="vectorScale"
             v-model:is-gait-line="isGaitLine"
             :measurements="baseMeasurements"
+            :can-view-detailed-data="canViewDetailedData"
         />
 
         <!-- The map is always 85% high, no matter the table size -->

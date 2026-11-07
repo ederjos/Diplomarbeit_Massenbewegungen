@@ -6,6 +6,7 @@ export interface AuthUser {
 
 export interface Permissions {
     isAdmin: boolean;
+    canViewDetailedData: boolean;
     canManageProjects: boolean;
     canManageMeasurements: boolean;
     canComment: boolean;

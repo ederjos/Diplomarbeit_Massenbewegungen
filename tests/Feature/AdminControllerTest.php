@@ -100,6 +100,7 @@ describe('Admin controller', function () {
         /** @var User $admin */
         $admin = User::factory()->createOne(['role_id' => $role->id]);
         $project = Project::factory()->createOne(['name' => 'Bergprojekt']);
+        $project->users()->attach($admin->id);
         Measurement::factory()->createOne(['project_id' => $project->id, 'name' => 'FM27']);
 
         $response = $this->actingAs($admin)->get(route('project.measurements.import.create', $project));
@@ -235,6 +236,7 @@ describe('Admin controller', function () {
         /** @var User $admin */
         $admin = User::factory()->createOne(['role_id' => $role->id]);
         $project = Project::factory()->createOne(['name' => 'Bergprojekt']);
+        $project->users()->attach($admin->id);
         Measurement::factory()->createOne(['project_id' => $project->id, 'name' => 'FM27']);
 
         $response = $this->actingAs($admin)->get(route('project.measurements.export.create', $project));
@@ -248,11 +250,37 @@ describe('Admin controller', function () {
 
     it('blocks non-admins from exporting measurements', function () {
         /** @var TestCase $this */
-        $role = Role::factory()->createOne(['is_admin' => false]);
+        $role = Role::factory()->createOne(['is_admin' => false, 'can_view_detailed_data' => false, 'can_manage_measurements' => false]);
         /** @var User $user */
         $user = User::factory()->createOne(['role_id' => $role->id]);
 
         $response = $this->actingAs($user)->get(route('project.measurements.export.create', Project::factory()->createOne()));
+
+        $response->assertForbidden();
+    });
+
+    it('allows experts to export measurements', function () {
+        /** @var TestCase $this */
+        $role = Role::factory()->createOne(['name' => 'custom', 'is_admin' => false, 'can_view_detailed_data' => true, 'can_manage_measurements' => false]);
+        /** @var User $expert */
+        $expert = User::factory()->createOne(['role_id' => $role->id]);
+        $project = Project::factory()->createOne();
+        $project->users()->attach($expert->id);
+
+        $response = $this->actingAs($expert)->get(route('project.measurements.export.create', $project));
+
+        $response->assertOk()
+            ->assertInertia(fn (Assert $page) => $page->component('admin/ExportMeasurements'));
+    });
+
+    it('blocks experts from exporting measurements for another project', function () {
+        /** @var TestCase $this */
+        $role = Role::factory()->createOne(['is_admin' => false, 'can_view_detailed_data' => true]);
+        $user = User::factory()->createOne(['role_id' => $role->id]);
+        $project = Project::factory()->createOne();
+        $measurement = Measurement::factory()->createOne(['project_id' => $project->id]);
+
+        $response = $this->actingAs($user)->get(route('project.measurements.export.download', [$project, $measurement]));
 
         $response->assertForbidden();
     });
@@ -263,19 +291,22 @@ describe('Admin controller', function () {
         /** @var User $admin */
         $admin = User::factory()->createOne(['role_id' => $role->id]);
         $project = Project::factory()->createOne(['name' => 'Bergprojekt']);
+        $project->users()->attach($admin->id);
         $measurement = Measurement::factory()->createOne([
             'project_id' => $project->id,
             'name' => 'FM27',
             'measurement_datetime' => '2026-09-23 12:30:00',
         ]);
-        $point = Point::factory()->createOne(['project_id' => $project->id, 'name' => 'P-2']);
+        $point = Point::factory()->createOne(['project_id' => $project->id, 'name' => 'P1', 'is_visible' => true]);
+        $hiddenPoint = Point::factory()->createOne(['project_id' => $project->id, 'name' => 'Hidden', 'is_visible' => false]);
         $measurement->measurementValues()->createMany([
             ['point_id' => $point->id, 'x' => 4.0, 'y' => 5.0, 'z' => 6.0],
+            ['point_id' => $hiddenPoint->id, 'x' => 7.0, 'y' => 8.0, 'z' => 9.0],
         ]);
 
         $response = $this->actingAs($admin)->get(route('project.measurements.export.download', [$project, $measurement]));
 
         $response->assertDownload('Bergprojekt_FM27_2026-09-23.csv');
-        expect($response->streamedContent())->toBe("P-2;4;5;6\n");
+        expect($response->streamedContent())->toBe("P1;4;5;6\n");
     });
 });
