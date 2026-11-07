@@ -103,12 +103,11 @@ Und soll es auch einen Logout über OIDC geben? Weil aktuell ist kein Logout imp
 
 ### todo
 
-- datei export umlaute, scharfes s parsen
 - punkt bearbeiten (projektion, is-visible, measurement löschen, punkt löschen) darf nur admin
 - addition (evt aus Messepoche)
 - messung bearbeiten
 - kommentare
--
+- erm (neue Rollen-Berechtigung) aktualisieren
 
 ### n2h
 

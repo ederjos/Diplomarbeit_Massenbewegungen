@@ -107,7 +107,7 @@ class AdminController extends Controller
         abort_unless($measurement->project_id === $project->id, 404);
 
         // Generate a filename based on the project and measurement names, replacing any non-alphanumeric characters with underscores.
-        $filename = Str::of("{$project->name}_{$measurement->name}_{$measurement->measurement_datetime->format('Y-m-d')}.csv")
+        $filename = Str::of($this->transliterateGermanCharacters("{$project->name}_{$measurement->name}_{$measurement->measurement_datetime->format('Y-m-d')}.csv"))
             ->replaceMatches('/[^\pL\pN._-]+/u', '_')
             ->toString();
 
@@ -121,10 +121,24 @@ class AdminController extends Controller
                 ->with('point:id,name')
                 ->orderBy('id')
                 ->lazy(500) as $value) {
-                fputcsv($handle, [$value->point->name, $value->x, $value->y, $value->z], separator: ';', escape: '', eol: "\n");
+                fputcsv($handle, [$this->transliterateGermanCharacters($value->point->name), $value->x, $value->y, $value->z], separator: ';', escape: '', eol: "\n");
             }
 
             fclose($handle);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    private function transliterateGermanCharacters(string $value): string
+    {
+        return strtr($value, [
+            'ä' => 'ae',
+            'ö' => 'oe',
+            'ü' => 'ue',
+            'Ä' => 'Ae',
+            'Ö' => 'Oe',
+            'Ü' => 'Ue',
+            'ß' => 'ss',
+            'ẞ' => 'ss',
+        ]);
     }
 }

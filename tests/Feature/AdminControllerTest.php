@@ -276,6 +276,7 @@ describe('Admin controller', function () {
     it('blocks experts from exporting measurements for another project', function () {
         /** @var TestCase $this */
         $role = Role::factory()->createOne(['is_admin' => false, 'can_view_detailed_data' => true]);
+        /** @var User $user */
         $user = User::factory()->createOne(['role_id' => $role->id]);
         $project = Project::factory()->createOne();
         $measurement = Measurement::factory()->createOne(['project_id' => $project->id]);
@@ -308,5 +309,31 @@ describe('Admin controller', function () {
 
         $response->assertDownload('Bergprojekt_FM27_2026-09-23.csv');
         expect($response->streamedContent())->toBe("P1;4;5;6\n");
+    });
+
+    it('transliterates German characters when exporting a measurement', function () {
+        /** @var TestCase $this */
+        $role = Role::factory()->createOne(['is_admin' => true]);
+        /** @var User $admin */
+        $admin = User::factory()->createOne(['role_id' => $role->id]);
+        $project = Project::factory()->createOne(['name' => 'äöüÄÖÜßẞ']);
+        $project->users()->attach($admin->id);
+        $measurement = Measurement::factory()->createOne([
+            'project_id' => $project->id,
+            'name' => 'äöüÄÖÜßẞ',
+            'measurement_datetime' => '2026-09-23 12:30:00',
+        ]);
+        $point = Point::factory()->createOne(['project_id' => $project->id, 'name' => 'äöüÄÖÜßẞ', 'is_visible' => true]);
+        $measurement->measurementValues()->createOne([
+            'point_id' => $point->id,
+            'x' => 4.0,
+            'y' => 5.0,
+            'z' => 6.0,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('project.measurements.export.download', [$project, $measurement]));
+
+        $response->assertDownload('aeoeueAeOeUessss_aeoeueAeOeUessss_2026-09-23.csv');
+        expect($response->streamedContent())->toBe("aeoeueAeOeUessss;4;5;6\n");
     });
 });
